@@ -1,0 +1,178 @@
+<?php
+
+use App\Http\Controllers\Auth\LoginController as UserLoginController;
+use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\DepositController;
+use App\Http\Controllers\User\PayoutController;
+use App\Http\Controllers\ManualRecaptchaController;
+use App\Http\Controllers\khaltiPaymentController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InAppNotificationController;
+use App\Http\Controllers\User\SupportTicketController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\User\VerificationController;
+use App\Http\Controllers\User\SellerController;
+use App\Http\Controllers\Frontend\BlogController;
+use App\Http\Controllers\User\PlanPurchaseControlller;
+use App\Http\Controllers\BidderController;
+use App\Http\Controllers\User\ReportController;
+use App\Http\Controllers\User\MessageController;
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+$basicControl = basicControl();
+Route::get('maintenance-mode', function () {
+    $data['maintenanceMode'] = \App\Models\MaintenanceMode::first();
+    return view(template() . 'maintenance', $data);
+})->name('maintenance');
+
+Route::get('send/notification',[\App\Http\Controllers\NotifyController::class,'index']);
+
+
+
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset')->middleware('guest');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset.update');
+
+Route::group(['middleware' => ['maintenanceMode']], function () use ($basicControl) {
+    Route::group(['middleware' => ['guest']], function () {
+        Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [UserLoginController::class, 'login'])->name('login.submit');
+    });
+
+    Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], function () {
+
+        Route::get('check', [VerificationController::class, 'check'])->name('check');
+        Route::get('resend_code', [VerificationController::class, 'resendCode'])->name('resendCode');
+        Route::post('mail-verify', [VerificationController::class, 'mailVerify'])->name('mailVerify');
+        Route::post('sms-verify', [VerificationController::class, 'smsVerify'])->name('smsVerify');
+        Route::post('twoFA-Verify', [VerificationController::class, 'twoFAverify'])->name('twoFA-Verify');
+
+        Route::middleware('userCheck')->group(function () {
+
+            Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
+            Route::get('profile', [HomeController::class, 'profile'])->name('profile');
+            Route::post('profile-update', [HomeController::class, 'profileUpdate'])->name('profile.update');
+            Route::post('profile-update/image', [HomeController::class, 'profileUpdateImage'])->name('profile.update.image');
+            Route::post('update/password', [HomeController::class, 'updatePassword'])->name('updatePassword');
+            Route::post('save-token', [HomeController::class, 'saveToken'])->name('save.token');
+
+            Route::post('save-token', [HomeController::class, 'saveToken'])->name('save.token');
+
+            Route::post('kyc/submit', [HomeController::class, 'kycVerificationSubmit'])->name('kyc.verification.submit');
+            Route::get('add-fund', [HomeController::class, 'addFund'])->name('add.fund');
+            Route::get('funds', [HomeController::class, 'fund'])->name('fund.index');
+
+            Route::get('transaction-list', [HomeController::class, 'index'])->name('transaction');
+            Route::get('transaction-search', [HomeController::class, 'search'])->name('transaction.search');
+
+            Route::get('twostep-security', [HomeController::class, 'twoStepSecurity'])->name('twostep.security');
+            Route::post('twoStep-enable', [HomeController::class, 'twoStepEnable'])->name('twoStepEnable');
+            Route::post('twoStep-disable', [HomeController::class, 'twoStepDisable'])->name('twoStepDisable');
+            Route::middleware('kycVerification')->group(function () {
+
+                /* Manage Buy and Sell Vehicle and Manage Plan*/
+
+                Route::get('upgrade/plan/{id}',[PlanPurchaseControlller::class,'upgradePlan'])->name('upgrade.plan');
+                Route::post('/bid/{id}',[\App\Http\Controllers\BiddingController::class,'bid'])->name('bid');
+                Route::get('sell/your/vehicle', [SellerController::class, 'index'])->name('sell-car.submit')->middleware(['CheckSeller']);
+                Route::post('store/your/store', [SellerController::class, 'store'])->name('sell-car.store')->middleware(['CheckSeller']);
+                Route::get('purchase/plan/{plan_id}', [PlanPurchaseControlller::class, 'purchasePlan'])->name('purchase.plan');
+                Route::get('listed/vehicle',[SellerController::class,'listedVehicle'])->name('listed.vehicle');
+                Route::get('edit/vehicle/{id}',[SellerController::class,'edit'])->name('edit.vehicle');;
+                Route::post('update/vehicle/{id}',[SellerController::class,'update'])->name('update.vehicle');;
+                Route::get('get/image/{id}',[SellerController::class,'getImage'])->name('get.image');
+                Route::get('delete/vehicle/{id}',[SellerController::class,'destroy'])->name('delete.vehicle');
+                Route::get('bidding/history',[BidderController::class,'UserBiddingHistory'])->name('bidding.history');
+                Route::post('release/property',[SellerController::class,'releseProperty'])->name('release.property');
+                Route::post('confirm/payment',[BidderController::class,'payNow'])->name('confirm.payment');
+                Route::post('store/report/{repoter_id}/{repoted_id}',[ReportController::class,'store'])->name('store.report');
+                Route::get('vehicle/bidding/History/{id}',[SellerController::class,'vehicleBiddingHistory'])->name('vehicle.bidding.history');
+                Route::post('delete/vehicle/bidding/history',[SellerController::class,'deleteHistory'])->name('delete.vehicle.bidding.history');
+            });
+
+            /* Message Route */
+
+            Route::get('messages',[MessageController::class,'index'])->name('messages');
+
+
+            /* PAYMENT REQUEST BY USER */
+            Route::get('payout-list', [PayoutController::class, 'index'])->name('payout.index');
+            Route::get('payout-search', [PayoutController::class, 'search'])->name('payout.search');
+
+            Route::get('payout', [PayoutController::class, 'payouprofile.update.imaget'])->name('payout');
+            Route::get('payout-supported-currency', [PayoutController::class, 'payoutSupportedCurrency'])->name('payout.supported.currency');
+            Route::get('payout-check-amount', [PayoutController::class, 'checkAmount'])->name('payout.checkAmount');
+            Route::post('request-payout', [PayoutController::class, 'payoutRequest'])->name('payout.request');
+
+            Route::match(['get', 'post'], 'confirm-payout/{trx_id}', [PayoutController::class, 'confirmPayout'])->name('payout.confirm');
+            Route::post('confirm-payout/flutterwave/{trx_id}', [PayoutController::class, 'flutterwavePayout'])->name('payout.flutterwave');
+            Route::post('confirm-payout/paystack/{trx_id}', [PayoutController::class, 'paystackPayout'])->name('payout.paystack');
+            Route::get('payout-check-limit', [PayoutController::class, 'checkLimit'])->name('payout.checkLimit');
+            Route::post('payout-bank-form', [PayoutController::class, 'getBankForm'])->name('payout.getBankForm');
+            Route::post('payout-bank-list', [PayoutController::class, 'getBankList'])->name('payout.getBankList');
+
+            /* ===== Push Notification ===== */
+            Route::get('push-notification-show', [InAppNotificationController::class, 'show'])->name('push.notification.show');
+            Route::get('push.notification.readAll', [InAppNotificationController::class, 'readAll'])->name('push.notification.readAll');
+            Route::get('push-notification-readAt/{id}', [InAppNotificationController::class, 'readAt'])->name('push.notification.readAt');
+
+            Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function () {
+                Route::get('/', [SupportTicketController::class, 'index'])->name('list');
+                Route::get('/create', [SupportTicketController::class, 'create'])->name('create');
+                Route::post('/create', [SupportTicketController::class, 'store'])->name('store');
+                Route::get('/view/{ticket}', [SupportTicketController::class, 'ticketView'])->name('view');
+                Route::put('/reply/{ticket}', [SupportTicketController::class, 'reply'])->name('reply');
+                Route::get('/download/{ticket}', [SupportTicketController::class, 'download'])->name('download');
+            });
+
+        });
+    });
+
+
+    Route::get('/captcha', [ManualRecaptchaController::class, 'reCaptCha'])->name('captcha');
+
+    /* Manage User Deposit */
+    Route::get('supported-currency', [DepositController::class, 'supportedCurrency'])->name('supported.currency');
+    Route::post('payment-request', [DepositController::class, 'paymentRequest'])->name('payment.request');
+    Route::get('deposit-check-amount', [DepositController::class, 'checkAmount'])->name('deposit.checkAmount');
+
+    Route::get('payment-process/{trx_id}', [PaymentController::class, 'depositConfirm'])->name('payment.process');
+    Route::post('addFundConfirm/{trx_id}', [PaymentController::class, 'fromSubmit'])->name('addFund.fromSubmit');
+    Route::match(['get', 'post'], 'success', [PaymentController::class, 'success'])->name('success');
+    Route::match(['get', 'post'], 'failed', [PaymentController::class, 'failed'])->name('failed');
+    Route::match(['get', 'post'], 'payment/{code}/{trx?}/{type?}', [PaymentController::class, 'gatewayIpn'])->name('ipn');
+
+    Route::post('khalti/payment/verify/{trx}', [\App\Http\Controllers\khaltiPaymentController::class, 'verifyPayment'])->name('khalti.verifyPayment');
+    Route::post('khalti/payment/store', [khaltiPaymentController::class, 'storePayment'])->name('khalti.storePayment');
+
+    Auth::routes();
+    Route::get('/plan', [FrontendController::class, 'plan'])->name('plan');
+    Route::get('/auction', [FrontendController::class, 'auction'])->name('auction');
+    Route::get('/blogs', [FrontendController::class, 'blogs'])->name('blogs');
+    Route::get('blog', [FrontendController::class, 'blogs'])->name('blog');
+    Route::get('blogs/{category}/{id}',[FrontendController::class,'categoryBlogs'])->name('category.blogs');
+    Route::get('blog-details/{slug}', [BlogController::class, 'blogDetails'])->name('blog.details');
+    Route::get('property/details/{slug?}/{id}',[\App\Http\Controllers\BidderController::class,'viewAuctionDetails'])->name('auction.details');
+
+    /*= Frontend Manage Controller =*/
+    Route::get("/{slug?}", [FrontendController::class, 'page'])->name('page');
+
+});
+
+
