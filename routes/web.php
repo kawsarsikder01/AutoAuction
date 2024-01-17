@@ -101,14 +101,20 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
                 Route::get('bidding/history',[BidderController::class,'UserBiddingHistory'])->name('bidding.history');
                 Route::post('release/property',[SellerController::class,'releseProperty'])->name('release.property');
                 Route::post('confirm/payment',[BidderController::class,'payNow'])->name('confirm.payment');
-                Route::post('store/report/{repoter_id}/{repoted_id}',[ReportController::class,'store'])->name('store.report');
+                Route::post('store/report/{repoter_id}/{repoted_id}/{vehicle_id}',[ReportController::class,'store'])->name('store.report');
                 Route::get('vehicle/bidding/History/{id}',[SellerController::class,'vehicleBiddingHistory'])->name('vehicle.bidding.history');
                 Route::post('delete/vehicle/bidding/history',[SellerController::class,'deleteHistory'])->name('delete.vehicle.bidding.history');
+                Route::get('messages/{id}',[MessageController::class,'index'])->name('messages');
+                Route::get('get/message/{id}',[MessageController::class,'getMessage'])->name('get.message');
+                Route::post('send/message/',[MessageController::class,'sendMessage'])->name('send.message');
+                Route::get('reports/conversation',[ReportController::class,'index'])->name('reports.conversation');
+                Route::get('get/conversation/{id}',[ReportController::class,'getConversation'])->name('get.conversation');
+                Route::post('send/report/message',[ReportController::class,'sendMessage'])->name('send.report.message');
             });
 
             /* Message Route */
 
-            Route::get('messages',[MessageController::class,'index'])->name('messages');
+           
 
 
             /* PAYMENT REQUEST BY USER */

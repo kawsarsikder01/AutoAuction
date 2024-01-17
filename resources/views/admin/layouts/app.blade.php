@@ -167,6 +167,17 @@
                     url: "{{route('admin.themeMode')}}/" + $theme,
                     type: 'get',
                     success: function (response) {
+                        if(response != 'dark'){
+                            if(response == 'auto'){
+                                var $themeImgSource = "{{ getFile($basicControl->admin_dark_mode_logo_driver, $basicControl->admin_dark_mode_logo, true) }}";
+                            }else{
+                                var $themeImgSource = "{{ getFile($basicControl->admin_logo_driver, $basicControl->admin_logo, true) }}";
+                            }
+                            var element = document.querySelector('.navbar-brand-logo-auto');
+                            if (element) {
+                                element.setAttribute('src', $themeImgSource);
+                            }
+                        }
                     }
                 });
             })

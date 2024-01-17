@@ -15,14 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sender_id');
             $table->unsignedBigInteger('receiver_id');
-            $table->unsignedBigInteger('admin_id');
-            $table->boolean('type');
-            $table->string('name')->nullable();
             $table->text('message')->nullable();
             $table->timestamps();
             $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('receiver_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
         });
     }
 

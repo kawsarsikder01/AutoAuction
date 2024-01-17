@@ -3,61 +3,21 @@
 @section('content')
  <!-- main -->
  <div class="container-fluid">
-    <div class="main row">
-       <div class="col-12">
+    <div class="main row  d-flex justify-content-center">
+       <div class="col-10 ">
          
 
-          <div class="message-wrapper">
+          <div class="message-wrapper" id="MessageArea">
              <div class="row g-lg-0">
-                <div class="col-lg-3">
-                   <h5 class="m-3">Messages</h5>
-                   <div class="messages-box">
-                     
-                     
-                      
-                     
-                     
-                      
-                     
-                      <div class="message">
-                         <div class="img-box">
-                            <img src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" class="img-fluid" alt="" />
-                         </div>
-                         <div class="text-box">
-                            <a href="">
-                               <p class="name">
-                                  Trista Francis
-                                  <span class="time">4h</span>
-                               </p>
-                               <p>Wants to connect your network.</p>
-                            </a>
-                         </div>
-                      </div>
-                      <div class="message">
-                         <div class="img-box">
-                            <img src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" class="img-fluid" alt="" />
-                         </div>
-                         <div class="text-box">
-                            <a href="">
-                               <p class="name">
-                                  Trista Francis
-                                  <span class="time">4h</span>
-                               </p>
-                               <p>Wants to connect your network.</p>
-                            </a>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-                <div class="col-lg-9">
+                <div class="col-lg-12">
                    <div class="inbox-wrapper">
                       <!-- top bar -->
                       <div class="top-bar">
                          <div class="d-flex align-items-center">
-                            <img class="user img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
+                            <img class="user img-fluid" src="{{getFile($user->image_driver,$user->image)}}" alt="" />
                             <div class="name">
-                               <a href="influencer-profile.html">Kimberley Lang</a>
-                               <span>Active Now</span>
+                               <a href="javascript:void(0);">{{$user->firstname." ".$user->lastname}} </a>
+                               {{-- <span>Active Now</span> --}}
                             </div>
                          </div>
                          <div>
@@ -67,56 +27,56 @@
                          </div>
                       </div>
                       <!-- chats -->
-                      <div class="chats" style="background-image: url('./img/pxfuel.jpg');">
-                         <div class="chat-box this-side">
-                            <div class="text-wrapper">
-                               <div class="text">
-                                  <p>Hello! How are you</p>
-                               </div>
-                               <span class="time">3 hours ago</span>
-                            </div>
-                            <div class="img">
-                               <img class="img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
-                            </div>
-                         </div>
-                         <div class="chat-box opposite-side">
-                            <div class="img">
-                               <img class="img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
-                            </div>
-                            <div class="text-wrapper">
-                               <div class="text">
-                                  <p>Hello! How are you</p>
-                               </div>
-                               <span class="time">3 hours ago</span>
-                            </div>
-                         </div>
-                         <div class="chat-box this-side">
-                            <div class="text-wrapper">
-                               <div class="text">
-                                  <p>
-                                     Hello! How are you Lorem, ipsum dolor sit amet consectetur
-                                     adipisicing elit. Dolorem rem
-                                  </p>
-                               </div>
-                               <span class="time">3 hours ago</span>
-                            </div>
-                            <div class="img">
-                               <img class="img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
-                            </div>
-                         </div>
-                         
-                         
+                      <div class="chats">
+                        <div class="div">
+                           @foreach ($messages as $message)
+                           @if ($message->sender_id == Auth::user()->id)
+                              <div class="chat-box this-side">
+                                 <div class="text-wrapper" >
+                                    <div class="text">
+                                       <p>{{$message->message}}</p>
+                                    </div>
+                                    {{-- <span class="time"> 3 hours ago</span> --}}
+                                 </div>
+                                 <div class="img">
+                                    <img class="img-fluid" src="{{getFile($message->sender->image_driver,$message->sender->image)}}" alt="" />
+                                 </div>
+                              </div>
+                              @else
+                              <div class="chat-box opposite-side">
+                                 <div class="img">
+                                    <img class="img-fluid" src="{{getFile($user->image_driver,$user->image)}}" alt="" />
+                                 </div>
+                                 <div class="text-wrapper">
+                                    <div class="text">
+                                       <p>{{$message->message}}</p>
+                                    </div>
+                                    {{-- <span class="time">3 hours ago</span> --}}
+                                 </div>
+                              </div>
+                           @endif
+                          
+                           @endforeach
+                          
+
+                           
+
+                        </div>
                          
                       </div>
                       <!-- typing area -->
                       <div class="typing-area mt-5">
-                         <div class="input-group">
-                            
-                            <input type="text" class="form-control" />
-                            <button class="submit-btn">
-                               <i class="fal fa-paper-plane"></i>
-                            </button>
-                         </div>
+                        <form action="{{route('user.send.message')}}" method="POST">
+                           @csrf
+                           <div class="input-group">
+                            <input type="hidden" name="receiver_id" value="{{$user->id}}">
+                            <input type="hidden" name="sender_id" value="{{Auth::user()->id}}">
+                              <input type="text" name="message" class="form-control" />
+                              <button type="submit" class="submit-btn" >
+                                 <i class="fal fa-paper-plane"></i>
+                              </button>
+                           </div>
+                        </form>
                       </div>
                    </div>
                 </div>
@@ -126,3 +86,47 @@
     </div>
  </div>
 @endsection
+
+@push('script')
+   <script>
+   //   const MessageSection = new Vue({
+   //    el: "#MessageArea",
+   //      data: {
+   //       message:'',
+   //       allmessage:[],
+   //      },
+   //      mounted(){
+   //          this.getMessage();
+   //      },
+   //      methods:{
+   //          getMessage(id){
+   //          axios.get(`{{ route('user.get.message', ['id' => ':id']) }}`.replace(':id', id))
+   //                .then(function (res) {
+   //                   this.allmessage = res.data;
+   //                   console.log(this.allmessage)
+   //                })
+   //                console.log(this.allmessage)
+   //          },
+   //          async  sendMessage(id,sender_id){
+   //             const data = {
+   //              message : this.message,
+   //              sender_id:sender_id,
+   //              receiver_id:id
+   //          }
+   //          this.message = ''
+   //          try {
+   //             const response = await axios.post('{{ route('user.send.message') }}', data);
+
+   //             this.getMessage(id);
+               
+   //          } catch (error) {
+   //            console.error('Error making POST request:', error);
+   //          }
+   //          }
+
+
+   //      }
+   //   })
+
+   </script>
+@endpush

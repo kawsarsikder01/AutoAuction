@@ -346,6 +346,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::delete('destroy/blogs/{id}',[BlogController::class,'destroy'])->name('blogs.destroy');
         Route::get('blogs/seo/{id}',[BlogController::class,'blogSeo'])->name('blogs.seo');
         Route::post('blog/seo/update/{id}',[BlogController::class,'seoUpdate'])->name('blog.seo.update');
+        Route::get('get/blogs', [BlogController::class , 'getBlogs'])->name('get.blogs');
 
 
        /* ======== Plan Management ======== */
@@ -397,6 +398,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('get/reports',[ReportController::class,'getReports'])->name('get.reports');
         Route::get('delete/report/{id}',[ReportController::class,'destroy'])->name('delete.report');
         Route::get('user/report/{id}',[ReportController::class,'viewReport'])->name('user.report');
+        Route::post('send/message',[ReportController::class,'sendMessage'])->name('send.message');
 
 
     });

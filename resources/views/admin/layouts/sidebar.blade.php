@@ -5,10 +5,10 @@
         <div class="navbar-vertical-footer-offset">
             <!-- Logo -->
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}" aria-label="{{ $basicControl->site_title }}">
-                <img class="navbar-brand-logo"
-                     src="{{ getFile($basicControl->admin_logo_driver, $basicControl->admin_logo, true) }}"
-                     alt="{{ $basicControl->site_title }} Logo"
-                     data-hs-theme-appearance="default">
+                <img class="navbar-brand-logo navbar-brand-logo-auto"
+                src="{{ getFile(session()->get('themeMode') == 'auto'?$basicControl->admin_dark_mode_logo_driver : $basicControl->admin_logo_driver, session()->get('themeMode') == 'auto'?$basicControl->admin_dark_mode_logo:$basicControl->admin_logo, true) }}"
+                alt="{{ $basicControl->site_title }} Logo"
+                data-hs-theme-appearance="default">
 
                 <img class="navbar-brand-logo"
                      src="{{ getFile($basicControl->admin_dark_mode_logo_driver, $basicControl->admin_dark_mode_logo, true) }}"

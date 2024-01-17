@@ -4,7 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2c309cd-d780-4ea4-a94d-a2698efc035b" name="Changes" comment="" />
+    <list default="true" id="a2c309cd-d780-4ea4-a94d-a2698efc035b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/phpunit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/phpunit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Admin/BlogController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/BlogController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Admin/ReportController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/ReportController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BidderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BidderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/MessageController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/MessageController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/ReportController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/ReportController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/SellerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/SellerController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/kycVerification.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/kycVerification.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Report.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2024_01_15_143134_create_messages_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2024_01_15_143134_create_messages_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/Reports/view.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/Reports/view.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/blog_management/blog/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/blog_management/blog/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/layouts/app.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/admin/layouts/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/layouts/sidebar.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/light/auctionDetails.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/light/auctionDetails.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/light/biddingHistory.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/light/biddingHistory.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/light/message.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/light/message.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/light/partials/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/light/partials/sidebar.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/light/vehicleBiddingHistory.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/light/vehicleBiddingHistory.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -259,7 +282,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/server/htdocs/adminpanel/resources/views/themes/light/user/payment&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -351,12 +374,26 @@
       <workItem from="1705206570449" duration="12688000" />
       <workItem from="1705235484138" duration="2008000" />
       <workItem from="1705292883685" duration="10977000" />
-      <workItem from="1705379466732" duration="1080000" />
+      <workItem from="1705379466732" duration="6913000" />
+      <workItem from="1705387429925" duration="3547000" />
+      <workItem from="1705405208535" duration="3828000" />
+      <workItem from="1705465700767" duration="13203000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

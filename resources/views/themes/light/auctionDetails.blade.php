@@ -351,7 +351,7 @@
                <h1 class="modal-title text-black fs-5" id="staticBackdropLabel">Report</h1>
                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
            </div>
-           <form action="{{route('user.store.report',[Auth::user()->id??0,$vehicle->user_id])}}" id="FormRoute" method="POST">
+           <form action="{{route('user.store.report',[Auth::user()->id??0,$vehicle->user_id,$vehicle->id])}}" id="FormRoute" method="POST">
               @csrf
                <div class="modal-body">
                    <div class="row justify-content-center align-items-center">

@@ -5,7 +5,7 @@
     <div class="main row">
        <div class="col-12">
           <div class="dashboard-heading">
-             <h4 class="mb-0">Vehicle Bidding History</h4>
+             <h4 class="mb-0">{{$vehicleTitle." "}}: Bidding History</h4>
           </div>
 
           <!-- table -->
@@ -70,8 +70,8 @@
                 <thead>
                    <tr>
                       <th scope="col">Bidder</th>
-                      <th scope="col">Title</th>
                       <th scope="col">Bid Amount</th>
+                      <th scope="col">Date</th>
                       <th scope="col">Action</th>
                    </tr>
                 </thead>
@@ -79,7 +79,7 @@
                     @forelse($historys as $key => $biddingHistory)
                     <tr>
                         <td data-label="@lang('Bidder')">
-                            <a class="d-flex align-items-center me-2" href="">
+                            <a class="d-flex align-items-center me-2" href="javascript:void(0);">
                                 <div class="flex-shrink-0">
                                   <div class="avatar avatar-sm avatar-circle">
                                     <img id="avaterImg"  src="{{getFile($biddingHistory->bidder->image_driver,$biddingHistory->bidder->image)}}" alt="Image Description">
@@ -92,33 +92,25 @@
                                 </div>
                               </a>
                         </td>
-                        <td data-label="@lang('Title')">
-                                {{$biddingHistory->vehicle->details->title}}
-                        </td>
-                       
                         <td data-label="@lang('Bid Amount')">
-                          {{$biddingHistory->bid_amount}}
+                           {{$biddingHistory->bid_amount}}
+                         </td>
+                        <td data-label="@lang('Date')">
+                                {{$biddingHistory->created_at}}
                         </td>
                         <td data-label="@lang('Action')">
                             <div>
-                              @if ($biddingHistory->wining_status == 0 )
-                            
-                              <a href="" onclick="event.preventDefault(); document.getElementById('deleteBid{{$key}}').submit();" class="btn-action-icon bg-primary">
-                                 <i class="fa-solid fa-trash"></i>
-                               </a>
-                               <form id="deleteBid{{$key}}" action="{{route('user.delete.vehicle.bidding.history')}}" method="POST" class="d-none">
-                                 @csrf
-                                 <input type="hidden" value="{{$biddingHistory->id}}" name="bid_id">
-                              </form>
-                              @endif
                               @if ($biddingHistory->wining_status == 1)
-                              <a href="" class="btn-action-icon bg-primary" id="report" data-route="{{route('user.store.report',[$biddingHistory->vehicle->user_id??0,$biddingHistory->user_id])}}" data-bs-toggle="modal" data-bs-target="#ReportModal">
+                              <a href="" class="btn-action-icon bg-primary" id="report" data-route="{{route('user.store.report',[$biddingHistory->vehicle->user_id??0,$biddingHistory->user_id,$biddingHistory->vehicle->id])}}" data-bs-toggle="modal" data-bs-target="#ReportModal">
                                  <i class="fal fa-flag-alt" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report"></i>
                                </a>
-                               <a href="" class="btn-action-icon bg-warning">
+                               <a href="{{route('user.messages',$biddingHistory->user_id)}}" class="btn-action-icon bg-warning">
                                  <i class="fa-brands fa-rocketchat"></i>
                              </a>
                               @endif
+                              <a href="{{ route('auction.details', [slug($biddingHistory->vehicle->details->title)??'',$biddingHistory->vehicle_id]) }}" class="btn-action-icon bg-success">
+                                 <i class="fad fa-eye"></i>
+                             </a>
                             </div>
                          </td>
                     </tr>

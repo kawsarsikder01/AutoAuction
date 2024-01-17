@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Report;
+use App\Models\ReportConversation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class ReportController extends Controller
@@ -77,6 +79,24 @@ class ReportController extends Controller
     public function viewReport($id)
     {
         $report  = Report::findOrFail($id);
-        return view('admin.Reports.view',compact('report'));
+        $conversations = ReportConversation::where('reporter_id',$report->repoter_id)
+            ->where('reported_id',$report->reported_user_id )
+            ->where('report_id',$report->id)->get();
+        return view('admin.Reports.view',compact('report','conversations'));
+    }
+    public  function sendMessage(Request $request)
+    {
+        $request->validate([
+            'message' => 'required | string'
+        ]);
+        $conversation = new ReportConversation();
+        $conversation->sender_id = Auth::user()->id;
+        $conversation->reporter_id = $request->reporter_id;
+        $conversation->reported_id = $request->repotedUser_id;
+        $conversation->report_id = $request->report_id;
+        $conversation->admin_id = Auth::user()->id;
+        $conversation->message = $request->message;
+        $conversation->save();
+        return back();
     }
 }

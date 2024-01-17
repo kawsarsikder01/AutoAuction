@@ -53,15 +53,15 @@
                             <td class="text-center">
                                 @if($item->type !== 2)
                                     @if(optional($item->details)->language_id)
-                                        <a href="{{route('admin.edit.blog',[$item->id,optional($item->details)->language_id])}}"
-                                           class="btn btn-white btn-icon btn-sm flag-btn"> <i
-                                                class="bi bi-check2"></i></a>
+                                        <a href='{{route('admin.edit.blog',[$item->id,optional($item->details)->language_id])}}'
+                                           class='btn btn-white btn-icon btn-sm flag-btn'> <i
+                                                class='bi bi-check2'></i></a>
                                     @endif
                                     @foreach($languages as $language)
                                         @if(optional($item->details)->language_id !== $language->id)
-                                            <a href="{{route('admin.edit.blog',[$item->id,$language->id])}}"
-                                               class="btn btn-white btn-icon btn-sm flag-btn"
-                                               target="_blank"> <i class="bi-pencil"></i></a>
+                                            <a href='{{route('admin.edit.blog',[$item->id,$language->id])}}'
+                                               class='btn btn-white btn-icon btn-sm flag-btn'
+                                               target='_blank'> <i class='bi-pencil'></i></a>
                                         @endif
                                     @endforeach
                                 @else
@@ -139,4 +139,3 @@
         })
     </script>
 @endpush
-

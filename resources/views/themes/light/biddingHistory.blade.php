@@ -111,13 +111,11 @@
                         <td data-label="@lang('Action')">
                             <div>
                               @if ($biddingHistory->wining_status == 1)
-                              <a href="javascript:void(0);" id="report"   data-route="{{route('user.store.report',[$biddingHistory->user_id,$biddingHistory->vehicle->user_id])}}" class="btn-action-icon bg-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                              <a href="javascript:void(0);" id="report"   data-route="{{route('user.store.report',[$biddingHistory->user_id,$biddingHistory->vehicle->user_id,$biddingHistory->vehicle->id])}}" class="btn-action-icon bg-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                  <i class="fal fa-flag-alt" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report" aria-hidden="true"></i>
                              </a>
                              
-                              <a href="" class="btn-action-icon bg-warning">
-                                 <i class="fa-brands fa-rocketchat"></i>
-                             </a>
+                             
                              @if ($biddingHistory->vehicle->payment_status == 0)
                              <a href="javascript:void(0);" id="payment" data-id="{{$biddingHistory->vehicle->id}}" data-message="Are You Sure You Want To Pay ?" data-route="{{route('user.confirm.payment')}}" class="btn-action-icon bg-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">
                               <i class="fa-brands fa-amazon-pay" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Pay Now"></i>

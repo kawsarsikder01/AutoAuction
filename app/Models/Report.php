@@ -18,5 +18,13 @@ class Report extends Model
     {
         return $this->belongsTo(User::class,'reported_user_id');
     }
+    public function Vehicle()
+    {
+        return $this->belongsTo(Vehicle::class,'vehicle_id');
+    }
+    public function conversation()
+    {
+        return$this->hasMany(ReportConversation::class,'report_id');
+    }
 
 }

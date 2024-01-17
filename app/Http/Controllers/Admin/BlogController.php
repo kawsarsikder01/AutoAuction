@@ -12,6 +12,7 @@ use App\Models\BlogCategory;
 use App\Traits\Upload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Yajra\DataTables\DataTables;
 
 class BlogController extends Controller
 {
@@ -248,5 +249,48 @@ class BlogController extends Controller
 
 
         return back()->with('success', 'Seo has been updated.');
+    }
+    public function getBlogs()
+    {
+        $defaultLanguage = Language::where('default_status', true)->first();
+        $languages = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
+        $blogs = Blog::with('category', 'details')->orderBy('id', 'desc')
+            ->whereHas('details', function ($query) use($defaultLanguage) {
+                $query->where('language_id',  $defaultLanguage->id);
+            })
+            ->get();
+       return DataTables::of($blogs)
+           ->addColumn('no',function ($blog){
+               static $counter = 0;
+               return ++$counter;
+           })
+           ->addColumn('title',function ($blog){
+               return optional($blog->details)->title;
+           })
+           ->addColumn('status',function ($blog){
+               return "<span style='font-size: 12px;' class='badge " . ($blog->status == 1 ? 'bg-soft-success text-success' : 'bg-soft-danger text-danger') . "'>"
+                   . "<span class='legend-indicator bg-" . ($blog->status == 1 ? 'success' : 'danger') . "'></span>"
+                   . ($blog->status == 1 ? 'Active' : 'Inactive') . "</span></td>";
+
+           })
+           ->addColumn('language',function ($blog) use($languages){
+               if ($blog->type !== 2){
+                    return "";
+               }else{
+                   return "N/A";
+               }
+           })
+           ->addColumn('action',function ($blog){
+               return "<div class='btn-group' role='group'>
+                      <a href = '' class='btn btn-white btn-sm edit_user_btn'>
+                        <i class='bi bi-trash'></i> ".trans('Delete')."
+                      </a>
+                  </div>
+                  ";
+           })
+           ->rawColumns(['no', 'title', 'status','language','action'])
+           ->make(true);
+           ;
+
     }
 }

@@ -15,7 +15,7 @@
                             <li class="breadcrumb-item active" aria-current="page">@lang('Reports')</li>
                             <li class="breadcrumb-item active"
                             aria-current="page">User Report</li>
-                            
+
                         </ol>
                     </nav>
                 </div>
@@ -40,7 +40,7 @@
                                 <i class="bi-person dropdown-item-icon"></i>{{$report->reporter->firstname.' '.$report->reporter->lastname}}
                             </li>
                             <li>
-                                <i class="bi-briefcase dropdown-item-icon"></i>{{$report->reporter->username}} 
+                                <i class="bi-briefcase dropdown-item-icon"></i>{{$report->reporter->username}}
                             </li>
 
 
@@ -93,7 +93,7 @@
                 <div class="card mb-3 mb-lg-5">
                     <div class="message-wrapper">
                         <div class="row g-lg-0">
-                           
+
                            <div class="col-lg-12">
                               <div class="inbox-wrapper">
                                  <!-- top bar -->
@@ -106,54 +106,65 @@
                                  </div>
                                  <!-- chats -->
                                  <div class="chats">
-                                    <div class="chat-box this-side">
-                                       <div class="text-wrapper">
-                                          <div class="text">
-                                             <p>Hello! How are you</p>
-                                          </div>
-                                          <span class="time">3 hours ago</span>
-                                       </div>
-                                       <div class="img">
-                                          <img class="img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
-                                       </div>
-                                    </div>
-                                    <div class="chat-box opposite-side">
-                                       <div class="img">
-                                          <img class="img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
-                                       </div>
-                                       <div class="text-wrapper">
-                                          <div class="text">
-                                             <p>Hello! How are you</p>
-                                          </div>
-                                          <span class="time">3 hours ago</span>
-                                       </div>
-                                    </div>
-                                    <div class="chat-box this-side">
-                                       <div class="text-wrapper">
-                                          <div class="text">
-                                             <p>
-                                                Hello! How are you Lorem, ipsum dolor sit amet consectetur
-                                                adipisicing elit. Dolorem rem
-                                             </p>
-                                          </div>
-                                          <span class="time">3 hours ago</span>
-                                       </div>
-                                       <div class="img">
-                                          <img class="img-fluid" src="https://cdn.pixabay.com/photo/2016/03/31/20/37/client-1295901_1280.png" alt="" />
-                                       </div>
-                                    </div>
-                                    
-                                    
-                                    
+                                     @foreach($conversations as $conversation)
+                                         @if($conversation->sender_id == Auth::user()->id)
+                                             <div class="chat-box this-side">
+                                                 <div class="text-wrapper">
+                                                     <div class="text">
+                                                         <p>{{$conversation->message}}</p>
+                                                     </div>
+{{--                                                     <span class="time">3 hours ago</span>--}}
+                                                 </div>
+                                                 <div class="img">
+                                                     <img class="img-fluid" src="{{getFile(Auth::user()->image_driver,Auth::user()->image)}}" alt="" />
+                                                 </div>
+
+                                             </div>
+                                         @else
+                                             @if($conversation->sender_id == $conversation->reporter_id)
+                                                 <div class="chat-box opposite-side">
+                                                     <div class="img">
+                                                         <img class="img-fluid" src="{{getFile($conversation->reporter->image_driver,$conversation->reporter->image)}}" alt="" />
+                                                     </div>
+                                                     <div class="text-wrapper">
+                                                         <div class="text">
+                                                             <p>{{$conversation->message}}</p>
+                                                         </div>
+                                                         <span class="time">{{$conversation->reporter->firstname}}</span>
+                                                     </div>
+                                                 </div>
+                                             @else
+                                                 <div class="chat-box opposite-side">
+                                                     <div class="img">
+                                                         <img class="img-fluid" src="{{getFile($conversation->repotedUser->image_driver,$conversation->repotedUser->image)}}" alt="" />
+                                                     </div>
+                                                     <div class="text-wrapper">
+                                                         <div class="text">
+                                                             <p>{{$conversation->message}}</p>
+                                                         </div>
+                                                         <span class="time">{{$conversation->repotedUser->firstname}}</span>
+                                                     </div>
+                                                 </div>
+                                             @endif
+                                         @endif
+                                     @endforeach
+
                                  </div>
                                  <!-- typing area -->
                                  <div class="typing-area">
-                                    <div class="input-group">
-                                       <input type="text" class="form-control" />
-                                       <button class="submit-btn">
-                                          <i class="fal fa-paper-plane"></i>
-                                       </button>
-                                    </div>
+                                    <form action="{{route('admin.send.message')}}" method="POST">
+                                        @csrf
+                                        <div class="input-group">
+                                            <input type="hidden" name="report_id" value="{{$report->id}}">
+                                            <input type="hidden"name="reporter_id"value="{{$report->reporter->id}}">
+                                            <input type="hidden"name="repotedUser_id"value="{{$report->repotedUser->id}}">
+                                            <input type="text" name="message" class="form-control" />
+                                            <button type="submit" class="btn btn-info">
+                                               <i class="fal fa-paper-plane"></i>
+                                            </button>
+                                         </div>
+                                    </form>
+
                                  </div>
                               </div>
                            </div>

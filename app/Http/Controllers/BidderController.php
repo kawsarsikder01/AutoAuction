@@ -25,12 +25,14 @@ class BidderController extends Controller
 
         return view(template().'auctionDetails',compact('vehicle','maxBid'));
     }
+
     public function UserBiddingHistory()
     {
         $user = Auth::user();
         $biddingHistorys =BiddingHistory::with('vehicle')->where('user_id',$user->id)->orderBy('created_at', 'DESC')->get();
         return view(template().'biddingHistory',compact('biddingHistorys'));
     }
+    
     public  function payNow(Request $request)
     {
         $vehicle = Vehicle::where('payment_status',0)->find($request->vehicle_id);

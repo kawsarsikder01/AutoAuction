@@ -242,6 +242,11 @@ class SellerController extends Controller
     public  function destroy($id)
     {
         $vehicle = Vehicle::with('details','biddingHistory')->find($id);
+        if($vehicle->details->sold_status == 1){
+            if($vehicle->release_status == 0 || $vehicle->payment_status = 0){
+                return back()->with('warning','You Can not Delete This Vehicle');
+            }
+        }
         if($vehicle->user_id != Auth::user()->id){
             return abort(404);
         }
@@ -293,7 +298,8 @@ class SellerController extends Controller
     {
         $vehicle = Vehicle::find($id);
         $historys = $vehicle->biddingHistory;
-        return view(template().'vehicleBiddingHistory',compact('historys'));
+        $vehicleTitle = $vehicle->details->title;
+        return view(template().'vehicleBiddingHistory',compact('historys','vehicleTitle'));
     }
     public function deleteHistory(Request $request)
     {

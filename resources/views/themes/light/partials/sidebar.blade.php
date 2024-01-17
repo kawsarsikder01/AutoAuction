@@ -25,10 +25,10 @@
          <a href="{{route('user.bidding.history')}}"><i class="fa-regular fa-file"></i>@lang("Bid History")</a>
       </li>
       <li>
-         <a href="{{route('user.messages')}}"><i class="fa-brands fa-rocketchat"></i>@lang("Messages")</a>
+         <a href="{{route('user.reports.conversation')}}"><i class="fal fa-flag-alt"></i></i>@lang("Reports")</a>
       </li>
       <li>
-         <a href="{{route('user.ticket.list')}}"><i class="fa-solid fa-ticket"></i>@lang("Support Ticket")</a>
+         <a href="{{route('user.ticket.list')}}"><i class="fal fa-wallet"></i>@lang("Support Ticket")</a>
       </li>
        <li>
          <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form1').submit();"> <i class="fal fa-sign-out-alt"></i>@lang('Sign Out') </a>
