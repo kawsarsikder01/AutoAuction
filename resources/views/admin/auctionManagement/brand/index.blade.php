@@ -19,7 +19,7 @@
 
     <div class="card">
         <div class="card-header card-header-content-md-between">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">@lang('Create Brand')</button>>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">@lang('Create Brand')</button>
         </div>
 
         <div class="table-responsive">
@@ -48,7 +48,7 @@
                         <tr>
                             <td>{{++$sl}}</td>
                             <td>{{$item->name}}</td>
-                            
+
                             <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
                             <td class="text-center">
                                 @if($item->type !== 2)
@@ -72,7 +72,7 @@
                                 <div class="btn-group" role="group">
                                     <a class="btn btn-white btn-sm" href="{{route('admin.edit.car.brand',[$item->id,$item->language_id])}}">
                                         <i class="bi-pencil-fill me-1"></i> Edit</a>
-                            
+
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-white btn-icon btn-sm dropdown-toggle dropdown-toggle-empty" id="pageEditDropdown" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end mt-1" aria-labelledby="pageEditDropdown">
@@ -136,7 +136,7 @@
   </div>
   <!-- End Modal -->
 
-  
+
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
 data-bs-backdrop="static"

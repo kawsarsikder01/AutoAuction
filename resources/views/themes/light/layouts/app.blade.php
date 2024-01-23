@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/fancybox.css')}}" />
     <!-- custom css -->
     <link rel="stylesheet" href="{{asset($themeTrue.'css/style.css')}}" />
+        @stack('style')
     </head>
 <body>
 @include($theme.'partials.navbar')
@@ -39,7 +40,7 @@
 
 </main>
 <!-- End #main -->
-
+@include($theme. 'partials.bottomNavbar')
 @include($theme.'partials.searchItem')
 @include($theme.'partials.jsLink')
 
@@ -49,7 +50,6 @@
 </body>
 
 </html>
-@stack('script')
 <script>
    'use strict';
    let pushNotificationArea = new Vue({

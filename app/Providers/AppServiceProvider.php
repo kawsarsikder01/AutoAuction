@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\CarBrand;
+use App\Models\CarCategory;
 use App\Models\Content;
 use App\Models\ContentDetails;
 use App\Models\Language;
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
             $data['theme'] . 'sections.footer',
             $data['theme'] . 'auth.login',
             $data['theme'] . 'partials.footer',
+            $data['theme'] . 'partials.searchItem',
             $data['theme'] . 'page'
         ], function ($view) {
             $headerMenu = ManageMenu::where('menu_section', 'header')->first();
@@ -55,10 +58,14 @@ class AppServiceProvider extends ServiceProvider
             $loginContent = ContentDetails::with('content')->whereHas('content',function ($query){
                 $query->where('name','login');
             })->get();
+            $data['categories'] =  CarCategory::get();
+            $data['brands'] =  CarBrand::get();
             $view->with('loginContent', $loginContent);
             $view->with('Staticfooter', $Staticfooter);
             $view->with('allLanguage', $allLanguage);
             $view->with('footerMenu', $footerMenu);
+            $view->with('categories', $data['categories']);
+            $view->with('brands', $data['brands']);
 
         });
         if (basicControl()->force_ssl == 1) {

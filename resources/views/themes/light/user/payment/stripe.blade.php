@@ -23,6 +23,7 @@
                                         <h5 class="my-3">@lang('Please Pay') {{getAmount($deposit->payable_amount)}} {{$deposit->payment_method_currency}}</h5>
                                         <form action="{{ $data->url }}" method="{{ $data->method }}">
                                             @csrf
+                                            <input type="hidden" name="type" value="{{$type}}">
                                             <script src="{{ $data->src }}" class="stripe-button"
                                                     @foreach($data->val as $key=> $value)
                                                         data-{{$key}}="{{$value}}"

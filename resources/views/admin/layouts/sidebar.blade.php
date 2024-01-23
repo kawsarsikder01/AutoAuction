@@ -63,7 +63,7 @@
                            data-bs-target="#navbarVerticalBlog"
                            aria-expanded="false"
                            aria-controls="navbarVerticalBlog">
-                            <i class="bi bi-journal-check nav-icon"></i>
+                            <i class="bi bi-union nav-icon"></i>
                             <span class="nav-link-title">@lang('Blog Management')</span>
                         </a>
 
@@ -80,7 +80,7 @@
                     <div class="nav-item">
                         <a class="nav-link {{ menuActive(['admin.plan.list']) }}"
                            href="{{ route('admin.plan.list') }}" data-placement="left">
-                           <i class="bi-stickies nav-icon"></i>
+                            <i class="bi bi-box-seam nav-icon"></i>
                             <span class="nav-link-title">@lang('Plan')</span>
                         </a>
                     </div>
@@ -92,7 +92,7 @@
                              data-bs-target="#navbarVerticalAuction"
                              aria-expanded="false"
                              aria-controls="navbarVerticalAuction">
-                              <i class="bi bi-journal-check nav-icon"></i>
+                              <i class="bi bi-calendar nav-icon"></i>
                               <span class="nav-link-title">@lang('Auction Management')</span>
                           </a>
                           <div id="navbarVerticalAuction"
@@ -113,7 +113,7 @@
                            data-bs-target="#navbarVerticalVehicleRequest"
                            aria-expanded="false"
                            aria-controls="navbarVerticalVehicleRequest">
-                            <i class="bi bi-journal-check nav-icon"></i>
+                            <i class="bi bi-truck nav-icon"></i>
                             <span class="nav-link-title">@lang('Vehicle Request')</span>
                         </a>
                         <div id="navbarVerticalVehicleRequest"

@@ -7,9 +7,6 @@
       <div class="col-12">
          <div class="dashboard-heading">
             <h4 class="mb-0">Edit Profile</h4>
-            <a href="{{route('user.ticket.create')}}" type="button" class="btn-custom"  data-bs-target="#editModal">
-              @lang('Create ticket')
-            </a>
          </div>
          {{-- data-bs-toggle="modal" --}}
          <section class="profile-setting">

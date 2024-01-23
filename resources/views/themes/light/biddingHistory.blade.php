@@ -12,41 +12,39 @@
           <div class="table-parent table-responsive mt-4">
              <div class="table-search-bar">
                 <div class="d-none d-lg-block">
-                   <form>
+                   <form action="{{route('filter.bidding-history')}}" method="get">
                       <div class="row g-3 align-items-end">
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <input type="text" class="form-control" placeholder="Search" />
+                            <input type="text" class="form-control" name="title" placeholder="Search" />
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="sold_status">
+                                <option value="">Select Sold Status</option>
+                               <option value="1">Sold</option>
+                               <option value="0">Unsold</option>
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="win_status">
+                               <option value="">Select Win Status</option>
+                               <option value="1">Win</option>
+                               <option value="0">Not Win</option>
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="category">
+                                <option value="">Select Category</option>
+                                @foreach($categories as $categorie)
+                                    <option value="{{$categorie->id}}">{{$categorie->name}}</option>
+                                @endforeach
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="brand">
+                                <option value="">Select Brand</option>
+                                @foreach($brands  as $brand)
+                                    <option value="{{$brand->id}}">{{$brand->name}}</option>
+                                @endforeach
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
@@ -111,13 +109,13 @@
                         <td data-label="@lang('Action')">
                             <div>
                               @if ($biddingHistory->wining_status == 1)
-                              <a href="javascript:void(0);" id="report"   data-route="{{route('user.store.report',[$biddingHistory->user_id,$biddingHistory->vehicle->user_id,$biddingHistory->vehicle->id])}}" class="btn-action-icon bg-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                              <a href="javascript:void(0);"   data-route="{{route('user.store.report',[$biddingHistory->user_id,$biddingHistory->vehicle->user_id,$biddingHistory->vehicle_id])}}" class="btn-action-icon bg-danger report" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                  <i class="fal fa-flag-alt" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report" aria-hidden="true"></i>
                              </a>
-                             
-                             
+
+
                              @if ($biddingHistory->vehicle->payment_status == 0)
-                             <a href="javascript:void(0);" id="payment" data-id="{{$biddingHistory->vehicle->id}}" data-message="Are You Sure You Want To Pay ?" data-route="{{route('user.confirm.payment')}}" class="btn-action-icon bg-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                             <a href="javascript:void(0);"  data-id="{{$biddingHistory->vehicle->id}}" data-message="Are You Sure You Want To Pay ?" data-route="{{route('user.confirm.payment')}}" class="btn-action-icon bg-primary payment" data-bs-toggle="modal" data-bs-target="#paymentModal">
                               <i class="fa-brands fa-amazon-pay" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Pay Now"></i>
                              </a>
                              @endif
@@ -143,7 +141,7 @@
              <!-- pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end mt-4">
-                    {{-- {{ $tickets->appends($_GET)->links($theme.'partials.pagination') }} --}}
+                     {{ $biddingHistorys->appends($_GET)->links($theme.'partials.pagination') }}
                 </ul>
              </nav>
           </div>
@@ -226,14 +224,23 @@
 @push('script')
     <script>
         $(document).ready(function(){
-            if($('#report').length){
-               $('#FormRoute').attr('action', $('#report').data('route'));
-            }
-            if($('#payment').length){
-               $('#vehicle_id').attr('value',$('#payment').data('id'));
-               $('#PaymentRoute').attr('action',$('#payment').data('route'));
-               $('#setMessage').text($('#payment').data('message'));
-            }
+
+            $('.report').on('click',function (){
+                let route = $(this).data('route');
+                console.log(route);
+                $('#FormRoute').attr('action', route);
+            })
+
+
+           $('.payment').on('click',function (){
+               let route = $(this).data('route');
+               let id = $(this).data('id');
+               let message = $(this).data('message');
+               $('#vehicle_id').attr('value',id);
+               $('#PaymentRoute').attr('action',route);
+               $('#setMessage').text(message);
+           })
+
         });
     </script>
 @endpush

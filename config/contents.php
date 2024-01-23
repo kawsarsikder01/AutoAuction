@@ -110,7 +110,7 @@ return [
             'validation' => [
                 'heading.*' => 'required|max:100',
                 'sub_heading.*' => 'required|max:100',
-                'description.*' => 'required|max:200',
+                'description.*' => 'required|max:400',
             ]
         ]
     ],

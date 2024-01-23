@@ -63,15 +63,15 @@ class HomeController extends Controller
             $query->where('sold_status',1);
         })->where('user_id',Auth::user()->id)->get();
 
-        $data['averageSell'] = BiddingHistory::with(['Vehicle'=>function ($query) {
-            $query->where('user_id',Auth::user()->id);
-        }])->whereIn('bid_amount',function ($query){
-            $query->selectRaw('MAX(bid_amount)')->from('bidding_history')->groupBy('vehicle_id');
-        })->whereHas('Vehicle',function ($query){
-            $query->where('user_id',Auth::user()->id);
-        })
-            ->where('wining_status',1)->avg('bid_amount');
-//        dd($data['averageSell']);
+//        $data['averageSell'] = BiddingHistory::with(['Vehicle'=>function ($query) {
+//            $query->where('user_id',Auth::user()->id);
+//        }])->whereIn('bid_amount',function ($query){
+//            $query->selectRaw('MAX(bid_amount)')->from('bidding_history')->groupBy('vehicle_id');
+//        })->whereHas('Vehicle',function ($query){
+//            $query->where('user_id',Auth::user()->id);
+//        })
+//            ->where('wining_status',1)->avg('bid_amount');
+        $data['cancelAuction'] = Vehicle::where('release_status',2)->where('user_id',Auth::user()->id)->get();
         $data['totalWinAuction'] = Vehicle::with(['biddingHistory'=>function ($query) {
             $query->where('wining_status',1)->where('user_id',Auth::user()->id);
         },'details'=>function ($query) {

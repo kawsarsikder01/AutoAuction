@@ -6,10 +6,7 @@
     <div class="main row">
        <div class="col-12">
           <div class="dashboard-heading">
-             <h4 class="mb-0">Support Ticket</h4>
-             <button type="button" class="btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">
-                Create ticket
-             </button>
+             <h4 class="mb-0">Report Conversation</h4>
           </div>
 
           <div class="message-wrapper">
@@ -94,7 +91,7 @@
                                 <input type="hidden"name="reporter_id"value="{{$report->reporter->id}}">
                                 <input type="hidden"name="repotedUser_id"value="{{$report->repotedUser->id}}">
                                 <input type="text" name="message" class="form-control" />
-                                <button type="submit" class="btn btn-info">
+                                <button type="submit" class="submit-btn">
                                    <i class="fal fa-paper-plane"></i>
                                 </button>
                              </div>

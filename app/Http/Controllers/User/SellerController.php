@@ -119,8 +119,10 @@ class SellerController extends Controller
         if(!$user->plan){
             return abort(404);
         }
-        $vehicles = Vehicle::with('details')->where('user_id',$user->id)->get();
-        return view('themes.light.listedVehicle',compact('vehicles'));
+        $vehicles = Vehicle::with('details')->where('user_id',$user->id)->paginate(basicControl()->paginate);
+        $data['categories'] =  CarCategory::get();
+        $data['brands'] =  CarBrand::get();
+        return view(template().'listedVehicle',compact('vehicles'),$data);
     }
 
     public function  edit($id)

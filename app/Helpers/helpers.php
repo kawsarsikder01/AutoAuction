@@ -11,6 +11,20 @@ use App\Models\Language;
 
 use Illuminate\Support\Facades\Storage;
 
+
+function checkReact($reacts){
+        foreach($reacts as $react){
+            if($react->ip_address === request()->ip()){
+                return true;
+            }
+        }
+}
+
+
+
+
+
+
 function template($asset = false)
 {
     $activeTheme = basicControl()->theme;
@@ -112,7 +126,7 @@ if (!function_exists('renderHeaderMenu')) {
     function renderHeaderMenu($menuItems)
     {
 
-        foreach ($menuItems as $menuItem) {
+        foreach ($menuItems as $key => $menuItem) {
             if (isset($menuItem['child'])) {
                 echo '<li class="dropdown text-capitalize">';
                 echo '<a href="javascript:void(0)"><span>' . $menuItem['name'] . '</span> <i class="bi bi-chevron-down"></i></a>';
@@ -121,9 +135,16 @@ if (!function_exists('renderHeaderMenu')) {
                 if(Auth::user()&& $menuItem['name'] == 'login'){
                     continue;
                 }
-                echo "<li class='nav-item'>
+                if ($key == 0){
+                    echo "<li class='nav-item'>
+                          <a class='nav-link active' href=".$menuItem['route'].">".$menuItem['name']."</a>
+                      </li>";
+                }else{
+                    echo "<li class='nav-item'>
                           <a class='nav-link' href=".$menuItem['route'].">".$menuItem['name']."</a>
                       </li>";
+                }
+
 
             }
         }
@@ -266,8 +287,10 @@ if (!function_exists('basicControl')) {
             $configure = BasicControl::firstOrCreate();
             \Cache::put('ConfigureSetting', $configure);
         }
+        if(session()->get('themeMode') == null){
+            session()->put('themeMode', 'auto');
+        }
         return $configure;
-
     }
 }
 
@@ -345,16 +368,16 @@ function strRandom($length = 12)
 
 
 if (!function_exists('getFile')) {
-   
-    
+
+
     function getFile($disk = 'local', $image = '', $upload = false)
     {
         $root = storage_path('framework/testing/disks/'.$disk);
-        
+
         $default = ($upload == true) ? asset(config('filelocation.default2')) : asset(config('filelocation.default'));
         try {
             if ($disk == 'local') {
-                
+
                 $localImage = asset('/assets/upload') . '/' . $image;
                 return !empty($image) && Storage::disk($disk)->exists($image) ? $localImage : $default;
             } else {

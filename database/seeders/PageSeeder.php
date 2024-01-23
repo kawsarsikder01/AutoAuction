@@ -16,8 +16,7 @@ class PageSeeder extends Seeder
     {
 
         $pages = [
-            ['name' => 'login', 'slug' => 'login', 'template_name' => 'light', 'type' => 1],
-            ['name' => 'registation', 'slug' => 'registation', 'template_name' => 'light', 'type' => 1],
+            ['name' => 'payment option', 'slug' => 'payment-option', 'template_name' => 'light', 'type' => 1],
         ];
 
         foreach ($pages as $page) {

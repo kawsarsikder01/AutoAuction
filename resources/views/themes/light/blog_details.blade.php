@@ -27,12 +27,12 @@
           <div class="col-lg-3">
              <div class="side-bar">
                 <div class="side-box search-box">
-                   <form>
-                      <div class="input-group">
-                         <input type="text" class="form-control" placeholder="search Here" />
-                         <button><i class="fal fa-search" aria-hidden="true"></i></button>
-                      </div>
-                   </form>
+                    <form action="{{route('blog.search')}}" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="name" placeholder="search Here" />
+                            <button><i class="fal fa-search" aria-hidden="true"></i></button>
+                        </div>
+                    </form>
                 </div>
                 <div class="side-box">
                    <h4>Related Posts</h4>
@@ -68,15 +68,15 @@
 
                    </ul>
                 </div>
-                <div class="side-box">
-                   <h4>tags</h4>
-                   <a href="" class="tag-item">Car</a>
-                   <a href="" class="tag-item">Family Car</a>
-                   <a href="" class="tag-item">Used car</a>
-                   <a href="" class="tag-item">Motor</a>
-                   <a href="" class="tag-item">Auction</a>
-                   <a href="" class="tag-item">Ceremony</a>
-                </div>
+{{--                <div class="side-box">--}}
+{{--                   <h4>tags</h4>--}}
+{{--                   <a href="" class="tag-item">Car</a>--}}
+{{--                   <a href="" class="tag-item">Family Car</a>--}}
+{{--                   <a href="" class="tag-item">Used car</a>--}}
+{{--                   <a href="" class="tag-item">Motor</a>--}}
+{{--                   <a href="" class="tag-item">Auction</a>--}}
+{{--                   <a href="" class="tag-item">Ceremony</a>--}}
+{{--                </div>--}}
              </div>
           </div>
        </div>

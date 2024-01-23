@@ -28,4 +28,8 @@ class Vehicle extends Model
     {
         return $this->hasMany(BiddingHistory::class,'vehicle_id')->orderByDesc('id');
     }
+    public function reacts()
+    {
+        return $this->hasMany(React::class,'vehicle_id');
+    }
 }

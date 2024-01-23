@@ -28,13 +28,14 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/addProduct.css')}}" />
     <link rel="stylesheet" href="{{asset($themeTrue.'css/flatpickr.css')}}" />
 {{--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">--}}
-
+    @stack('style')
     @stack("css-lib")
+
 
 </head>
 <body class="">
 <!-- bottom navbar -->
-    @include($theme. 'partials.bottomNavbar')
+    @include($theme. 'partials.userBottomNavbar')
 
     <div class="dashboard-wrapper">
         <!-- sidebar -->

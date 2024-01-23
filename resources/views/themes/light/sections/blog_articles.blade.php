@@ -1,7 +1,7 @@
 
 {{-- <x-banner-component heading="Blogs & Articles" page="Blogs & Articles"/> --}}
 <!-- blog details  -->
-<section class="blog-section blog-details">
+{{-- <section class="blog-section blog-details">
     <div class="container">
        <div class="row justify-content-between">
           <div class="col-lg-8">
@@ -162,4 +162,4 @@
           </div>
        </div>
     </div>
- </section>
+ </section> --}}

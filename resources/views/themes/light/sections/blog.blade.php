@@ -5,13 +5,12 @@
               <div class="col-12">
                  <div class="section-header2" overlay-text="Working Process">
                     <div class="box">
-                       <h5>latest news</h5>
+                       <h5>{{$blog['single']['sub_heading']??''}}</h5>
                     </div>
                     <div class="box">
-                       <h2>our blogs & articles</h2>
+                       <h2>{!! $blog['single']['heading']??'' !!}</h2>
                        <p>
-                          We started as a small, subdue, called hath give fourth. Them one over saying. So the god,
-                          greater. You. Us air Moved divide midst us fifth sea .
+                        {!! $blog['single']['description']??'' !!}
                        </p>
                     </div>
                  </div>

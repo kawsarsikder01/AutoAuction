@@ -30,66 +30,7 @@
           ></button> -->
 
           <!-- cart panel -->
-          <div class="cart-panel">
-             <button class="dropdown-toggle">
-                cart
-                <span class="count">3</span>
-             </button>
-             <div class="cart-dropdown">
-                <ul class="dropdown-list list-unstyled mb-0">
-                   <li>
-                      <a class="dropdown-item" href="#">
-                         <div class="img-box">
-                            <img class="img-fluid" src="" alt="" />
-                         </div>
-                         <div class="text-box">
-                            <p>Aston martin dbs</p>
-                            <p class="qty text-primary text-uppercase">Quantity: 1</p>
-                            <p class="price">$3m</p>
-                         </div>
-                         <button class="delete">
-                            <i class="fal fa-times"></i>
-                         </button>
-                      </a>
-                   </li>
-                   <li>
-                      <a class="dropdown-item" href="#">
-                         <div class="img-box">
-                            <img class="img-fluid" src="" alt="" />
-                         </div>
-                         <div class="text-box">
-                            <p>Supra mk5</p>
-                            <p class="qty text-primary text-uppercase">Quantity: 1</p>
-                            <p class="price">$3m</p>
-                         </div>
-                         <button class="delete">
-                            <i class="fal fa-times"></i>
-                         </button>
-                      </a>
-                   </li>
-                   <li>
-                      <a class="dropdown-item" href="#">
-                         <div class="img-box">
-                            <img class="img-fluid" src="" alt="" />
-                         </div>
-                         <div class="text-box">
-                            <p>Mercedes Cla 45</p>
-                            <p class="qty text-primary text-uppercase">Quantity: 1</p>
-                            <p class="price">$3m</p>
-                         </div>
-                         <button class="delete">
-                            <i class="fal fa-times"></i>
-                         </button>
-                      </a>
-                   </li>
-                </ul>
-                <div class="total d-flex justify-content-between">
-                   <p>TOTAL</p>
-                   <p>$9m</p>
-                </div>
-                <button class="btn-custom">View cart</button>
-             </div>
-          </div>
+
           <!-- user panel -->
            <!-- <div class="user-panel">
              <div class="profile">

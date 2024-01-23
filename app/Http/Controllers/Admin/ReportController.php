@@ -3,21 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BiddingHistory;
 use App\Models\Report;
 use App\Models\ReportConversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
-
+use Exception;
+use App\Traits\Notify;
 class ReportController extends Controller
 {
+    use Notify;
     public function index()
     {
         return view('admin.Reports.reports');
     }
     public function getReports()
     {
-        $reports = Report::get();
+        $reports = Report::orderBy('created_at','desc')->get();
         return DataTables::of($reports)
             ->addColumn('no',function ($report){
                 static $counter = 0;
@@ -79,10 +82,13 @@ class ReportController extends Controller
     public function viewReport($id)
     {
         $report  = Report::findOrFail($id);
+        $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
+            ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
+
         $conversations = ReportConversation::where('reporter_id',$report->repoter_id)
             ->where('reported_id',$report->reported_user_id )
             ->where('report_id',$report->id)->get();
-        return view('admin.Reports.view',compact('report','conversations'));
+        return view('admin.Reports.view',compact('report','conversations','bid'));
     }
     public  function sendMessage(Request $request)
     {
@@ -98,5 +104,111 @@ class ReportController extends Controller
         $conversation->message = $request->message;
         $conversation->save();
         return back();
+    }
+
+    public function releaseSellerPayment($id)
+    {
+        $report = Report::with('Vehicle')->findOrFail($id);
+        if ($report->Vehicle->details->sold_status == 0){
+            return abort(404);
+        };
+
+        $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
+            ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
+        if($bid->bidder->id != $report->repoter_id && $bid->bidder->id != $report->reported_user_id){
+            return abort(404);
+        }
+        try {
+            $bid->bidder->hold_balance = $bid->bidder->hold_balance - $report->Vehicle->biddingHistory->max('bid_amount');
+            $bid->bidder->update();
+            $report->Vehicle->user->balance = $report->Vehicle->user->balance + $report->Vehicle->biddingHistory->max('bid_amount');
+            $report->Vehicle->user->update();
+            $bid->wining_status = 1;
+            $bid->update();
+            $report->Vehicle->payment_status = 1;
+            $report->Vehicle->release_status = 1;
+            $report->Vehicle->update();
+            $msg = [
+                'vehicle_model' => $report->Vehicle->details->title,
+                'currency' => basicControl()->currency_symbol,
+                'bidder'  => $bid->bidder->firstname." ".$bid->bidder->lastname,
+                'amount' => $report->Vehicle->biddingHistory->max('bid_amount')
+            ];
+            $action = [
+                "link" => '#',
+                "icon" => "fas fa-money-bill-alt text-white"
+            ];
+            $this->userPushNotification($report->Vehicle->user, 'RELEASE_PAYMENT_SELLER_SELLER', $msg, $action);
+            $this->userFirebasePushNotification($report->Vehicle->user,'RELEASE_PAYMENT_SELLER_SELLER', $msg, "#");
+            $this->sendMailSms($report->Vehicle->user, 'RELEASE_PAYMENT_SELLER_SELLER',$msg);
+            $msg2 = [
+                'vehicle_model' => $report->Vehicle->details->title,
+                'currency' => basicControl()->currency_symbol,
+                'seller'  => $report->Vehicle->user->firstname." ".$report->Vehicle->user->lastname,
+                'amount' => $report->Vehicle->biddingHistory->max('bid_amount')
+            ];
+            $action2 = [
+                "link" => '#',
+                "icon" => "fas fa-money-bill-alt text-white"
+            ];
+            $this->userPushNotification($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER', $msg2, $action2);
+            $this->userFirebasePushNotification($bid->bidder,'RELEASE_PAYMENT_SELLER_BIDDER', $msg2, "#");
+            $this->sendMailSms($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER',$msg2);
+            return back()->with('success','Seller Payment Release Successfully');
+        }catch (Exception $error){
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function releaseBidderPayment($id)
+    {
+
+        $report = Report::with('Vehicle')->findOrFail($id);
+        if ($report->Vehicle->details->sold_status == 0){
+            return abort(404);
+        };
+
+        $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
+            ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
+        if($bid->bidder->id != $report->repoter_id && $bid->bidder->id != $report->reported_user_id){
+            return abort(404);
+        }
+        try {
+            $bid->bidder->hold_balance = $bid->bidder->hold_balance - $report->Vehicle->biddingHistory->max('bid_amount');
+            $bid->bidder->balance = $bid->bidder->balance + $report->Vehicle->biddingHistory->max('bid_amount');
+            $bid->bidder->update();
+            $report->Vehicle->payment_status = 2;
+            $report->Vehicle->release_status = 2;
+            $report->Vehicle->update();
+            $msg = [
+                'vehicle_model' => $report->Vehicle->details->title,
+                'currency' => basicControl()->currency_symbol,
+                'seller'  => $report->Vehicle->user->firstname." ".$report->Vehicle->user->lastname,
+                'amount' => $report->Vehicle->biddingHistory->max('bid_amount')
+            ];
+            $action = [
+                "link" => '#',
+                "icon" => "fas fa-money-bill-alt text-white"
+            ];
+            $this->userPushNotification($bid->bidder, 'RELEASE_HOLD_BALANCE', $msg, $action);
+            $this->userFirebasePushNotification($bid->bidder,'RELEASE_HOLD_BALANCE', $msg, "#");
+            $this->sendMailSms($bid->bidder, 'RELEASE_HOLD_BALANCE',$msg);
+
+            $msg1 = [
+                'vehicle_model' => $report->Vehicle->details->title,
+                'bidder'  => $bid->bidder->firstname." ".$bid->bidder->lastname,
+
+            ];
+            $action1 = [
+                "link" => '#',
+                "icon" => "fas fa-money-bill-alt text-white"
+            ];
+            $this->userPushNotification($report->Vehicle->user, 'CANCEL_AUCTION', $msg1, $action1);
+            $this->userFirebasePushNotification($report->Vehicle->user,'CANCEL_AUCTION', $msg1, "#");
+            $this->sendMailSms($report->Vehicle->user, 'CANCEL_AUCTION',$msg1);
+            return back()->with('success','Release Bidder Payment Successfully');
+        }catch (Exception $error){
+            return back()->with('error', $error->getMessage());
+        }
+
     }
 }

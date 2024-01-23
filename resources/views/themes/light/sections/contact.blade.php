@@ -54,14 +54,20 @@ referrerpolicy="no-referrer-when-downgrade"
           <div class="col-lg-1"></div>
           <div class="col-lg-5">
              <div class="form-box">
-                <form action="">
+                <form action="{{route('user.store.contact.information')}}" method="POST">
+                  @csrf
                    <div class="row g-4">
                       <div class="col-md-12">
                          <div class="form-floating">
-                            <input type="text" name="name" class="form-control" id="floatingName" placeholder="Name" />
+                            <input type="text" name="fullname" class="form-control" id="floatingName" placeholder="Name" />
                             <label for="floatingName">Full Name</label>
                          </div>
                       </div>
+                      @error("fullname")
+                        <span class="invalid-feedback d-block" role="alert">
+                           <strong>{{ $message }}</strong>
+                        </span>
+                     @enderror
                       <div class="col-md-12">
                          <div class="form-floating">
                             <input
@@ -74,25 +80,38 @@ referrerpolicy="no-referrer-when-downgrade"
                             <label for="floatingInput">Email address</label>
                          </div>
                       </div>
-                      <div class="input-box col-12">
-                         <select class="form-select" name="subject" aria-label="Default select example">
-                            <option selected>Subject</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                         </select>
-                      </div>
+                      @error("email")
+                        <span class="invalid-feedback d-block" role="alert">
+                           <strong>{{ $message }}</strong>
+                        </span>
+                     @enderror
+                      <div class="col-md-12">
+                        <div class="form-floating">
+                           <input type="text" name="subject" class="form-control" id="floatingSubject" placeholder="Subject" />
+                           <label for="floatingSubject">Subject</label>
+                        </div>
+                     </div>
+                     @error("subject")
+                        <span class="invalid-feedback d-block" role="alert">
+                           <strong>{{ $message }}</strong>
+                        </span>
+                     @enderror
                       <div class="col-md-12">
                          <div class="form-floating">
                             <textarea
                                class="form-control"
-                               name="message"
+                               name="comment"
                                placeholder="Leave a comment here"
                                id="floatingTextarea"
                             ></textarea>
                             <label for="floatingTextarea">Comments</label>
                          </div>
                       </div>
+                      @error("comment")
+                        <span class="invalid-feedback d-block" role="alert">
+                           <strong>{{ $message }}</strong>
+                        </span>
+                     @enderror
                       <div class="input-box col-12">
                          <button class="btn-custom" type="submit"><span>@lang('Submit')</span></button>
                       </div>

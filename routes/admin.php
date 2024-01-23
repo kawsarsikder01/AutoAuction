@@ -399,6 +399,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('delete/report/{id}',[ReportController::class,'destroy'])->name('delete.report');
         Route::get('user/report/{id}',[ReportController::class,'viewReport'])->name('user.report');
         Route::post('send/message',[ReportController::class,'sendMessage'])->name('send.message');
+        Route::get('release/seller/payment/{id}',[ReportController::class,'releaseSellerPayment'])->name('release.seller.payment');
+        Route::get('release/bidder/payment/{id}',[ReportController::class,'releaseBidderPayment'])->name('release.bidder.payment');
 
 
     });

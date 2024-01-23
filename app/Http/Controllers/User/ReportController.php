@@ -8,16 +8,18 @@ use App\Models\ReportConversation;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\Notify;
 
 class ReportController extends Controller
 {
+    use Notify;
     public function index()
     {
         $reports = Report::where(function ($query){
             $query->where('repoter_id',Auth::user()->id);
         })->orWhere(function ($query){
             $query->where('reported_user_id',Auth::user()->id);
-    })->get();
+    })->paginate(basicControl()->paginate);
         return view(template().'reports',compact('reports'));
     }
     public function store(Request $request,$repoter_id,$repoted_id,$vehicle_id)
@@ -37,6 +39,20 @@ class ReportController extends Controller
             $report->subject =  $request->subject;
             $report->reason =  $request->reason;
             $report->save();
+            $msg = [
+                'subject' => $request->subject,
+                'reason' => $request->reason
+            ];
+            $subject = "User Report";
+            $action = [
+                "link" => route('admin.user.report',$report->id),
+                "icon" => "<i class='bi bi-bell-fill'></i>",
+                "image" => getFile(Auth::user()->image_driver, Auth::user()->image)
+            ];
+            $this->adminPushNotification( 'REPORT_NOTIFICATION', $msg, $action);
+            $this->adminFirebasePushNotification('REPORT_NOTIFICATION', $msg, route('admin.user.report',$report->id));
+            $this->adminMail( 'REPORT_NOTIFICATION', $msg,$subject);
+
             return back()->with('success','Your Report send Successfully');
         }catch (Exception $error){
             return back()->with('error', $error->getMessage());

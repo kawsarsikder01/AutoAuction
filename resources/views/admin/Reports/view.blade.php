@@ -29,7 +29,7 @@
                     <div class="card-header card-header-content-between">
                         <h4 class="card-header-title">@lang("Reporter Profile")</h4>
                         <a class="btn btn-white btn-sm"
-                           href=""><i
+                           href="{{route('admin.user.view.profile',$report->reporter->id )}}"><i
                                 class="bi-eye me-1"></i> @lang("View Profile")</a>
                     </div>
 
@@ -55,7 +55,7 @@
                     <div class="card-header card-header-content-between">
                         <h4 class="card-header-title">@lang("Repoted User Profile")</h4>
                         <a class="btn btn-white btn-sm"
-                           href=""><i
+                           href="{{route('admin.user.view.profile',$report->repotedUser->id )}}"><i
                                 class="bi-eye me-1"></i> @lang("View Profile")</a>
                     </div>
 
@@ -82,6 +82,23 @@
                 <div class="card mb-3 mb-lg-5">
                     <div class="card-header card-header-content-between">
                         <h4 class="card-header-title">Report</h4>
+                        <!-- Dropdown -->
+                        @if($report->Vehicle->details->sold_status == 1)
+                            @if($bid->bidder->id == $report->repoter_id || $bid->bidder->id == $report->reported_user_id)
+                                @if($report->Vehicle->release_status==0 || $report->Vehicle->payment_status == 0)
+                                    <div class="dropdown card-header-dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Release Payment
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="{{route('admin.release.seller.payment',$report->id)}}">Release To Seller</a>
+                                            <a class="dropdown-item" href="{{route('admin.release.bidder.payment',$report->id)}}">Release To Bidder</a>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                        @endif
+                        <!-- End Dropdown -->
                     </div>
                         <div class="card-body">
                             <h5>Subject</h5>

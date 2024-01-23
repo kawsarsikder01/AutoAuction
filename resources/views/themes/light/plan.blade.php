@@ -28,7 +28,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="pricing-box">
                     <h4>{{$plan->package_name}}</h4>
-                    <h2 class="text-primary">{{$plan->price == 0? 'Free' :$plan->price.' '.basicControl()->currency_symbol}}</h2>
+                    <h2 class="text-primary">{{$plan->price <= 0? 'Free' :$plan->price.' '.basicControl()->currency_symbol}}</h2>
                     <p>{{$plan->title}}</p>
                     <ul class="list-unstyled">
                         <li>
@@ -79,25 +79,74 @@
                                 @if(Auth::user()->plan && $plan->id == Auth::user()->plan->id)
                                     <button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" disabled>Already Purchased</button>
                                 @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
-                                    <a href="{{route('user.upgrade.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Upgrade Now</button></a>
+                                    <a href="javascript:void(0);"><button
+                                            data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-listing="{{$plan->number_of_listing}}"
+                                            class="btn-custom purchasePlanOrUpgrade"
+                                            data-route="{{route('user.upgrade.plan',$plan->id)}}"
+                                            type="button" data-bs-toggle="modal"
+                                            data-bs-target="#planModal" > Upgrade Now</button></a>
                                 @elseif(Auth::user()->plan && $plan->price < Auth::user()->plan->price)
-                                    <a href="{{route('user.purchase.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Purchase Now</button></a>
+                                    <a href="javascript:void(0);"><button
+                                            data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-listing="{{$plan->number_of_listing}}"
+                                            class="btn-custom purchasePlanOrUpgrade"
+                                            data-route="{{route('user.purchase.plan',$plan->id)}}"
+                                            type="button"  data-bs-toggle="modal"
+                                            data-bs-target="#planModal" > Purchase Now</button></a>
                                 @else
-                                    <a href="{{route('user.purchase.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Purchase Now</button></a>
+                                    <a href="javascript:void(0);"><button
+                                            data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-listing="{{$plan->number_of_listing}}"
+                                            class="btn-custom purchasePlanOrUpgrade"
+                                            data-route="{{route('user.purchase.plan',$plan->id)}}"
+                                            type="button" data-bs-toggle="modal"
+                                            data-bs-target="#planModal" > Purchase Now</button></a>
                                 @endif
                             @else
                                 @if(Auth::user()->plan && $plan->id == Auth::user()->plan->id)
-                                    <a href="{{route('user.upgrade.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" >Expired Upgrade Now</button></a>
+                                    <a href="javascript:void(0);"><button
+                                            data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-listing="{{$plan->number_of_listing}}"
+                                            class="btn-custom purchasePlanOrUpgrade"
+                                            data-route="{{route('user.upgrade.plan',$plan->id)}}"
+                                            type="button" data-bs-toggle="modal"
+                                            data-bs-target="#planModal" >Expired Upgrade Now</button></a>
                                 @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
-                                    <a href="{{route('user.upgrade.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Upgrade Now</button></a>
+                                    <a href="javascript:void(0);"><button
+                                            data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-listing="{{$plan->number_of_listing}}"
+                                            class="btn-custom purchasePlanOrUpgrade"
+                                            data-route="{{route('user.upgrade.plan',$plan->id)}}"
+                                            type="button" data-bs-toggle="modal"
+                                            data-bs-target="#planModal" > Upgrade Now</button></a>
                                 @else
-                                    <a href="{{route('user.upgrade.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Purchase Now</button></a>
+                                    <a href="javascript:void(0);"><button
+                                            data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-listing="{{$plan->number_of_listing}}"
+                                            class="btn-custom purchasePlanOrUpgrade"
+                                            data-route="{{route('user.upgrade.plan',$plan->id)}}"
+                                            type="button" data-bs-toggle="modal"
+                                            data-bs-target="#planModal" > Purchase Now</button></a>
                                 @endif
                             @endif
                         @elseif(Auth::user() && !Auth::user()->plan)
-                            <a href="{{route('user.purchase.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Purchase Now</button></a>
-                        @else
-                            <a href="{{route('user.purchase.plan',$plan->id)}}"><button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" > Purchase Now</button></a>
+                            <a href="javascript:void(0);"><button
+                                    data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
+                                    data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                    data-listing="{{$plan->number_of_listing}}"
+                                    class="btn-custom purchasePlanOrUpgrade"
+                                    data-route="{{route('user.purchase.plan',$plan->id)}}"
+                                    type="button" data-bs-toggle="modal"
+                                    data-bs-target="#planModal" > Purchase Now</button></a>
+                        @elseif(!Auth::user())
+                            <a href="{{route('user.purchase.plan',$plan->id)}}"><button class="btn-custom" type="button"> Purchase Now</button></a>
                        @endif
                     </div>
                 </div>
@@ -106,4 +155,60 @@
         </div>
      </section>
  @include($theme . 'partials.footer')
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#planModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="planModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="planModalForm" action="" method="get">
+                <div class="modal-body">
+                    <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">Price</div>
+                        <span class="plan-price" id="price">$10</span>
+                    </li>
+                    <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">No. Of Listing</div>
+                        <span class="plan-noOfListing" id="NoOfListing">$10</span>
+                    </li>
+                    <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">Validity</div>
+                        <span class="plan-validity" id="Validity">$10</span>
+                    </li>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn-custom">Confirm</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
+{{----}}
+@push('script')
+    <script>
+        $(document).ready(function (){
+            $('.purchasePlanOrUpgrade').on('click',function (){
+                let route = $(this).data('route');
+                let planPrice = $(this).data('price');
+                let  planValidity = $(this).data('validity');
+                let noOfListing = $(this).data('listing');
+                console.log(noOfListing);
+                $('#planModalForm').attr('action',route);
+                $('#Validity').text(planValidity);
+                $('#NoOfListing').text(noOfListing);
+                $('#price').text(planPrice);
+          });
+        })
+    </script>
+@endpush

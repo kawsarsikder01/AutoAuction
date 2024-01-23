@@ -89,6 +89,8 @@ class DepositController extends Controller
         $amount = getAmount($amount, $limit);
         $status = false;
 
+
+
         if ($currencyInfo) {
             $percentage = getAmount($currencyInfo->percentage_charge, $limit);
             $percentage_charge = getAmount(($amount * $percentage) / 100, $limit);
@@ -146,6 +148,7 @@ class DepositController extends Controller
 
             $deposit = Deposit::create([
                 'user_id' => Auth::user()->id,
+                'depositable_type' => 'App\Models\Fund',
                 'payment_method_id' => $checkAmountValidate['data']['gateway_id'],
                 'payment_method_currency' => $checkAmountValidate['data']['currency'],
                 'amount' => $amount,
@@ -157,8 +160,8 @@ class DepositController extends Controller
                 'trx_id' => strRandom(),
                 'status' => 0,
             ]);
-
-            return redirect(route('payment.process', $deposit->trx_id));
+            $type = "deposit";
+            return redirect(route('payment.process', [$deposit->trx_id,$type]));
 
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());

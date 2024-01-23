@@ -3,6 +3,9 @@
 use App\Http\Controllers\Auth\LoginController as UserLoginController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SearchingController;
+use App\Http\Controllers\User\ContactController;
+use App\Http\Controllers\User\GetInformationController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\DepositController;
 use App\Http\Controllers\User\PayoutController;
@@ -21,6 +24,7 @@ use App\Http\Controllers\User\PlanPurchaseControlller;
 use App\Http\Controllers\BidderController;
 use App\Http\Controllers\User\ReportController;
 use App\Http\Controllers\User\MessageController;
+use App\Http\Controllers\ReactController;
 
 
 /*
@@ -87,12 +91,9 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
             Route::middleware('kycVerification')->group(function () {
 
                 /* Manage Buy and Sell Vehicle and Manage Plan*/
-
-                Route::get('upgrade/plan/{id}',[PlanPurchaseControlller::class,'upgradePlan'])->name('upgrade.plan');
                 Route::post('/bid/{id}',[\App\Http\Controllers\BiddingController::class,'bid'])->name('bid');
                 Route::get('sell/your/vehicle', [SellerController::class, 'index'])->name('sell-car.submit')->middleware(['CheckSeller']);
                 Route::post('store/your/store', [SellerController::class, 'store'])->name('sell-car.store')->middleware(['CheckSeller']);
-                Route::get('purchase/plan/{plan_id}', [PlanPurchaseControlller::class, 'purchasePlan'])->name('purchase.plan');
                 Route::get('listed/vehicle',[SellerController::class,'listedVehicle'])->name('listed.vehicle');
                 Route::get('edit/vehicle/{id}',[SellerController::class,'edit'])->name('edit.vehicle');;
                 Route::post('update/vehicle/{id}',[SellerController::class,'update'])->name('update.vehicle');;
@@ -112,16 +113,22 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
                 Route::post('send/report/message',[ReportController::class,'sendMessage'])->name('send.report.message');
             });
 
-            /* Message Route */
+            /*Get Mor Info */
+           Route::post('get/more/info',[GetInformationController::class,'getInfo'])->name('get.info');
 
-           
+            /*Contact */
+           Route::post('store/contact/information',[ContactController::class,'store'])->name('store.contact.information');
+            /* Manage User Plan Payment */
 
-
+            Route::get('purchase/plan/{plan_id}', [PlanPurchaseControlller::class, 'purchasePlan'])->name('purchase.plan');
+            Route::get('upgrade/plan/{id}',[PlanPurchaseControlller::class,'upgradePlan'])->name('upgrade.plan');
+            Route::get('payment-check-amount',[PlanPurchaseControlller::class,'checkAmount'])->name('plan.checkAmount');
+            Route::post('confirm-plan',[PlanPurchaseControlller::class,'confirmPlan'])->name('confirm-plan');
             /* PAYMENT REQUEST BY USER */
             Route::get('payout-list', [PayoutController::class, 'index'])->name('payout.index');
             Route::get('payout-search', [PayoutController::class, 'search'])->name('payout.search');
 
-            Route::get('payout', [PayoutController::class, 'payouprofile.update.imaget'])->name('payout');
+            Route::get('payout', [PayoutController::class, 'payout'])->name('payout');
             Route::get('payout-supported-currency', [PayoutController::class, 'payoutSupportedCurrency'])->name('payout.supported.currency');
             Route::get('payout-check-amount', [PayoutController::class, 'checkAmount'])->name('payout.checkAmount');
             Route::post('request-payout', [PayoutController::class, 'payoutRequest'])->name('payout.request');
@@ -152,13 +159,18 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
 
 
     Route::get('/captcha', [ManualRecaptchaController::class, 'reCaptCha'])->name('captcha');
+    /* Searching Auction Vehicle */
+    Route::get('filter/vehicle',[SearchingController::class,'filterVehicle'])->name('filter.vehicle');
+    Route::get('filter/bidding-history',[SearchingController::class,'filterBiddingHistory'])->name('filter.bidding-history');
+    Route::get('filter/listed-vehicle',[SearchingController::class,'filterListedVehicle'])->name('filter.listed-vehicle');
+    Route::get('blog/searching',[SearchingController::class,'blogSearching'])->name('blog.search');
 
     /* Manage User Deposit */
     Route::get('supported-currency', [DepositController::class, 'supportedCurrency'])->name('supported.currency');
     Route::post('payment-request', [DepositController::class, 'paymentRequest'])->name('payment.request');
     Route::get('deposit-check-amount', [DepositController::class, 'checkAmount'])->name('deposit.checkAmount');
 
-    Route::get('payment-process/{trx_id}', [PaymentController::class, 'depositConfirm'])->name('payment.process');
+    Route::get('payment-process/{trx_id}/{type}', [PaymentController::class, 'depositConfirm'])->name('payment.process');
     Route::post('addFundConfirm/{trx_id}', [PaymentController::class, 'fromSubmit'])->name('addFund.fromSubmit');
     Route::match(['get', 'post'], 'success', [PaymentController::class, 'success'])->name('success');
     Route::match(['get', 'post'], 'failed', [PaymentController::class, 'failed'])->name('failed');
@@ -168,6 +180,9 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
     Route::post('khalti/payment/store', [khaltiPaymentController::class, 'storePayment'])->name('khalti.storePayment');
 
     Auth::routes();
+
+    Route::get('submit/react/{id}',[ReactController::class,'getReact'])->name('submit.react');
+    Route::get('unsubmit/react/{id}',[ReactController::class,'unsubmit'])->name('unsubmit.react');
     Route::get('/plan', [FrontendController::class, 'plan'])->name('plan');
     Route::get('/auction', [FrontendController::class, 'auction'])->name('auction');
     Route::get('/blogs', [FrontendController::class, 'blogs'])->name('blogs');

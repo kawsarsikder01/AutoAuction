@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BiddingHistory;
+use App\Models\CarBrand;
+use App\Models\CarCategory;
 use App\Models\User;
 use App\Models\Vehicle;
 use Carbon\Carbon;
@@ -29,10 +31,12 @@ class BidderController extends Controller
     public function UserBiddingHistory()
     {
         $user = Auth::user();
-        $biddingHistorys =BiddingHistory::with('vehicle')->where('user_id',$user->id)->orderBy('created_at', 'DESC')->get();
-        return view(template().'biddingHistory',compact('biddingHistorys'));
+        $data['categories'] =  CarCategory::get();
+        $data['brands'] =  CarBrand::get();
+        $biddingHistorys =BiddingHistory::with('vehicle')->where('user_id',$user->id)->orderBy('created_at', 'DESC')->paginate(basicControl()->paginate);
+        return view(template().'biddingHistory',compact('biddingHistorys'),$data);
     }
-    
+
     public  function payNow(Request $request)
     {
         $vehicle = Vehicle::where('payment_status',0)->find($request->vehicle_id);
@@ -82,6 +86,8 @@ class BidderController extends Controller
                 $this->userFirebasePushNotification($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2, "#",);
                 $this->sendMailSms($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2);
             }
+        }else{
+            return back(404);
         }
         return back()->with('success','Your Payment Successfully Completed');
     }

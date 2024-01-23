@@ -6,48 +6,49 @@
        <div class="col-12">
           <div class="dashboard-heading">
              <h4 class="mb-0">Listed Vehicle</h4>
-             
+
           </div>
 
           <!-- table -->
           <div class="table-parent table-responsive mt-4">
              <div class="table-search-bar">
                 <div class="d-none d-lg-block">
-                   <form>
+                   <form action="{{route('filter.listed-vehicle')}}" method="get">
                       <div class="row g-3 align-items-end">
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <input type="text" class="form-control" placeholder="Search" />
+                            <input type="text" class="form-control" name="title" placeholder="Search" />
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="category">
+                               <option value="">Select Category</option>
+                                @foreach($categories as $categorie)
+                                    <option value="{{$categorie->id}}">{{$categorie->name}}</option>
+                                @endforeach
+
+
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="brand">
+                               <option value="">Select Brand</option>
+                                @foreach($brands as $brands)
+                                    <option value="{{$brands->id}}">{{$brands->name}}</option>
+                                @endforeach
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="sold_status">
+                               <option value="">Select Sold Status</option>
+                               <option value="1">Sold</option>
+                               <option value="0">Unsold</option>
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
+                            <select class="js-example-basic-single form-control" name="release_status">
+                               <option value="">Select Release Status</option>
+                               <option value="1">Released</option>
+                               <option value="0">Unreleased</option>
+                               <option value="2">Canceled</option>
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
@@ -88,11 +89,11 @@
                         </td>
                         <td data-label="@lang('Status')">
                             @if($vehicle->status == 0)
-                                <span class="badge bg-primary">@lang('Pending')</span>
+                                <span class="badge bg-warning">@lang('Pending')</span>
                             @elseif($vehicle->status == 1)
                                 <span class="badge bg-success">@lang('Approved')</span>
                             @elseif($vehicle->status == 2)
-                                <span class="badge bg-warning">@lang('Rejected')</span>
+                                <span class="badge bg-primary">@lang('Rejected')</span>
                             @endif
                         </td>
                         <td>
@@ -120,8 +121,10 @@
                                 <span class="badge bg-info">@lang('Unreleased')</span>
                             @elseif($vehicle->details->sold_status == 0)
                                 <span class="badge bg-primary">@lang('Unsold')</span>
-                            @else
+                            @elseif($vehicle->release_status == 1)
                                 <span class="badge bg-secondary">@lang('Released')</span>
+                            @elseif($vehicle->release_status == 2)
+                                <span class="badge bg-primary">@lang('Canceled')</span>
                             @endif
                         </td>
                         <td data-label="@lang('Action')">
@@ -169,7 +172,7 @@
              <!-- pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end mt-4">
-                    {{-- {{ $tickets->appends($_GET)->links($theme.'partials.pagination') }} --}}
+                     {{ $vehicles->appends($_GET)->links($theme.'partials.pagination') }}
                 </ul>
              </nav>
           </div>

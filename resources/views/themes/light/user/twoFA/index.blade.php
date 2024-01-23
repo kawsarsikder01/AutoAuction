@@ -46,8 +46,8 @@
                                         <input type="text" value="{{$secret}}"
                                                class="form-control form-control-lg bg-transparent" id="referralURL"
                                                readonly>
-                                        <span class="input-group-text" id="basic-addon2" onclick="copyFunction()"><i
-                                                class="fa fa-copy"></i></span>
+                                        <span class="input-group-text cursor-pointer" id="basic-addon2" onclick="copyFunction()"><i
+                                                class="fa fa-copy cursor-pointer"></i></span>
                                     </div>
 
                                     <div class="form-group mx-auto text-center">

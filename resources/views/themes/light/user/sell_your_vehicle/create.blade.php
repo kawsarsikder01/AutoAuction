@@ -222,9 +222,8 @@
 @endpush
 @push('js-lib')
     <script src="{{ asset('assets/admin/js/summernote-bs5.min.js') }}"></script>
-    <script src="{{asset($themeTrue.'js/image-uploader.min.js')}}"></script>
+    <script src="{{asset($themeTrue.'js/image-uploader.js')}}"></script>
     <script src="{{asset('assets/admin/js/hs-file.min.js')}}"></script>
-    hs-file.min
 @endpush
 @push('script')
 <script>

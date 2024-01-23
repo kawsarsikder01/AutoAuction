@@ -5,67 +5,11 @@
     <div class="main row">
        <div class="col-12">
           <div class="dashboard-heading">
-             <h4 class="mb-0">User Bidding History</h4>
+             <h4 class="mb-0">Reports</h4>
           </div>
 
           <!-- table -->
           <div class="table-parent table-responsive mt-4">
-             <div class="table-search-bar">
-                <div class="d-none d-lg-block">
-                   <form>
-                      <div class="row g-3 align-items-end">
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <input type="text" class="form-control" placeholder="Search" />
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <button class="btn-custom w-100"><i class="fal fa-search"></i> Filter</button>
-                         </div>
-                      </div>
-                   </form>
-                </div>
-                <div class="d-lg-none justify-content-end">
-                   <button
-                      type="button"
-                      class="btn-action"
-                      data-bs-toggle="modal"
-                      data-bs-target="#editModal"
-                   >
-                      Filter <i class="fa-light fa-filter"></i>
-                   </button>
-                </div>
-             </div>
              <table class="table table-striped">
                 <thead>
                    <tr>
@@ -108,7 +52,7 @@
              <!-- pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end mt-4">
-                    {{-- {{ $tickets->appends($_GET)->links($theme.'partials.pagination') }} --}}
+                     {{ $reports->appends($_GET)->links($theme.'partials.pagination') }}
                 </ul>
              </nav>
           </div>

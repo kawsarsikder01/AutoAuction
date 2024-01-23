@@ -26,7 +26,7 @@ class Deposit extends Model
 
     public function depositable()
     {
-        return $this->morphTo();
+        return $this->morphOne(Deposit::class, 'depositable');
     }
 
     protected static function boot()

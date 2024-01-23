@@ -30,11 +30,12 @@ class CheckUserBalance implements ValidationRule
                 ->from('bidding_history')
                 ->groupBy('vehicle_id');
           })->with('vehicle')->where('user_id',$user->id)->where('wining_status',0)->get();
+
         $totalBidAmount = $this->bid_amount;
           foreach($biddingHistorys as $biddingHistory){
               $totalBidAmount = $totalBidAmount + $biddingHistory->bid_amount;
           }
-        if ($biddingHistorys){
+        if ($biddingHistorys->first()){
             if($totalBidAmount  > $user->balance){
                 $totalBidAmount = $totalBidAmount-$this->bid_amount;
                 $fail("Your balance is low because your $totalBidAmount ".basicControl()->currency_symbol." is hold");

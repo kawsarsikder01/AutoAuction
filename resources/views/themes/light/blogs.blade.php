@@ -7,7 +7,7 @@
     <div class="container">
        <div class="row justify-content-between">
           <div class="col-lg-8">
-             @foreach ($blogs as $blog)
+             @forelse ($blogs as $blog)
                 <div class="blog-box">
                     <div class="img-box">
                     <img src="{{getFile($blog->blog_image_driver,$blog->blog_image)}}" class="img-fluid" alt="" />
@@ -24,7 +24,14 @@
                     <a href="{{route('blog.details',$blog->details->slug)}}" class="btn-custom arrow"><span>View More</span></a>
                     </div>
                 </div>
-             @endforeach
+              @empty
+                  <div class="text-center p-4">
+                      <img  class="dataTables-image mb-3 w-50"
+                            src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                            alt="Image Description">
+                      <p class="mb-0">@lang("No Blog Found")</p>
+                  </div>
+             @endforelse
              <!-- pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center mt-4">
@@ -35,9 +42,9 @@
           <div class="col-lg-3">
              <div class="side-bar">
                 <div class="side-box search-box">
-                   <form>
+                   <form action="{{route('blog.search')}}" method="get">
                       <div class="input-group">
-                         <input type="text" class="form-control" placeholder="search Here" />
+                         <input type="text" class="form-control" name="name" placeholder="search Here" />
                          <button><i class="fal fa-search" aria-hidden="true"></i></button>
                       </div>
                    </form>
@@ -51,15 +58,6 @@
                     </li>
                    @endforeach
                    </ul>
-                </div>
-                <div class="side-box">
-                   <h4>tags</h4>
-                   <a href="" class="tag-item">Car</a>
-                   <a href="" class="tag-item">Family Car</a>
-                   <a href="" class="tag-item">Used car</a>
-                   <a href="" class="tag-item">Motor</a>
-                   <a href="" class="tag-item">Auction</a>
-                   <a href="" class="tag-item">Ceremony</a>
                 </div>
              </div>
           </div>

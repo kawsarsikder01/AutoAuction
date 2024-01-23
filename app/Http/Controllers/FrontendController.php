@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\CarBrand;
+use App\Models\CarCategory;
 use App\Models\Language;
 use App\Models\PageDetail;
 use App\Models\Page;
 use App\Models\Vehicle;
+use App\Models\VehicleDetails;
 use App\Traits\Frontend;
 use Illuminate\Http\Request;
 use App\Models\Plan;
@@ -32,6 +35,8 @@ class FrontendController extends Controller
             'page_title' => optional($pageDetails->page)->page_title
         ];
         $sectionsData = $this->getSectionsData($pageDetails->sections, $pageDetails->content, $selectedTheme);
+//        $data['categories'] =  CarCategory::get();
+//        $data['brands'] =  CarBrand::get();
         return view("themes.{$selectedTheme}.page", compact('sectionsData', 'pageSeo', 'page', 'pageDetails'));
     }
 
@@ -59,13 +64,17 @@ class FrontendController extends Controller
                 ->where('status',1)
 
                 ->paginate(basicControl()->paginate) ;
-        return view('themes.light.auction', compact('vehicles','pageSeo'));
+            $data['maxAmount'] =  VehicleDetails::get()->max('price');
+            $data['minAmount'] =  VehicleDetails::get()->min('price');
+            $data['carBrand']  = CarBrand::where('status',1)->get();
+            $data['CarCategory'] = CarCategory::where('status',1)->get();
+        return view('themes.light.auction', compact('vehicles','pageSeo'),$data);
     }
     public  function blogs()
     {
         $pageSeo = Page::where('name', 'blog')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
         $blogs = Blog::with('category', 'details')->orderBy('id', 'desc')
-            ->paginate(3);
+            ->paginate(basicControl()->paginate);
         $categorys = BlogCategory::where('status',1)->get();
         return view(template().'blogs',compact('blogs','categorys','pageSeo'));
     }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deposit;
+use App\Models\Fund;
 use App\Models\Gateway;
 use App\Traits\Notify;
+use App\Traits\PaymentValidationCheck;
 use App\Traits\Upload;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,15 +18,16 @@ use Illuminate\Support\Facades\Validator;
 class PaymentController extends Controller
 {
 
-    use Upload, Notify;
+    use Upload, Notify ;
 
     public function __construct()
     {
         $this->theme = template();
     }
 
-    public function depositConfirm($trx_id)
+    public function depositConfirm($trx_id,$type)
     {
+
         try {
             $deposit = Deposit::with('user', 'depositable')->where(['trx_id' => $trx_id, 'status' => 0])->first();
             if (!$deposit) {
@@ -40,6 +43,7 @@ class PaymentController extends Controller
             }
 
             $gatewayObj = 'App\\Services\\Gateway\\' . $gateway->code . '\\Payment';
+
             $data = $gatewayObj::prepareData($deposit, $gateway);
             $data = json_decode($data);
 
@@ -57,9 +61,10 @@ class PaymentController extends Controller
         }
 
         $page_title = 'Payment Confirm';
-        return view($this->theme . $data->view, compact('data', 'page_title', 'deposit'));
+        return view($this->theme . $data->view, compact('data', 'page_title', 'deposit','type'));
 
     }
+
 
     public function gatewayIpn(Request $request, $code, $trx = null, $type = null)
     {

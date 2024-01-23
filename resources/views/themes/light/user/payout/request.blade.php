@@ -341,7 +341,7 @@
 
                                             <div class="col-md-12 input-box mt-3">
                                                 <label for="">Select Currency</label>
-                                                <select class="js-example-basic-single form-control"
+                                                <select class="js-example-basic-single form-select form-select-lg "
                                                         name="supported_currency"
                                                         id="supported_currency">
                                                 </select>

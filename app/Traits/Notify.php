@@ -77,8 +77,8 @@ trait Notify
         }
 
         $smsControl = ManualSmsConfig::firstOrCreate();
-
         $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('language_id', $user->language_id)->where('notify_for', 0)->first();
+
         if (!$templateObj) {
             $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('notify_for', 0)->first();
         }
@@ -288,7 +288,6 @@ trait Notify
             }
 
             $users = FireBaseToken::where('tokenable_id', $user->id)->get();
-
             foreach ($users as $user) {
                 $data = [
                     "to" => $user->token,
@@ -402,7 +401,7 @@ trait Notify
                         "data" => [
                             "foreground" => (int)$notify['admin_foreground'],
                             "background" => (int)$notify['admin_background'],
-                            "click_action" => $action['link']
+                            "click_action" => $action,
                         ],
                         "content_available" => true,
                         "mutable_content" => true

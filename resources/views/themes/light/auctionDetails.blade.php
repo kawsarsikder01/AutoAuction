@@ -38,8 +38,14 @@
 
                  <div class="col-lg-6">
                     <div class="auction-content-area">
-                       <div class="btn-group">
-                          <button class="react"><i class="fa-regular fa-heart"></i>587</button>
+                       <div class="btn-group" id="React">
+                        @if (checkReact($vehicle->reacts))
+                        <a href="{{route('unsubmit.react',$vehicle->id)}}"><button class="react"><i class="fa-solid fa-heart"></i></i>{{count($vehicle->reacts)}}</button></a>
+                           @else
+                            <a href="{{route('submit.react',$vehicle->id)}}"><button class="react"><i class="fa-regular fa-heart"></i>{{count($vehicle->reacts)}}</button></a>
+                        @endif
+
+
                           <div class="">
                            @if(Auth::guard('admin')->user())
                               <form action="{{route('admin.delete.vehicle')}}" method="POST">
@@ -72,6 +78,7 @@
                                             <label>You Can Not Bid This Vehicle</label>
                                         </div>
                                         @else
+                                            @if($vehicle->details->auction_ending_date > today()->format('Y-m-d'))
                                             <div class="card-box">
                                                 <h4>Bid Now</h4>
                                                 @if ($vehicle->biddingHistory->max('bid_amount'))
@@ -79,23 +86,25 @@
                                                 @else
                                                     <pre> <h5>Bid Amount: Minimum Bid   {{number_format( $vehicle->details->price, 2, '.', ',')}} {{basicControl()->currency_symbol}}</h5></pre>
                                                 @endif
-                                                <form action="{{route('user.bid',$vehicle->id)}}" method="POST">
-                                                    @csrf
-                                                    <div class="input-group">
-                                                        <input type="number" name="bid_amount" class="form-control" placeholder="Enter amount" />
-                                                        <button type="submit" class="btn-custom">bid now</button>
-                                                    </div>
-                                                    @error("bid_amount")
-                                                    <span class="invalid-feedback d-block" role="alert">
-                                                   <strong>{{ $message }}</strong>
-                                                </span>
-                                                    @enderror
-                                                </form>
+                                                    <form action="{{route('user.bid',$vehicle->id)}}" method="POST">
+                                                        @csrf
+                                                        <div class="input-group">
+                                                            <input type="number" name="bid_amount" class="form-control" placeholder="Enter amount" />
+                                                            <button type="submit" class="btn-custom">bid now</button>
+                                                        </div>
+                                                        @error("bid_amount")
+                                                            <span class="invalid-feedback d-block" role="alert">
+                                                               <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </form>
 
-                                                @if ($vehicle->user_id != Auth::user()->id)
-                                                    {{--                                            <small>($100.00 USD Bid Increment) Incremental Bid Guidelines</small>--}}
-                                                @endif
                                             </div>
+                                            @else
+                                                <div class="card-box">
+                                                    Auction End
+                                                </div>
+                                            @endif
                                     @endif
                                 @else
                                     <div class="card-box">
@@ -222,98 +231,139 @@
                           aria-labelledby="contact-tab"
                           tabindex="0"
                        >
-                         @foreach ($vehicle->biddingHistory as $item)
-                           <div class="bid-item">
-                              <div class="img-box">
-                                 <img src="{{getFile($item->bidder->image_driver,$item->bidder->image)}}" alt="" />
-                              </div>
-                              <div class="info">
-                                 <div>
-                                    <h5>{{$item->bidder->firstname.' '.$item->bidder->lastname}}</h5>
-                                    <p>{{number_format($item->bid_amount, 2, '.', ',') .' '.basicControl()->currency_symbol}}</p>
-                                 </div>
-                                 <div>
-                                    @if ($maxBid->vehicle->details->sold_status == 1)
-                                       @if (Auth::user()&&($maxBid->vehicle->user_id == Auth::user()->id && $item->bid_amount == $maxBid->bid_amount ))
-                                          @if($maxBid->vehicle->release_status == 0)
-                                                 <button class="btn-custom" id="dataRoute" data-message="Are You Sure You Want To Release Your Vehicle ?" data-route="{{route('user.release.property')}}" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
-                                                     Release Your Vehicle
-                                                 </button>
-                                             @else
-                                                 <button class="btn-custom"  type="button" disabled>
-                                                     Already Released
-                                                 </button>
-                                          @endif
-                                       @elseif (Auth::user()&&($maxBid->user_id == Auth::user()->id && $item->bid_amount == $maxBid->bid_amount))
-                                             @if($maxBid->vehicle->payment_status == 0)
-                                                 <button class="btn-custom" id="dataRoute" data-message="Are You Sure You Want To Pay ?" data-route="{{route('user.confirm.payment')}}" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
-                                                     Pay Now
-                                                 </button>
-                                             @else
-                                                 <button class="btn-custom"  type="button" disabled>
-                                                     Paid
-                                                 </button>
-                                             @endif
-                                       @else
-                                          <p class="time">{{$item->created_at}}</p>
-                                       @endif
-                                    @else
-                                       <p class="time">{{$item->created_at}}</p>
-                                    @endif
-                                 </div>
-                              </div>
-                           </div>
-                         @endforeach
+                       @if ($vehicle->biddingHistory->first())
+                       @foreach ($vehicle->biddingHistory as $item)
+                       <div class="bid-item">
+                          <div class="img-box">
+                             <img src="{{getFile($item->bidder->image_driver,$item->bidder->image)}}" alt="" />
+                          </div>
+                          <div class="info">
+                             <div>
+                                <h5>{{$item->bidder->firstname.' '.$item->bidder->lastname}}</h5>
+                                <p>{{number_format($item->bid_amount, 2, '.', ',') .' '.basicControl()->currency_symbol}}</p>
+                             </div>
+                             <div>
+                                @if ($maxBid->vehicle->details->sold_status == 1)
+                                   @if (Auth::user()&&($maxBid->vehicle->user_id == Auth::user()->id && $item->bid_amount == $maxBid->bid_amount ))
+                                      @if($maxBid->vehicle->release_status == 0)
+                                             <button class="btn-custom" id="dataRoute" data-message="Are You Sure You Want To Release Your Vehicle ?" data-route="{{route('user.release.property')}}" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
+                                                 Release Your Vehicle
+                                             </button>
+                                         @elseif($maxBid->vehicle->release_status == 1)
+                                             <button class="btn-custom"  type="button" disabled>
+                                                 Already Released
+                                             </button>
+                                         @elseif($maxBid->vehicle->release_status == 2)
+                                             <button class="btn-custom"  type="button" disabled>
+                                                 Canceled
+                                             </button>
+                                      @endif
+                                   @elseif (Auth::user()&&($maxBid->user_id == Auth::user()->id && $item->bid_amount == $maxBid->bid_amount))
+                                         @if($maxBid->vehicle->payment_status == 0)
+                                             <button class="btn-custom" id="dataRoute" data-message="Are You Sure You Want To Pay ?" data-route="{{route('user.confirm.payment')}}" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
+                                                 Pay Now
+                                             </button>
+                                         @elseif($maxBid->vehicle->payment_status == 1)
+                                             <button class="btn-custom"  type="button" disabled>
+                                                 Paid
+                                             </button>
+                                         @elseif($maxBid->vehicle->payment_status == 2)
+                                             <button class="btn-custom"  type="button" disabled>
+                                                 Payment Cancel
+                                             </button>
+                                         @endif
+                                   @else
+                                      <p class="time">{{$item->created_at}}</p>
+                                   @endif
+                                @else
+                                   <p class="time">{{$item->created_at}}</p>
+                                @endif
+                             </div>
+                          </div>
+                       </div>
+                     @endforeach
+                     @else
+                     <div class="text-center p-4">
+                        <img  class="dataTables-image mb-3 w-50"
+                             src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                             alt="Image Description">
+                        <p class="mb-0">@lang("No Bidding History Found")</p>
+                    </div>
+                       @endif
                        </div>
                     </div>
                  </div>
+                 @if (Auth::user() && Auth::user()->id != $vehicle->user_id)
                  <div class="col-lg-4">
-                    <div class="inquiry-form-box">
-                       <h4>Get more info</h4>
-                       <form action="">
-                          <div class="row g-4">
-                             <div class="col-md-12">
-                                <div class="form-floating">
-                                   <input type="text" class="form-control" id="floatingName" placeholder="Name" />
-                                   <label for="floatingName">Full Name</label>
-                                </div>
-                             </div>
-                             <div class="col-md-12">
-                                <div class="form-floating">
-                                   <input
-                                      type="email"
-                                      class="form-control"
-                                      id="floatingInput"
-                                      placeholder="name@example.com"
-                                   />
-                                   <label for="floatingInput">Email address</label>
-                                </div>
-                             </div>
-                             <div class="input-box col-12">
-                                <select class="form-select" aria-label="Default select example">
-                                   <option selected>Subject</option>
-                                   <option value="1">One</option>
-                                   <option value="2">Two</option>
-                                   <option value="3">Three</option>
-                                </select>
-                             </div>
-                             <div class="col-md-12">
-                                <div class="form-floating">
-                                   <textarea
-                                      class="form-control"
-                                      placeholder="Leave a comment here"
-                                      id="floatingTextarea"
-                                   ></textarea>
-                                   <label for="floatingTextarea">Comments</label>
-                                </div>
-                             </div>
-                             <div class="input-box col-12">
-                                <button class="btn-custom"><span>Submit </span></button>
-                             </div>
-                          </div>
-                       </form>
-                    </div>
-                 </div>
+                  <div class="inquiry-form-box">
+                     <h4>Get more info</h4>
+                     <form action="{{route('user.get.info')}}" method="POST">
+                      @csrf
+                      <input type="hidden" name="vehicle_id" value="{{$vehicle->id}}">
+                        <div class="row g-4">
+                           <div class="col-md-12">
+                              <div class="form-floating">
+                                 <input type="text" class="form-control" name="fullname" id="floatingName" placeholder="Name" />
+                                 <label for="floatingName">Full Name</label>
+                              </div>
+                           </div>
+                           @error("fullname")
+                              <span class="invalid-feedback d-block" role="alert">
+                                 <strong>{{ $message }}</strong>
+                              </span>
+                           @enderror
+                           <div class="col-md-12">
+                              <div class="form-floating">
+                                 <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control"
+                                    id="floatingInput"
+                                    placeholder="name@example.com"
+                                 />
+                                 <label for="floatingInput">Email address</label>
+                              </div>
+                           </div>
+                           @error("email")
+                              <span class="invalid-feedback d-block" role="alert">
+                                 <strong>{{ $message }}</strong>
+                              </span>
+                           @enderror
+                           <div class="col-md-12">
+                            <div class="form-floating">
+                               <input type="text" class="form-control" name="subject" id="floatingSubject" placeholder="Subject" />
+                               <label for="floatingSubject">Subject</label>
+                            </div>
+                         </div>
+                           @error("subject")
+                              <span class="invalid-feedback d-block" role="alert">
+                                 <strong>{{ $message }}</strong>
+                              </span>
+                           @enderror
+                           <div class="col-md-12">
+                              <div class="form-floating">
+                                 <textarea
+                                    class="form-control"
+                                    name="comment"
+                                    placeholder="Leave a comment here"
+                                    id="floatingTextarea"
+                                 ></textarea>
+                                 <label for="floatingTextarea">Comments</label>
+                              </div>
+                           </div>
+                           @error("comment")
+                              <span class="invalid-feedback d-block" role="alert">
+                                 <strong>{{ $message }}</strong>
+                              </span>
+                           @enderror
+                           <div class="input-box col-12">
+                              <button class="btn-custom"><span>Submit </span></button>
+                           </div>
+                        </div>
+                     </form>
+                  </div>
+               </div>
+                 @endif
               </div>
            </div>
         </div>
