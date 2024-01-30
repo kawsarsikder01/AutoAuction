@@ -50,11 +50,6 @@ class HomeController extends Controller
         ]);
     }
 
-// whereIn('bid_amount', function ($query) {
-//     $query->selectRaw('MAX(bid_amount)')
-//         ->from('bidding_history')
-//         ->groupBy('vehicle_id');
-// })
     public function index()
     {
         $data['user'] = Auth::user();

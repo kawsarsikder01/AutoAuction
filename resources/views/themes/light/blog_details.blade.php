@@ -20,7 +20,7 @@
                    <p>
                       {!! $blogDetails->description !!}
                    </p>
-                   <div id="shareBlock"><h4>Share now:</h4></div>
+                   <div id="shareBlock"><h4>@lang('Share now :')</h4></div>
                 </div>
              </div>
           </div>
@@ -35,7 +35,7 @@
                     </form>
                 </div>
                 <div class="side-box">
-                   <h4>Related Posts</h4>
+                   <h4>@lang('Related Posts')</h4>
                    @php $i = 0; @endphp
                    @foreach ($categoryBlogs as $key => $relatedBlog)
                        @if($relatedBlog->id ==$blogDetails->blog->id )
@@ -58,7 +58,7 @@
 
                 </div>
                 <div class="side-box">
-                   <h4>categories</h4>
+                   <h4>@lang('categories')</h4>
                    <ul class="links">
                     @foreach ($blogCategories as $blogCategorie)
                      <li>
@@ -68,19 +68,10 @@
 
                    </ul>
                 </div>
-{{--                <div class="side-box">--}}
-{{--                   <h4>tags</h4>--}}
-{{--                   <a href="" class="tag-item">Car</a>--}}
-{{--                   <a href="" class="tag-item">Family Car</a>--}}
-{{--                   <a href="" class="tag-item">Used car</a>--}}
-{{--                   <a href="" class="tag-item">Motor</a>--}}
-{{--                   <a href="" class="tag-item">Auction</a>--}}
-{{--                   <a href="" class="tag-item">Ceremony</a>--}}
-{{--                </div>--}}
              </div>
           </div>
        </div>
     </div>
  </section>
- @include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 @endsection

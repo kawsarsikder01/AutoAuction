@@ -25,6 +25,7 @@ use App\Http\Controllers\BidderController;
 use App\Http\Controllers\User\ReportController;
 use App\Http\Controllers\User\MessageController;
 use App\Http\Controllers\ReactController;
+use App\Models\Language;
 
 
 /*
@@ -38,14 +39,13 @@ use App\Http\Controllers\ReactController;
 |
 */
 
+
+
 $basicControl = basicControl();
 Route::get('maintenance-mode', function () {
     $data['maintenanceMode'] = \App\Models\MaintenanceMode::first();
     return view(template() . 'maintenance', $data);
 })->name('maintenance');
-
-Route::get('send/notification',[\App\Http\Controllers\NotifyController::class,'index']);
-
 
 
 Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -74,6 +74,7 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
             Route::post('profile-update', [HomeController::class, 'profileUpdate'])->name('profile.update');
             Route::post('profile-update/image', [HomeController::class, 'profileUpdateImage'])->name('profile.update.image');
             Route::post('update/password', [HomeController::class, 'updatePassword'])->name('updatePassword');
+
             Route::post('save-token', [HomeController::class, 'saveToken'])->name('save.token');
 
             Route::post('save-token', [HomeController::class, 'saveToken'])->name('save.token');
@@ -181,8 +182,9 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
 
     Auth::routes();
 
-    Route::get('submit/react/{id}',[ReactController::class,'getReact'])->name('submit.react');
+    Route::get('submit/react/{id}',[ReactController::class,'submit'])->name('submit.react');
     Route::get('unsubmit/react/{id}',[ReactController::class,'unsubmit'])->name('unsubmit.react');
+    Route::get('get/react/{id}',[ReactController::class,'getReact'])->name('get.react');
     Route::get('/plan', [FrontendController::class, 'plan'])->name('plan');
     Route::get('/auction', [FrontendController::class, 'auction'])->name('auction');
     Route::get('/blogs', [FrontendController::class, 'blogs'])->name('blogs');
@@ -190,6 +192,14 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
     Route::get('blogs/{category}/{id}',[FrontendController::class,'categoryBlogs'])->name('category.blogs');
     Route::get('blog-details/{slug}', [BlogController::class, 'blogDetails'])->name('blog.details');
     Route::get('property/details/{slug?}/{id}',[\App\Http\Controllers\BidderController::class,'viewAuctionDetails'])->name('auction.details');
+
+    Route::get('language/{locale}', function ($locale) {
+        $language = Language::where('short_name', $locale)->first();
+        if (!$language) $locale = 'en';
+        session()->put('lang', $locale);
+        session()->put('rtl', $language ? $language->rtl : 0);
+        return back();
+    })->name('language');
 
     /*= Frontend Manage Controller =*/
     Route::get("/{slug?}", [FrontendController::class, 'page'])->name('page');

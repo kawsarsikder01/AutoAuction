@@ -403,6 +403,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('release/bidder/payment/{id}',[ReportController::class,'releaseBidderPayment'])->name('release.bidder.payment');
 
 
+        Route::get('filter/blog',[BlogController::class,'filterBlog'])->name('filter.blog');
+
+
     });
 
 });

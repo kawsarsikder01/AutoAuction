@@ -1,17 +1,17 @@
   <!-- testimonial section -->
-  <section class="testimonial-section" style="background-image: url({{getFile($testimonial['single']['media']->image->driver,$testimonial['single']['media']->image->path)}});">
+  <section class="testimonial-section" style="background-image: url({{$testimonial['single'] && $testimonial['single']['media'] ? getFile($testimonial['single']['media']->image->driver,$testimonial['single']['media']->image->path):''}});">
     <div class="overlay">
        <div class="container">
           <div class="row">
              <div class="col-12">
                 <div class="section-header" overlay-text="Working Process">
                    <div class="box">
-                      <h5>{{$testimonial['single']['title']}}</h5>
+                      <h5>{{$testimonial['single']['title']??''}}</h5>
                    </div>
                    <div class="box">
-                      <h2>{{$testimonial['single']['sub_title']}}</h2>
+                      <h2>{{$testimonial['single']['sub_title']??''}}</h2>
                       <p>
-                        {{$testimonial['single']['text']}}
+                        {{$testimonial['single']['text']??''}}
                       </p>
                    </div>
                 </div>
@@ -32,7 +32,7 @@
                         <h4 class="mb-0">{{$objectItem->name}}</h4>
                         <b class="text-primary">{{$objectItem->title}}</b>
                         <p class="mt-4">
-                           {{$objectItem->text}}
+                           {!! $objectItem->text !!}
                         </p>
                      </div>
                      <i class="fa-thin fa-quote-right quote"></i>

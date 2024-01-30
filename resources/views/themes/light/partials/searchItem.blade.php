@@ -21,46 +21,38 @@
              <form action="{{route('filter.vehicle')}}" method="get">
                 <div class="row g-3 align-items-end">
                    <div class="input-box col-xl-4">
-                      <input type="text" class="form-control" name="name" placeholder="Search" />
+                      <input type="text" class="form-control" value="{{request()->name}}" name="name" placeholder="Search" />
                    </div>
                    <div class="input-box col-xl-2">
                       <select class="js-example-basic-single form-control" name="category">
-                         <option value="">Select Category</option>
+                         <option value="">@lang('Select Category')</option>
                           @foreach($categories as $categorie)
-                              <option value="{{$categorie->id}}">{{$categorie->name}}</option>
+                              <option value="{{$categorie->id}}" @selected(request()->category == $categorie->id)>@lang($categorie->name)</option>
                           @endforeach
                       </select>
                    </div>
                    <div class="input-box col-xl-2">
                       <select class="js-example-basic-single form-control" name="brand">
-                         <option value="">Select Brand</option>
+                         <option value="">@lang('Select Brand')</option>
                          @foreach($brands as $brand)
-                              <option value="{{$brand->id}}">{{$brand->name}}</option>
+                              <option value="{{$brand->id}}" @selected(request()->brand == $brand->id)>@lang($brand->name)</option>
                          @endforeach
                       </select>
                    </div>
                    <div class="input-box col-xl-2">
                       <select class="js-example-basic-single form-control" name="status">
-                         <option value="">Select Status</option>
-                         <option value="1">Sold</option>
-                         <option value="0">Unsold</option>
+                         <option value="0" @selected(request()->status == 0)>@lang('Select Status')</option>
+                         <option value="1" @selected(request()->status == 1)>@lang('Sold')</option>
+                         <option value="2" @selected(request()->status == 2)>@lang('Unsold')</option>
 
                       </select>
                    </div>
                    <div class="input-box col-xl-2">
-                      <button class="btn-custom w-100"><i class="fal fa-search"></i> Filter</button>
+                      <button class="btn-custom w-100"><i class="fal fa-search"></i> @lang('Filter')</button>
                    </div>
                 </div>
              </form>
           </div>
        </div>
     </div>
- </div>
-
- <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-    <div class="offcanvas-header">
-       <h5 class="offcanvas-title" id="offcanvasRightLabel">Offcanvas right</h5>
-       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">...</div>
  </div>

@@ -17,7 +17,6 @@
                             <img class="user img-fluid" src="{{getFile($user->image_driver,$user->image)}}" alt="" />
                             <div class="name">
                                <a href="javascript:void(0);">{{$user->firstname." ".$user->lastname}} </a>
-                               {{-- <span>Active Now</span> --}}
                             </div>
                          </div>
                          <div>
@@ -36,7 +35,6 @@
                                     <div class="text">
                                        <p>{{$message->message}}</p>
                                     </div>
-                                    {{-- <span class="time"> 3 hours ago</span> --}}
                                  </div>
                                  <div class="img">
                                     <img class="img-fluid" src="{{getFile($message->sender->image_driver,$message->sender->image)}}" alt="" />
@@ -51,7 +49,6 @@
                                     <div class="text">
                                        <p>{{$message->message}}</p>
                                     </div>
-                                    {{-- <span class="time">3 hours ago</span> --}}
                                  </div>
                               </div>
                            @endif
@@ -86,47 +83,3 @@
     </div>
  </div>
 @endsection
-
-@push('script')
-   <script>
-   //   const MessageSection = new Vue({
-   //    el: "#MessageArea",
-   //      data: {
-   //       message:'',
-   //       allmessage:[],
-   //      },
-   //      mounted(){
-   //          this.getMessage();
-   //      },
-   //      methods:{
-   //          getMessage(id){
-   //          axios.get(`{{ route('user.get.message', ['id' => ':id']) }}`.replace(':id', id))
-   //                .then(function (res) {
-   //                   this.allmessage = res.data;
-   //                   console.log(this.allmessage)
-   //                })
-   //                console.log(this.allmessage)
-   //          },
-   //          async  sendMessage(id,sender_id){
-   //             const data = {
-   //              message : this.message,
-   //              sender_id:sender_id,
-   //              receiver_id:id
-   //          }
-   //          this.message = ''
-   //          try {
-   //             const response = await axios.post('{{ route('user.send.message') }}', data);
-
-   //             this.getMessage(id);
-               
-   //          } catch (error) {
-   //            console.error('Error making POST request:', error);
-   //          }
-   //          }
-
-
-   //      }
-   //   })
-
-   </script>
-@endpush

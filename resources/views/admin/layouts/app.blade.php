@@ -249,6 +249,10 @@
                     channel.bind('App\\Events\\UpdateAdminNotification', function (data) {
                         app.getNotifications();
                     });
+                },
+                removeHtmlTags(html) {
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                    return doc.body.textContent || "";
                 }
             }
         });

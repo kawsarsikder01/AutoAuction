@@ -36,7 +36,7 @@
                         </div>
                     </div>
                     @else
-                        <div class="col-lg-6 mb-3">
+                        <div class="col-lg-6 mb-3" >
                             <div class="card search-bar text-center br-4">
                                 <div class="card-header">
                                     <h5>@lang('Two Factor Authenticator')</h5>
@@ -55,7 +55,7 @@
                                     </div>
 
                                     <div class="form-group mx-auto text-center mt-3">
-                                        <a href="javascript:void(0)" class="cmn_btn w-100"
+                                        <a href="javascript:void(0)" class="btn-custom"
                                            data-bs-toggle="modal"
                                            data-bs-target="#enableModal">@lang('Enable Two Factor Authenticator')</a>
                                     </div>
@@ -65,14 +65,14 @@
                         </div>
                     @endif
                     <div class="col-lg-6 mb-3">
-                        <div class="card text-center search-bar">
+                        <div class="card text-center search-bar" id="googleAuthenticator">
                             <div class="card-header">
                                 <h5>@lang('Google Authenticator')</h5>
                             </div>
                             <div class="card-body">
                                 <h6 class="text-uppercase my-3">@lang('Use Google Authenticator to Scan the QR code  or use the code')</h6>
                                 <p class="p-2">@lang('Google Authenticator is a multifactor app for mobile devices. It generates timed codes used during the 2-step verification process. To use Google Authenticator, install the Google Authenticator application on your mobile device.')</p>
-                                <a class="cmn_btn mt-3"
+                                <a class="mt-3 btn-custom"
                                    href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en"
                                    target="_blank">@lang('DOWNLOAD APP')</a>
                             </div>
@@ -138,7 +138,20 @@
     </div>
 
 @endsection
-
+@push('style')
+    <style>
+        #googleAuthenticator{
+           min-height: 418px !important;
+            /*align-items: center;*/
+        }
+         #googleAuthenticator .card-body{
+             display: flex;
+             flex-direction: column;
+             justify-content: center;
+             align-items: center;
+          }
+    </style>
+@endpush
 
 
 @push('script')

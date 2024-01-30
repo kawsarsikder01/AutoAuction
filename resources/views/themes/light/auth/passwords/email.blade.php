@@ -1,27 +1,14 @@
 @extends($theme.'layouts.app')
 @section('content')
-<section class="banner-section" style=" padding: 250px 0 150px 0; position: relative;background: url({{asset($themeTrue.'img/breadcrumb/bugatti-wallpaperflare2.jpg')}});background-size: cover;background-repeat: no-repeat;background-position: center right; overflow: hidden;z-index: 1;">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <h2>Login</h2>
-            <nav aria-label="breadcrumb">
-               <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Login</li>
-               </ol>
-            </nav>
-         </div>
-      </div>
-   </div>
-</section>
+<x-banner-component :pagetitle="$pageSeo->page_title" :path="$pageSeo->breadcrumb_image" :driver="$pageSeo->breadcrumb_image_driver"/>
+{{-- @dd($pageSeo) --}}
 <section class="login-section">
     <div class="container">
        <div class="login-wrapper">
           <div class="row justify-content-center align-items-center">
              <div class="col-lg-6">
                 <div class="img-box d-none d-lg-block">
-                   <img src="{{asset($themeTrue.'/img//breadcrumb/2021-mercedes-benz-g63-amg-5k-0z.jpg')}}" alt="" class="img-fluid" />
+                   <img src="{{getFile($pageSeo->breadcrumb_image_driver,$pageSeo->breadcrumb_image)}}" alt="" class="img-fluid" />
                 </div>
              </div>
              <div class="col-lg-6">
@@ -56,6 +43,7 @@
        </div>
     </div>
  </section>
+ @include($theme . 'sections.footer')
 @endsection
 {{-- @error('email') is-invalid @enderror --}}
 {{-- value="{{ old('email') }}" --}}

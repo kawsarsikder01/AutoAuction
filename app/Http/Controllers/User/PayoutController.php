@@ -188,8 +188,10 @@ class PayoutController extends Controller
             if ($payoutMethod->code == 'flutterwave') {
                 return view(template() . 'user.payout.gateway.' . $payoutMethod->code, compact('payout', 'payoutMethod', 'basic'));
             } elseif ($payoutMethod->code == 'paystack') {
+
                 return view(template() . 'user.payout.gateway.' . $payoutMethod->code, compact('payout', 'payoutMethod', 'basic'));
             }
+
             return view(template() . 'user.payout.confirm', compact('payout', 'payoutMethod'));
 
         } elseif ($request->isMethod('post')) {
@@ -564,7 +566,7 @@ class PayoutController extends Controller
     public function userNotify($user, $payout)
     {
         $params = [
-            'sender' => $user->name,
+            'username' => $user->name,
             'amount' => currencyPosition($payout->amount),
             'transaction' => $payout->trx_id,
         ];

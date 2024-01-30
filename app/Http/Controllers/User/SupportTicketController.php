@@ -68,7 +68,7 @@ class SupportTicketController extends Controller
         }
 
         $msg = [
-            'user' => optional($ticket->user)->username,
+            'username' => optional($ticket->user)->username,
             'ticket_id' => $ticket->ticket
         ];
         $action = [

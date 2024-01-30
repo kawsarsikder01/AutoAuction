@@ -23,7 +23,7 @@
                    </tr>
                 </thead>
                 <tbody>
-                    @forelse($tickets as $key => $ticket)
+                    @foreach($tickets as $key => $ticket)
                     <tr>
                         <td data-label="@lang('Subject')">
                                 [{{ trans('Ticket#').$ticket->ticket }}] {{ $ticket->subject }}
@@ -44,27 +44,23 @@
                         </td>
                         <td data-label="@lang('Action')">
                             <div>
-                               <button
-                                  class="btn-action-icon bg-primary"
-                                  type="button"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#formModal"
-                               >
-                                  <i class="fad fa-info-circle"></i>
-                               </button>
-                               <a href="{{ route('user.ticket.view', $ticket->ticket) }}" class="btn-action-icon bg-success">
+                               <a href="{{ route('user.ticket.view', $ticket->ticket) }}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="View" class="btn-action-icon bg-success">
                                   <i class="fad fa-eye"></i>
                                </a>
                             </div>
                          </td>
                     </tr>
-                @empty
-                    <tr class="text-center">
-                        <td>{{__('No Data Found!')}}</td>
-                    </tr>
-                @endforelse
+                @endforeach
                 </tbody>
              </table>
+             @if (count($tickets) == 0)
+               <div class="text-center p-4">
+                  <img  class="dataTables-image mb-3 w-50"
+                        src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                        alt="Image Description">
+                  <p class="mb-0">@lang("No Data Found")</p>
+               </div>
+             @endif
 
              <!-- pagination -->
              <nav aria-label="Page navigation example">

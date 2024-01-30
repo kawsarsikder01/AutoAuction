@@ -253,6 +253,7 @@ trait Notify
         }
     }
 
+
     public function userFirebasePushNotification($user, $templateKey, $params = [], $action = null)
     {
         try {
@@ -262,12 +263,22 @@ trait Notify
             if (!$basic->push_notification) {
                 return false;
             }
+
+//            if (empty($user->push_key) || in_array($templateKey, $user->push_key) == false) {
+//                return false;
+//            }
+
+
             if ($notify['user_foreground'] == 0 && $notify['user_background'] == 0) {
                 return false;
             }
 
 
             $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('language_id', $user->language_id)->first();
+            if (!$templateObj) {
+                $templateObj = NotificationTemplate::where('template_key', $templateKey)->first();
+            }
+
             if (!$templateObj->status['push']) {
                 return false;
             }
@@ -279,6 +290,7 @@ trait Notify
                 }
             }
 
+
             $template = '';
             if ($templateObj) {
                 $template = $templateObj->push;
@@ -287,7 +299,11 @@ trait Notify
                 }
             }
 
+
             $users = FireBaseToken::where('tokenable_id', $user->id)->get();
+
+//            dd($user->id);
+
             foreach ($users as $user) {
                 $data = [
                     "to" => $user->token,

@@ -327,9 +327,6 @@
                                                            name="amount"
                                                            type="text" id="amount"
                                                            placeholder="Enter Amount" autocomplete="off"/>
-                                                    <button id="copyBtn" class="btn text-white">
-                                                        {{ $basic->base_currency }}
-                                                    </button>
                                                     <div class="invalid-feedback">
                                                         @error('amount') @lang($message) @enderror
                                                     </div>

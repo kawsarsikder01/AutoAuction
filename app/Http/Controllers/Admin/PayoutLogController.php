@@ -216,8 +216,6 @@ class PayoutLogController extends Controller
             'status' => ['required', Rule::in(['2', '3'])],
         ]);
         $payout = Payout::where('id', $request->id)->whereIn('status', [1])->with('user', 'method')->firstOrFail();
-
-
         if ($request->status == 3) {
             $this->cancelPayout($request->id, $request->feedback);
             return back()->with('success', "Payment Rejected.");
@@ -274,6 +272,8 @@ class PayoutLogController extends Controller
                 $payout->save();
             }
         }
+        $payout->user->balance = $payout->user->balance - ($payout->amount_in_base_currency + $payout->charge_in_base_currency);
+        $payout->user->update();
 
         return back()->with('success', 'Payment Confirmed');
     }
@@ -332,7 +332,7 @@ class PayoutLogController extends Controller
         $this->userPushNotification($payout->user, 'PAYOUT_APPROVED', $msg, $action);
         $this->userFirebasePushNotification('PAYOUT_APPROVED', $msg, $fireBaseAction);
         $this->sendMailSms($payout->user, 'PAYOUT_APPROVED', [
-            'gateway_name' => optional($payout->method)->name,
+            'gateway' => optional($payout->method)->name,
             'amount' => currencyPosition($payout->amount),
             'charge' => currencyPosition($payout->charge),
             'transaction' => $payout->trx_id,

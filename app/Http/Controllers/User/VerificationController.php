@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Helpers\GoogleAuthenticator;
 use App\Http\Controllers\Controller;
+use App\Models\Page;
 use App\Traits\Notify;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ class VerificationController extends Controller
 
     public function check()
     {
+
         $user = $this->user;
         if (!$user->status) {
             Auth::guard('web')->logout();
@@ -67,8 +69,8 @@ class VerificationController extends Controller
             $page_title = 'SMS Verification';
             return view(template() . 'auth.verification.sms', compact('user', 'page_title'));
         } elseif (!$user->two_fa_verify) {
-            $page_title = '2FA Code';
-            return view(template() . 'auth.verification.2stepSecurity', compact('user', 'page_title'));
+            $pageSeo = Page::where('name', 'verification code')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
+            return view(template() . 'auth.verification.2stepSecurity', compact('user', 'pageSeo'));
 
         }
         return redirect()->route('user.dashboard');

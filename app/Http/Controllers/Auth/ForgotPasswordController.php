@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Page;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -24,7 +25,8 @@ class ForgotPasswordController extends Controller
 
     public function showLinkRequestForm()
     {
-        return view(template().'auth.passwords.email');
+        $pageSeo = Page::where('name', 'forget password')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
+        return view(template().'auth.passwords.email',compact('pageSeo'));
     }
     public function sendResetLinkEmail(Request $request)
     {
@@ -64,7 +66,7 @@ class ForgotPasswordController extends Controller
     return $request->wantsJson()
      ? new JsonResponse(['message' => trans($response)], 200)
      : back()->with('status', trans($response));
-    
+
     }
     public function broker()
     {

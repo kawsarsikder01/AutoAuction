@@ -55,7 +55,7 @@ return [
                     'heading.*'     => 'required | max:50',
                     'sub_heading.*' => 'required | max:50',
                     'text.*'        => 'required | max:200',
-                    'image.*'       => 'required | image | max:3072 | mimes:jpg,jpeg,png'
+                    'image.*'       => 'nullable | image | max:3072 | mimes:jpg,jpeg,png'
                 ]
             ],
             'multiple' => [
@@ -64,7 +64,7 @@ return [
                     'text'    => 'textarea'
                 ],
                 'validation' => [
-                    'heading.*' => 'required | max:30',
+                    'heading.*' => 'required | max:50',
                     'text.*'    => 'required | max:200'
 
                 ]
@@ -96,7 +96,7 @@ return [
                 'name.*'  => 'required | max:30',
                 'title.*' => 'required | max:40',
                 'text.*'  => 'required | max:200',
-                'image.*' => 'required | max:3072 | image | mimes:jpg,jpeg,png'
+                'image.*' => 'nullable | max:3072 | image | mimes:jpg,jpeg,png'
             ]
         ]
     ],
@@ -134,7 +134,7 @@ return [
                 'image' => 'file'
             ],
             'validation' => [
-                'image.*' => 'required | image | max:3072 | mimes:jpg,jpeg,png'
+                'image.*' => 'nullable | image | max:3072 | mimes:jpg,jpeg,png'
             ]
         ]
     ],
@@ -152,7 +152,7 @@ return [
                 'title.*'               => 'required | max:50',
                 'description.*'         => 'required | max:2000',
                 'total_raised_amount.*' => 'required ',
-                'image.*'               => 'required | max:5000 | image | mimes:jpg,jpeg,png,avif'
+                'image.*'               => 'nullable | max:5000 | image | mimes:jpg,jpeg,png,avif'
             ]
         ],
         'multiple' => [
@@ -206,36 +206,6 @@ return [
             ]
         ]
     ],
-    'pricing' => [
-        'single' => [
-            'field_name' => [
-                'page_name' => 'text',
-                'heading'   => 'text',
-                'title'     => 'text',
-                'text'      => 'textarea'
-            ],
-            'validation' => [
-                'page_name.*' => 'required | max:50',
-                'heading.*'   => 'required | max:50',
-                'title.*'     => 'required | max:50',
-                'text.*'      => 'nullable | max:200'
-            ]
-        ],
-        'multiple' => [
-            'field_name' => [
-                'plan_name'   => 'text',
-                'plan_price'  => 'text',
-                'description' => 'textarea',
-                'options'     => 'text',
-            ],
-            'validation' => [
-                'plan_name.*'   => 'required | max:50',
-                'plan_price.*'  => 'required | max:50',
-                'description.*' => 'required |max:100',
-                'options.*'     => 'required | max:200',
-            ]
-        ]
-    ],
     'privacy_policy' => [
         'single' => [
             'field_name' => [
@@ -267,14 +237,16 @@ return [
                 'email'       => 'text',
                 'phone_no'    => 'number',
                 'address'     => 'text',
+                'map_url'     => 'text'
             ],
             'validation' => [
                 'heading.*'     => 'required | max:50',
                 'title.*'       => 'required | max:50',
-                'description.*' => 'required | max:200',
+                'description.*' => 'required | max:400',
                 'email.*'       => 'required | max:100',
                 'phone_no.*'    => 'required',
-                'address.*'     => 'required | max:100'
+                'address.*'     => 'required | max:100',
+                'map_url'       => 'required'
             ]
         ]
     ],
@@ -288,7 +260,7 @@ return [
                 'address'  => 'text',
             ],
             'validation' => [
-                'logo.*' => 'required | max:3072 | image | mimes:jpg,png,jpeg',
+                'logo.*' => 'nullable | max:3072 | image | mimes:jpg,png,jpeg',
                 'text.*' => 'nullable | max:250',
                 'email.*' => 'required  | max:80',
                 'phone_no.*' => 'required',
@@ -314,7 +286,21 @@ return [
             ],
             'validation' => [
                 'heading.*' => 'required|string|max:60',
-                'image' => 'required|image|mimes:jpg,jpeg,png|max:5000'
+                'image' => 'nullable|image|mimes:jpg,jpeg,png|max:5000'
+            ]
+        ]
+    ],
+    'plan' => [
+        'single' => [
+            'field_name' => [
+                'heading' => 'text',
+                'sub_heading' => 'text',
+                'short_text' => 'textarea'
+            ],
+            'validation' => [
+                'heading.*' => 'required|string|max:40',
+                'sub_heading.*' => 'required|string|max:40',
+                'short_text.*' => 'required|string|max:300'
             ]
         ]
     ],

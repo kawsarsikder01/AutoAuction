@@ -5,12 +5,12 @@
           <div class="col-12">
              <div class="section-header2" overlay-text="Working Process">
                 <div class="box">
-                   <h5>{{$how_works['single']['sub_heading']}}</h5>
+                   <h5>{{$how_works['single']['sub_heading']??''}}</h5>
                 </div>
                 <div class="box">
-                   <h2>{{$how_works['single']['heading']}}</h2>
+                   <h2>{{$how_works['single']['heading']??''}}</h2>
                    <p>
-                     {{$how_works['single']['text']}}
+                     {!! $how_works['single']['text']??'' !!}
                    </p>
                 </div>
              </div>
@@ -31,7 +31,7 @@
                      <h3 class="index"> {{$count + 1}}.</h3>
                      <h4>{{$item['heading']}}</h4>
                      <p>
-                       {{$item['text']}}
+                       {!! $item['text'] !!}
                      </p>
                   </div>
                </div>
@@ -42,7 +42,7 @@
             @endforeach
           </div>
           <div class="col-lg-6 text-center">
-             <img src="{{getFile($how_works['single']['media']->image->driver,$how_works['single']['media']->image->path)}}" alt="" class="img-fluid" />
+              <img src="{{$how_works['single'] && $how_works['single']['media']?getFile($how_works['single']['media']->image->driver,$how_works['single']['media']->image->path):''}}" alt="" class="img-fluid" />
           </div>
           <div class="col-lg-3">
             @php
@@ -55,7 +55,7 @@
                      <h3 class="index">{{$count + 1}}.</h3>
                      <h4>{{$item['heading']}}</h4>
                      <p>
-                        {{$item['text']}}
+                        {!! $item['text'] !!}
                      </p>
                   </div>
                </div>

@@ -243,11 +243,11 @@ class ContentController extends Controller
         foreach ($field_name as $name => $type) {
             $description[$name] = $inputData[$name][$language];
         }
-
+//dd($description);
         if ($language != 0) {
             $contentDetails = ContentDetails::updateOrCreate(
                 ['content_id' => $id, 'language_id' => $language],
-                ['content_id' => $id, 'language_id' => $language, 'description' => $description ?: null]
+                ['content_id' => $id, 'language_id' => $language, 'description' => $description ?? null]
             );
         }
 

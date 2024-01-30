@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AuctionTimeCheck;
 use App\Console\Commands\PayoutCryptoCurrencyUpdateCron;
 use App\Console\Commands\PayoutCurrencyUpdateCron;
 use Illuminate\Console\Scheduling\Schedule;
@@ -14,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         PayoutCurrencyUpdateCron::class,
         PayoutCryptoCurrencyUpdateCron::class,
+        AuctionTimeCheck::class,
     ];
 
     /**
@@ -22,6 +24,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('auction-time-check')->everyFiveMinutes();
     }
 
     /**
@@ -29,7 +32,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

@@ -8,7 +8,7 @@
              <div class="section_bottom">
 
                 @foreach (collect($privacy_policy['multiple'])->toArray() as $item)
-                    <h4>{{$item['heading']}}</h4>
+                    <h4>{{$item['heading']??''}}</h4>
                     <p>
                     {!! $item['text'] !!}
                     </p>

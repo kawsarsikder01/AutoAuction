@@ -373,7 +373,7 @@ class PaymentLogController extends Controller
             $this->userPushNotification($data->user, 'PAYMENT_APPROVED', $msg, $action);
             $this->userFirebasePushNotification('PAYMENT_APPROVED', $msg, $fireBaseAction);
             $this->sendMailSms($data->user, 'PAYMENT_APPROVED', [
-                'gateway_name' => optional($data->gateway)->name,
+                'gateway' => optional($data->gateway)->name,
                 'amount' => currencyPosition($data->amount),
                 'charge' => currencyPosition($data->charge),
                 'transaction' => $data->trx_id,

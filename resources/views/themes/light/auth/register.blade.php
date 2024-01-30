@@ -104,7 +104,7 @@
         </div>
      </section>
     <!-- End Contact Section -->
-@include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 @endsection
 
 @push('js-lib')

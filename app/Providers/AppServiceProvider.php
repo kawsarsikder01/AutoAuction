@@ -45,27 +45,52 @@ class AppServiceProvider extends ServiceProvider
             $data['theme'] . 'partials.navbar',
             $data['theme'] . 'sections.footer',
             $data['theme'] . 'auth.login',
-            $data['theme'] . 'partials.footer',
             $data['theme'] . 'partials.searchItem',
-            $data['theme'] . 'page'
+            $data['theme'] . 'page',
+            $data['theme'] . 'plan'
         ], function ($view) {
+
+            $languages = Language::orderBy('name')->where('status', 1)->get();
             $headerMenu = ManageMenu::where('menu_section', 'header')->first();
+
             $view->with('headerMenu', $headerMenu);
 
             $footerMenu = ManageMenu::where('menu_section', 'footer')->first();
-            $Staticfooter = Content::with('contentDetails')->where('name','footer')->get();
-            $allLanguage = Language::where('status',1)->get();
-            $loginContent = ContentDetails::with('content')->whereHas('content',function ($query){
-                $query->where('name','login');
+            $Staticfooter = Content::with('contentDetails')->where('name', 'footer')->get();
+            $plan = Content::with('contentDetails')->where('name', 'plan')->get();
+
+            $loginContent = ContentDetails::with('content')->whereHas('content', function ($query) {
+                $query->where('name', 'login');
             })->get();
-            $data['categories'] =  CarCategory::get();
-            $data['brands'] =  CarBrand::get();
+            $data['categories'] = CarCategory::get();
+            $data['brands'] = CarBrand::get();
             $view->with('loginContent', $loginContent);
             $view->with('Staticfooter', $Staticfooter);
-            $view->with('allLanguage', $allLanguage);
+            $view->with('languages', $languages);
             $view->with('footerMenu', $footerMenu);
             $view->with('categories', $data['categories']);
             $view->with('brands', $data['brands']);
+            $view->with('plan', $plan);
+
+            $footerMenu = ManageMenu::where('menu_section', 'footer')->first();
+            $view->with('footerMenu', $footerMenu);
+
+            $section = 'footer';
+            $footer_section1 = ContentDetails::with('content')
+                ->whereHas('content', function ($query) use ($section) {
+                    $query->where('name', $section);
+                })
+                ->get();
+            $singleContent = $footer_section1->where('content.name', $section)->where('content.type', 'single')->first() ?? [];
+            $multipleContents = $footer_section1->where('content.name', $section)->where('content.type', 'multiple')->values()->map(function ($multipleContentData) {
+                return collect($multipleContentData->description)->merge($multipleContentData->content->only('media'));
+            });
+            $data = [
+                'single' => $singleContent ? collect($singleContent->description ?? [])->merge($singleContent->content->only('media')) : [],
+                'multiple' => $multipleContents
+            ];
+
+            $view->with('footer', $data);
 
         });
         if (basicControl()->force_ssl == 1) {

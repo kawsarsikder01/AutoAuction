@@ -33,7 +33,11 @@ class BidderController extends Controller
         $user = Auth::user();
         $data['categories'] =  CarCategory::get();
         $data['brands'] =  CarBrand::get();
-        $biddingHistorys =BiddingHistory::with('vehicle')->where('user_id',$user->id)->orderBy('created_at', 'DESC')->paginate(basicControl()->paginate);
+        $biddingHistorys =BiddingHistory::with('vehicle')
+                        ->where('user_id',$user->id)
+                        ->orderBy('created_at', 'DESC')
+                        ->paginate(basicControl()->paginate);
+
         return view(template().'biddingHistory',compact('biddingHistorys'),$data);
     }
 

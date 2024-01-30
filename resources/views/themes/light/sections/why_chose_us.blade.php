@@ -5,12 +5,12 @@
           <div class="col-12">
              <div class="section-header2" overlay-text="Working Process">
                 <div class="box">
-                   <h5>{{$why_chose_us['single']['heading']}}</h5>
+                   <h5>{{$why_chose_us['single']['heading']??''}}</h5>
                 </div>
                 <div class="box">
-                   <h2>{{$why_chose_us['single']['title']}}</h2>
+                   <h2>{{$why_chose_us['single']['title']??''}}</h2>
                    <p>
-                     {{$why_chose_us['single']['text']}}
+                     {{$why_chose_us['single']['text']??''}}
                    </p>
                 </div>
              </div>
@@ -33,7 +33,7 @@
             </div>
          </div>
           @endforeach
-          
+
        </div>
     </div>
  </section>

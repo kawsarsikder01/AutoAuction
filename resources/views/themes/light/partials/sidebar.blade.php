@@ -35,17 +35,17 @@
              role="button"
              aria-expanded="false"
              aria-controls="collapseExample">
-             <i class="fal fa-wallet"></i> Fund
+             <i class="fal fa-wallet"></i> @lang('Fund')
          </a>
          <div class="collapse dropdown-collapsible" id="dropdownCollapsible">
              <ul>
                  <li>
 
-                     <a class="{{ isMenuActive('user.add.fund') }}" href="{{ route('user.add.fund') }}"><i class="fal fa-th-large"></i>Add Fund</a>
+                     <a class="{{ isMenuActive('user.add.fund') }}" href="{{ route('user.add.fund') }}"><i class="fal fa-th-large"></i>@lang('Add Fund')</a>
                  </li>
                  <li>
 
-                     <a class="{{ isMenuActive("user.fund.index") }}" href="{{ route('user.fund.index') }}"><i class="fal fa-th-large"></i>List</a>
+                     <a class="{{ isMenuActive("user.fund.index") }}" href="{{ route('user.fund.index') }}"><i class="fal fa-th-large"></i>@lang('List')</a>
                  </li>
              </ul>
          </div>
@@ -57,15 +57,15 @@
           role="button"
           aria-expanded="false"
           aria-controls="collapseExample">
-          <i class="fa-light fa-money-bill-wave"></i> Payout
+          <i class="fa-light fa-money-bill-wave"></i> @lang('Payout')
       </a>
       <div class="collapse dropdown-collapsible" id="dropdownCollapsible2">
           <ul class="">
               <li>
-                  <a class="{{ isMenuActive('user.payout') }}" href="{{ route('user.payout') }}"><i class="fal fa-th-large"></i>Payout</a>
+                  <a class="{{ isMenuActive('user.payout') }}" href="{{ route('user.payout') }}"><i class="fal fa-th-large"></i>@lang('Payout')</a>
               </li>
               <li>
-                  <a class="{{ isMenuActive('user.payout.index') }}" href="{{ route("user.payout.index") }}"><i class="fal fa-th-large"></i>List</a>
+                  <a class="{{ isMenuActive('user.payout.index') }}" href="{{ route("user.payout.index") }}"><i class="fal fa-th-large"></i>@lang('List')</a>
               </li>
           </ul>
       </div>
@@ -74,7 +74,7 @@
          <a href="{{route('user.ticket.list')}}"><i class="fa-regular fa-paper-plane"></i>@lang("Support Ticket")</a>
       </li>
         <li>
-            <a href="{{route('user.twostep.security')}}"><i class="fal fa-flag-alt"></i></i>@lang("2FA Security")</a>
+            <a href="{{route('user.twostep.security')}}"><i class="fal fa-lock"></i></i>@lang("2FA Security")</a>
         </li>
        <li>
          <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form1').submit();"> <i class="fal fa-sign-out-alt"></i>@lang('Sign Out') </a>

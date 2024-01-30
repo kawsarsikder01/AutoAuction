@@ -39,10 +39,10 @@ class SearchingController extends Controller
                    return   $q2->where('sold_status', $search['status']);
                 });
             })
-            ->when(isset($search['status']) && $search['status'] == 0, function ($q) use ($search){
+            ->when(isset($search['status']) && $search['status'] == 2, function ($q) use ($search){
 
                 return $q->whereHas('details', function ($q2) use($search){
-                    return   $q2->where('sold_status', $search['status']);
+                    return   $q2->where('sold_status', 0);
                 });
             })
             ->when(!empty($vehiclePriceRange), function ($q) use ($vehiclePriceRange) {
@@ -77,18 +77,18 @@ class SearchingController extends Controller
                     });
                 });
             })
-            ->when(isset($search->sold_status) && $search->sold_status == 0 ,function ($q1)use($search){
+            ->when(isset($search->sold_status) && $search->sold_status == 2 ,function ($q1)use($search){
                 return $q1->whereHas('vehicle',function ($q2)use($search){
                     return $q2->with('details')->whereHas('details',function ($q3)use($search){
-                        return $q3->where('sold_status', $search->sold_status);
+                        return $q3->where('sold_status', 0);
                     });
                 });
             })
             ->when(isset($search->win_status) && $search->win_status == 1,function ($query)use($search){
                return $query->where('wining_status',$search->win_status);
             })
-            ->when(isset($search->win_status) && $search->win_status == 0,function ($query)use($search){
-                return $query->where('wining_status',$search->win_status);
+            ->when(isset($search->win_status) && $search->win_status == 2,function ($query)use($search){
+                return $query->where('wining_status',0);
             })
 
             ->when(!empty($search->category),function ($query)use($search){
@@ -135,14 +135,14 @@ class SearchingController extends Controller
                     return  $q2->where('sold_status', $search->sold_status);
                 });
             })
-            ->when(isset($search->sold_status) && $search->sold_status == 0, function ($q) use ($search){
+            ->when(isset($search->sold_status) && $search->sold_status == 2, function ($q) use ($search){
 
                 return $q->whereHas('details', function ($q2) use($search){
-                    return  $q2->where('sold_status', $search->sold_status);
+                    return  $q2->where('sold_status', 0);
                 });
             })
-            ->when(isset($search->release_status) && $search->release_status == 0 ,function ($query)use($search){
-               return $query->where('release_status',$search->release_status);
+            ->when(isset($search->release_status) && $search->release_status == 3 ,function ($query)use($search){
+               return $query->where('release_status',0);
             })
             ->when(isset($search->release_status) && $search->release_status == 1 ,function ($query)use($search){
                 return $query->where('release_status',$search->release_status);

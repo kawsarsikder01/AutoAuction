@@ -24,12 +24,12 @@ class BlogController extends Controller
     {
         $defaultLanguage = Language::where('default_status', true)->first();
         $data['languages'] = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
-        $data['blogs'] = Blog::with('category', 'details')->orderBy('id', 'desc')
+        $blogs = Blog::with('category', 'details')->orderBy('id', 'desc')
             ->whereHas('details', function ($query) use($defaultLanguage) {
                 $query->where('language_id',  $defaultLanguage->id);
             })
-            ->paginate(10);
-        return view('admin.blog_management.blog.index',$data,compact('defaultLanguage'));
+            ->paginate(basicControl()->paginate);
+        return view('admin.blog_management.blog.index',$data,compact('defaultLanguage','blogs'));
     }
 
     /**
@@ -129,8 +129,8 @@ class BlogController extends Controller
                 Rule::notIn(['login', 'register', 'signin', 'signup', 'sign-in', 'sign-up'])
             ],
             'description' => 'nullable|string|min:3',
-            'description_image' => 'nullable|mimes:png,jpg,jpeg|max:50000',
-            'short_description' => 'required | string | max:250'
+            'description_image' => 'nullable|mimes:png,jpg,jpeg|max:5000',
+            'short_description' => 'required | string | max:1500'
         ]);
 
         try {
@@ -155,6 +155,7 @@ class BlogController extends Controller
                 'breadcrumb_image' => $breadcrumbImage['path'] ?? $blog->breadcrumb_image,
                 'breadcrumb_image_driver' => $breadcrumbImage['driver'] ?? $blog->breadcrumb_image_driver,
                 'breadcrumb_status' => $request->breadcrumb_status,
+                'status' => $request->status?1:0
             ]);
 
             throw_if(!$response, 'Something went wrong while storing blog data. Please try again later.');
@@ -250,47 +251,22 @@ class BlogController extends Controller
 
         return back()->with('success', 'Seo has been updated.');
     }
-    public function getBlogs()
-    {
-        $defaultLanguage = Language::where('default_status', true)->first();
-        $languages = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
-        $blogs = Blog::with('category', 'details')->orderBy('id', 'desc')
-            ->whereHas('details', function ($query) use($defaultLanguage) {
-                $query->where('language_id',  $defaultLanguage->id);
-            })
-            ->get();
-       return DataTables::of($blogs)
-           ->addColumn('no',function ($blog){
-               static $counter = 0;
-               return ++$counter;
+   public function filterBlog(Request $request)
+   {
+       $blogs = Blog::with('details')
+           ->when(!empty($request->title),function ($query)use($request){
+               return $query->whereHas('details',function ($subQuery)use($request){
+                   return $subQuery->where('title','LIKE',"%$request->title%");
+               });
            })
-           ->addColumn('title',function ($blog){
-               return optional($blog->details)->title;
+           ->when(isset($request->status) && $request->status == 1,function ($query)use($request){
+               return $query->where('status',$request->status);
            })
-           ->addColumn('status',function ($blog){
-               return "<span style='font-size: 12px;' class='badge " . ($blog->status == 1 ? 'bg-soft-success text-success' : 'bg-soft-danger text-danger') . "'>"
-                   . "<span class='legend-indicator bg-" . ($blog->status == 1 ? 'success' : 'danger') . "'></span>"
-                   . ($blog->status == 1 ? 'Active' : 'Inactive') . "</span></td>";
-
-           })
-           ->addColumn('language',function ($blog) use($languages){
-               if ($blog->type !== 2){
-                    return "";
-               }else{
-                   return "N/A";
-               }
-           })
-           ->addColumn('action',function ($blog){
-               return "<div class='btn-group' role='group'>
-                      <a href = '' class='btn btn-white btn-sm edit_user_btn'>
-                        <i class='bi bi-trash'></i> ".trans('Delete')."
-                      </a>
-                  </div>
-                  ";
-           })
-           ->rawColumns(['no', 'title', 'status','language','action'])
-           ->make(true);
-           ;
-
-    }
+           ->when(isset($request->status) && $request->status == 0,function ($query)use($request){
+               return $query->where('status',$request->status);
+           })->paginate(basicControl()->paginate);
+       $defaultLanguage = Language::where('default_status', true)->first();
+       $data['languages'] = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
+       return view('admin.blog_management.blog.index',$data,compact('defaultLanguage','blogs'));
+   }
 }

@@ -1,7 +1,6 @@
 @extends($theme.'layouts.user')
 @section('title',trans('Profile'))
 @section('content')
-{{--@dd($errors->all())--}}
 <div class="container-fluid">
    <div class="main row">
       <div class="col-12">

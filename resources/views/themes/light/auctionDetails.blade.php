@@ -39,26 +39,22 @@
                  <div class="col-lg-6">
                     <div class="auction-content-area">
                        <div class="btn-group" id="React">
-                        @if (checkReact($vehicle->reacts))
-                        <a href="{{route('unsubmit.react',$vehicle->id)}}"><button class="react"><i class="fa-solid fa-heart"></i></i>{{count($vehicle->reacts)}}</button></a>
-                           @else
-                            <a href="{{route('submit.react',$vehicle->id)}}"><button class="react"><i class="fa-regular fa-heart"></i>{{count($vehicle->reacts)}}</button></a>
-                        @endif
-
-
+                             <button class="react" id="heartReact" data-ip = {{request()->ip()}}></button>
                           <div class="">
-                           @if(Auth::guard('admin')->user())
-                              <form action="{{route('admin.delete.vehicle')}}" method="POST">
-                                 @csrf
-                                 <input type="hidden" name="id" value="{{$vehicle->id}}">
-                                 <button type="submit" class="react"><i class="fa-regular fa-trash-can"></i>Delete</button>
-                              </form>
-                           @else
-                           <button class="react"><i class="fal fa-share-alt" aria-hidden="true"></i>Share</button>
-                           @if (Auth::user())
-                              <button class="react" id="report"    data-bs-toggle="modal" data-bs-target="#ReportModal"><i class="fal fa-flag-alt" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report"></i><span data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report">Report</span></button>
-                           @endif
-                          @endif
+                               @if(Auth::guard('admin')->user())
+                                  <form action="{{route('admin.delete.vehicle')}}" method="POST">
+                                     @csrf
+                                     <input type="hidden" name="id" value="{{$vehicle->id}}">
+                                     <button type="submit" class="react"><i class="fa-regular fa-trash-can"></i>@lang('Delete')</button>
+                                  </form>
+                               @else
+                               <button class="react"><i class="fal fa-share-alt" aria-hidden="true"></i>@lang('Share')</button>
+                               @if (Auth::user() && $vehicle->user_id != Auth::user()->id)
+                                   @if(checkReport(null,$vehicle) ==  false)
+                                          <button class="react" id="report"    data-bs-toggle="modal" data-bs-target="#ReportModal"><i class="fal fa-flag-alt" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report"></i><span data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report">@lang('Report')</span></button>
+                                   @endif
+                               @endif
+                              @endif
                           </div>
                        </div>
                        <h3>{{$vehicle->details->title}}</h3>
@@ -67,30 +63,30 @@
                        </p>
                        @if($vehicle->details->sold_status == 0)
                             @if ($vehicle->biddingHistory->max('bid_amount'))
-                                <h4>Current Bid: {{number_format($vehicle->biddingHistory->max('bid_amount'), 2, '.', ',')}}</h4>
+                                <h4>@lang('Current Bid') {{number_format($vehicle->biddingHistory->max('bid_amount'), 2, '.', ',')}}</h4>
                             @else
-                                <h4>Vehicle Initial Price: {{ number_format($vehicle->details->price, 2, '.', ',') }} {{basicControl()->currency_symbol}}</h4>
+                                <h4>@lang('Vehicle Initial Price') {{ number_format($vehicle->details->price, 2, '.', ',') }} {{basicControl()->currency_symbol}}</h4>
                             @endif
                             @if (!Auth::guard('admin')->user())
                                 @if (Auth::user())
                                     @if($vehicle->user_id == Auth::user()->id)
                                         <div class="card-box">
-                                            <label>You Can Not Bid This Vehicle</label>
+                                            <label>@lang('You Can Not Bid This Vehicle')</label>
                                         </div>
                                         @else
                                             @if($vehicle->details->auction_ending_date > today()->format('Y-m-d'))
                                             <div class="card-box">
-                                                <h4>Bid Now</h4>
+                                                <h4>@lang('Bid Now')</h4>
                                                 @if ($vehicle->biddingHistory->max('bid_amount'))
-                                                    <pre> <h5>Bid Amount: Minimum Bid   {{number_format( $vehicle->biddingHistory->max('bid_amount') + 1, 2, '.', ',')}} {{basicControl()->currency_symbol}}</h5></pre>
+                                                    <pre> <h5>@lang('Bid Amount: Minimum Bid')   {{number_format( $vehicle->biddingHistory->max('bid_amount') + 1, 2, '.', ',')}} {{basicControl()->currency_symbol}}</h5></pre>
                                                 @else
-                                                    <pre> <h5>Bid Amount: Minimum Bid   {{number_format( $vehicle->details->price, 2, '.', ',')}} {{basicControl()->currency_symbol}}</h5></pre>
+                                                    <pre> <h5>@lang('Bid Amount: Minimum Bid')   {{number_format( $vehicle->details->price, 2, '.', ',')}} {{basicControl()->currency_symbol}}</h5></pre>
                                                 @endif
                                                     <form action="{{route('user.bid',$vehicle->id)}}" method="POST">
                                                         @csrf
                                                         <div class="input-group">
                                                             <input type="number" name="bid_amount" class="form-control" placeholder="Enter amount" />
-                                                            <button type="submit" class="btn-custom">bid now</button>
+                                                            <button type="submit" class="btn-custom">@lang('bid now')</button>
                                                         </div>
                                                         @error("bid_amount")
                                                             <span class="invalid-feedback d-block" role="alert">
@@ -102,7 +98,7 @@
                                             </div>
                                             @else
                                                 <div class="card-box">
-                                                    Auction End
+                                                    @lang('Auction End')
                                                 </div>
                                             @endif
                                     @endif
@@ -110,7 +106,7 @@
                                     <div class="card-box">
 
                                         <div class="input-group">
-                                            <label for=""> You Can Not Bid</label>
+                                            <label for=""> @lang('You Can Not Bid')</label>
                                         </div>
                                     </div>
                                 @endif
@@ -119,7 +115,7 @@
                             <div class="card-box">
 
                                 <div class="input-group">
-                                    <label for=""> This vehicle is sold</label>
+                                    <label for=""> @lang('This vehicle is sold')</label>
                                 </div>
                             </div>
                        @endif
@@ -140,7 +136,7 @@
                              aria-controls="home-tab-pane"
                              aria-selected="true"
                           >
-                             Description
+                             @lang('Description')
                           </button>
                        </li>
                        <li class="nav-item" role="presentation">
@@ -154,7 +150,7 @@
                              aria-controls="profile-tab-pane"
                              aria-selected="false"
                           >
-                             Specification
+                             @lang('Specification')
                           </button>
                        </li>
                        <li class="nav-item" role="presentation">
@@ -168,7 +164,7 @@
                              aria-controls="contact-tab-pane"
                              aria-selected="false"
                           >
-                             Biding History
+                             @lang('Biding History')
                           </button>
                        </li>
                     </ul>
@@ -191,35 +187,35 @@
                        >
                           <div class="row g-4" id="car_specification">
                              <div class="col-md-6">
-                                <h4>Vehicle Type</h4>
+                                <h4>@lang('Vehicle Type')</h4>
                                    <li class="list-unstyled">{{optional($vehicle->details)->vehicle_type}}</li>
                              </div>
                              <div class="col-md-6">
-                                <h4>Dimensions</h4>
+                                <h4>@lang('Dimensions')</h4>
                                    {!!optional($vehicle->details)->dimension!!}
                              </div>
                              <div class="col-md-6">
-                                <h4>C/D Test Results</h4>
+                                <h4>@lang("C/D Test Results")</h4>
                                 {!!optional($vehicle->details)->test_result!!}
                              </div>
                              <div class="col-md-6">
-                                <h4>Engine Type</h4>
+                                <h4>@lang('Engine Type')</h4>
                                <li class="list-unstyled"> {!!optional($vehicle->details)->engine_type!!}</li>
                              </div>
                              <div class="col-md-6">
-                                <h4>Displacement</h4>
+                                <h4>@lang('Displacement')</h4>
                                 <li class="list-unstyled">{!!optional($vehicle->details)->displacement!!}</li>
                              </div>
                              <div class="col-md-6">
-                                <h4>Power</h4>
+                                <h4>@lang('Power')</h4>
                                 <li class="list-unstyled">{!!optional($vehicle->details)->power!!}</li>
                              </div>
                              <div class="col-md-6">
-                                <h4>Torque</h4>
+                                <h4>@lang('Torque')</h4>
                                 <li class="list-unstyled">{!!optional($vehicle->details)->torque!!}</li>
                              </div>
                              <div class="col-md-6">
-                                <h4>Transmission</h4>
+                                <h4>@lang('Transmission')</h4>
                                 <li class="list-unstyled">{!!optional($vehicle->details)->transmission!!}</li>
                              </div>
                           </div>
@@ -247,29 +243,29 @@
                                    @if (Auth::user()&&($maxBid->vehicle->user_id == Auth::user()->id && $item->bid_amount == $maxBid->bid_amount ))
                                       @if($maxBid->vehicle->release_status == 0)
                                              <button class="btn-custom" id="dataRoute" data-message="Are You Sure You Want To Release Your Vehicle ?" data-route="{{route('user.release.property')}}" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
-                                                 Release Your Vehicle
+                                                 @lang('Release Your Vehicle')
                                              </button>
                                          @elseif($maxBid->vehicle->release_status == 1)
                                              <button class="btn-custom"  type="button" disabled>
-                                                 Already Released
+                                                @lang("Already Released")
                                              </button>
                                          @elseif($maxBid->vehicle->release_status == 2)
                                              <button class="btn-custom"  type="button" disabled>
-                                                 Canceled
+                                                 @lang('Canceled')
                                              </button>
                                       @endif
                                    @elseif (Auth::user()&&($maxBid->user_id == Auth::user()->id && $item->bid_amount == $maxBid->bid_amount))
                                          @if($maxBid->vehicle->payment_status == 0)
                                              <button class="btn-custom" id="dataRoute" data-message="Are You Sure You Want To Pay ?" data-route="{{route('user.confirm.payment')}}" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
-                                                 Pay Now
+                                                 @lang('Pay Now')
                                              </button>
                                          @elseif($maxBid->vehicle->payment_status == 1)
                                              <button class="btn-custom"  type="button" disabled>
-                                                 Paid
+                                                 @lang('Paid')
                                              </button>
                                          @elseif($maxBid->vehicle->payment_status == 2)
                                              <button class="btn-custom"  type="button" disabled>
-                                                 Payment Cancel
+                                                 @lang('Payment Cancel')
                                              </button>
                                          @endif
                                    @else
@@ -296,15 +292,14 @@
                  @if (Auth::user() && Auth::user()->id != $vehicle->user_id)
                  <div class="col-lg-4">
                   <div class="inquiry-form-box">
-                     <h4>Get more info</h4>
+                     <h4>@lang('Get more info')</h4>
                      <form action="{{route('user.get.info')}}" method="POST">
                       @csrf
                       <input type="hidden" name="vehicle_id" value="{{$vehicle->id}}">
                         <div class="row g-4">
                            <div class="col-md-12">
-                              <div class="form-floating">
-                                 <input type="text" class="form-control" name="fullname" id="floatingName" placeholder="Name" />
-                                 <label for="floatingName">Full Name</label>
+                              <div class="form-input">
+                                 <input type="text" name="fullname" class="form-control" id="floatingName" placeholder="Name" />
                               </div>
                            </div>
                            @error("fullname")
@@ -313,15 +308,15 @@
                               </span>
                            @enderror
                            <div class="col-md-12">
-                              <div class="form-floating">
+                              <div class="form-input">
                                  <input
                                     type="email"
                                     name="email"
                                     class="form-control"
                                     id="floatingInput"
-                                    placeholder="name@example.com"
+                                    placeholder="Email Address"
                                  />
-                                 <label for="floatingInput">Email address</label>
+
                               </div>
                            </div>
                            @error("email")
@@ -330,9 +325,9 @@
                               </span>
                            @enderror
                            <div class="col-md-12">
-                            <div class="form-floating">
+                            <div class="form-input">
                                <input type="text" class="form-control" name="subject" id="floatingSubject" placeholder="Subject" />
-                               <label for="floatingSubject">Subject</label>
+
                             </div>
                          </div>
                            @error("subject")
@@ -341,14 +336,13 @@
                               </span>
                            @enderror
                            <div class="col-md-12">
-                              <div class="form-floating">
+                              <div class="form-input">
                                  <textarea
                                     class="form-control"
                                     name="comment"
-                                    placeholder="Leave a comment here"
+                                    placeholder="Comments"
                                     id="floatingTextarea"
                                  ></textarea>
-                                 <label for="floatingTextarea">Comments</label>
                               </div>
                            </div>
                            @error("comment")
@@ -357,7 +351,7 @@
                               </span>
                            @enderror
                            <div class="input-box col-12">
-                              <button class="btn-custom"><span>Submit </span></button>
+                              <button class="btn-custom"><span>@lang('Submit') </span></button>
                            </div>
                         </div>
                      </form>
@@ -368,7 +362,7 @@
            </div>
         </div>
      </section>
-     @include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 
 
 <!-- Modal -->
@@ -386,8 +380,8 @@
                    <span id="setMessage"></span>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn-custom">Confirm</button>
+                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">@lang('Close')</button>
+                    <button type="submit" class="btn-custom">@lang('Confirm')</button>
                 </div>
             </form>
         </div>
@@ -398,7 +392,7 @@
    <div class="modal-dialog modal-dialog-centered">
        <div class="modal-content">
            <div class="modal-header">
-               <h1 class="modal-title text-black fs-5" id="staticBackdropLabel">Report</h1>
+               <h1 class="modal-title text-black fs-5" id="staticBackdropLabel">@lang('Report')</h1>
                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
            </div>
            <form action="{{route('user.store.report',[Auth::user()->id??0,$vehicle->user_id,$vehicle->id])}}" id="FormRoute" method="POST">
@@ -435,8 +429,8 @@
                     </div>
                </div>
                <div class="modal-footer">
-                   <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">Close</button>
-                   <button type="submit" class="btn-custom">Confirm</button>
+                   <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">@lang('Close')</button>
+                   <button type="submit" class="btn-custom">@lang('Confirm')</button>
                </div>
            </form>
        </div>
@@ -485,6 +479,68 @@
             $('#FormRoute').attr('action', $('#dataRoute').data('route'));
            $('#setMessage').text($('#dataRoute').data('message'));
          }
+            let id = @json($vehicle->id);
+            let ip = $('#heartReact').data('ip');
+            let getReact = function (){
+                $.ajax({
+                    url: "{{ route('get.react', ['id' => 'id']) }}".replace('id', id),
+                    method: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        let length = data.length;
+                        let icon = 0;
+                        for(i = 0; i < length ; ++i){
+                            if(data[i].ip_address === ip){
+                                $('#heartReact').empty();
+                                $('#heartReact').append(`<i class='fa-solid fa-heart' id='unsubmit'></i><span>${length}<span>`);
+                                icon = 1;
+                                break;
+                            }
+                        }
+                        if(icon == 0){
+                            $('#heartReact').empty();
+                            $('#heartReact').prepend(`<i class='fa-regular fa-heart' id='submit'></i><span>${length}<span>`);
+                        }
+                        $('#countReact').text(length);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        // Handle errors here
+                        console.error("AJAX Error: " + textStatus, errorThrown);
+                    }
+                });
+            }
+            getReact();
+            $('#heartReact').on('click',function (){
+                var icon = $('#heartReact').find('#submit');
+                   if(icon.length == 1){
+                       $.ajax({
+                           url: "{{ route('submit.react', ['id' => 'id']) }}".replace('id', id),
+                           method: "GET",
+                           dataType: "json",
+                           success: function(data) {
+                               getReact();
+                           },
+                           error: function(jqXHR, textStatus, errorThrown) {
+                               // Handle errors here
+                               console.error("AJAX Error: " + textStatus, errorThrown);
+                           }
+                       });
+                   }else{
+                       $.ajax({
+                           url: "{{ route('unsubmit.react', ['id' => 'id']) }}".replace('id', id),
+                           method: "GET",
+                           dataType: "json",
+                           success: function(data) {
+                               getReact();
+                               console.log(data);
+                           },
+                           error: function(jqXHR, textStatus, errorThrown) {
+                               // Handle errors here
+                               console.error("AJAX Error: " + textStatus, errorThrown);
+                           }
+                       });
+                   }
+            })
         })
 
     </script>

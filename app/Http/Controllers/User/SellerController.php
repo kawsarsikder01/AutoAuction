@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\BiddingHistory;
+use App\Models\Report;
 use App\Traits\Notify;
 use Carbon\Carbon;
 use Exception;
@@ -249,6 +250,10 @@ class SellerController extends Controller
                 return back()->with('warning','You Can not Delete This Vehicle');
             }
         }
+        if (!$vehicle->biddingHistory->first()){
+            $vehicle->user->total_listed_car = $vehicle->user->total_listed_car - 1;
+            $vehicle->user->update();
+        }
         if($vehicle->user_id != Auth::user()->id){
             return abort(404);
         }
@@ -300,8 +305,25 @@ class SellerController extends Controller
     {
         $vehicle = Vehicle::find($id);
         $historys = $vehicle->biddingHistory;
+        $max_bid = BiddingHistory::where('vehicle_id',$vehicle->id)->where('bid_amount',$historys->max('bid_amount'))->first();
+
         $vehicleTitle = $vehicle->details->title;
-        return view(template().'vehicleBiddingHistory',compact('historys','vehicleTitle'));
+        if ($max_bid != null){
+            $report  = Report::where(function ($query)use($id,$max_bid){
+                $query->where('repoter_id',Auth::user()->id)
+                    ->where('reported_user_id',$max_bid->user_id)
+                    ->where('vehicle_id',$id);
+            })
+                ->orWhere(function ($query)use($id,$max_bid){
+                    $query->where('repoter_id',$max_bid->user_id)
+                        ->where('reported_user_id',Auth::user()->id)
+                        ->where('vehicle_id',$id);
+                })->first();
+        }else{
+            $report = null;
+        }
+
+        return view(template().'vehicleBiddingHistory',compact('historys','vehicleTitle','report'));
     }
     public function deleteHistory(Request $request)
     {

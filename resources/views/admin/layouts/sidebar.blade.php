@@ -55,28 +55,7 @@
                         </a>
                     </div>
 
-                    <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.blog.list', 'admin.blog.create','admin.blog.update'], 3) }}"
-                           href="#navbarVerticalBlog"
-                           role="button"
-                           data-bs-toggle="collapse"
-                           data-bs-target="#navbarVerticalBlog"
-                           aria-expanded="false"
-                           aria-controls="navbarVerticalBlog">
-                            <i class="bi bi-union nav-icon"></i>
-                            <span class="nav-link-title">@lang('Blog Management')</span>
-                        </a>
 
-                        <div id="navbarVerticalBlog"
-                             class="nav-collapse collapse {{ menuActive(['admin.blogCategory', 'admin.blogs'], 2) }}"
-                             data-bs-parent="#navbarVerticalBlog">
-                            <a class="nav-link {{ menuActive(['admin.blogCategory']) }}"
-                               href="{{ route('admin.blogCategory') }}">@lang('Blog Category')</a>
-
-                            <a class="nav-link  {{ menuActive(['admin.blogs']) }}"
-                               href="{{ route("admin.blogs") }}">@lang('Blogs')</a>
-                        </div>
-                    </div>
                     <div class="nav-item">
                         <a class="nav-link {{ menuActive(['admin.plan.list']) }}"
                            href="{{ route('admin.plan.list') }}" data-placement="left">
@@ -353,6 +332,28 @@
                                 <a class="nav-link {{($last == $name) ? 'active' : '' }}"
                                    href="{{ route('admin.manage.content', $name) }}">@lang(stringToTitle($name))</a>
                             @endforeach
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.blog.list', 'admin.blog.create','admin.blog.update'], 3) }}"
+                           href="#navbarVerticalBlog"
+                           role="button"
+                           data-bs-toggle="collapse"
+                           data-bs-target="#navbarVerticalBlog"
+                           aria-expanded="false"
+                           aria-controls="navbarVerticalBlog">
+                            <i class="bi bi-union nav-icon"></i>
+                            <span class="nav-link-title">@lang('Blog Management')</span>
+                        </a>
+
+                        <div id="navbarVerticalBlog"
+                             class="nav-collapse collapse {{ menuActive(['admin.blogCategory', 'admin.blogs'], 2) }}"
+                             data-bs-parent="#navbarVerticalBlog">
+                            <a class="nav-link {{ menuActive(['admin.blogCategory']) }}"
+                               href="{{ route('admin.blogCategory') }}">@lang('Blog Category')</a>
+
+                            <a class="nav-link  {{ menuActive(['admin.blogs']) }}"
+                               href="{{ route("admin.blogs") }}">@lang('Blogs')</a>
                         </div>
                     </div>
 

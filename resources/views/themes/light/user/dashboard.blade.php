@@ -5,6 +5,18 @@
     <div class="main row">
        <div class="col-12">
           <div class="row g-4">
+            <div class="col-12">
+               <div class="card-box p-0" id="alert">
+                 <div class="alertContent " id="alertContent">
+                     <div class="icon content"><i class="fa-solid fa-circle-info"></i></div>
+                     <div class="text content">Do not miss any single important notification allow your browser to get instant push notification</div>
+                     <div class="button content"><button class="btn-custom" >allow me</button></div>
+                 </div>
+                 <div class="crossbtn">
+                  <i class="fa-solid fa-xmark"></i>
+               </div>
+               </div>
+            </div>
              <div class="col-12">
                 <div class="card-box p-0">
                    <div class="row align-items-end">
@@ -18,7 +30,7 @@
                          </div>
                       </div>
                       <div class="col-lg-4 text-center text-sm-left d-none d-lg-block">
-                         <div class="text-right">
+                         <div class="text-right mb-4">
                             <img
                                src="{{asset($themeTrue.('img/img/bugatti.png'))}}"
                                height="140"
@@ -36,14 +48,6 @@
              <div class="col-12 d-lg-none">
                 <div class="quick-links">
                    <div class="row g-2 g-lg-4">
-{{--                      <div class="col-md-3 col-4 col-sm-3">--}}
-{{--                         <div class="link-item">--}}
-{{--                            <a href="">--}}
-{{--                               <i class="fal fa-project-diagram"></i>--}}
-{{--                               <span>Invest</span>--}}
-{{--                            </a>--}}
-{{--                         </div>--}}
-{{--                      </div>--}}
                       <div class="col-md-3 col-4 col-sm-3">
                          <div class="link-item">
                             <a href="{{route('user.add.fund')}}">
@@ -60,14 +64,6 @@
                             </a>
                          </div>
                       </div>
-{{--                      <div class="col-md-3 col-4 col-sm-3">--}}
-{{--                         <div class="link-item">--}}
-{{--                            <a href="">--}}
-{{--                               <i class="fal fa-sack-dollar"></i>--}}
-{{--                               <span>Transfer</span>--}}
-{{--                            </a>--}}
-{{--                         </div>--}}
-{{--                      </div>--}}
                       <div class="col-md-3 col-4 col-sm-3">
                          <div class="link-item">
                             <a href="{{route('user.profile')}}">
@@ -92,14 +88,6 @@
                             </a>
                          </div>
                       </div>
-{{--                      <div class="col-md-3 col-4 col-sm-3">--}}
-{{--                         <div class="link-item">--}}
-{{--                            <a href="">--}}
-{{--                               <i class="fal fa-ellipsis-h-alt"></i>--}}
-{{--                               <span>More</span>--}}
-{{--                            </a>--}}
-{{--                         </div>--}}
-{{--                      </div>--}}
                    </div>
                 </div>
              </div>
@@ -128,7 +116,7 @@
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{count(Auth::user()->vehicle)}}</h4>
+                            <h4>{{Auth::user()->total_listed_car}}</h4>
                             <i class="fa-light fa-chart-network"></i>
                          </div>
                          <p class="mb-0">Total Listed Vehicle</p>
@@ -146,7 +134,7 @@
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{count($soldedVehicle)}}</h4>
+                            <h4>{{count($soldedVehicle) - count($cancelAuction)}}</h4>
                             <i class="fa-light fa-chart-pie-simple"></i>
                          </div>
                          <p class="mb-0">Total Sold Vehicle</p>
@@ -332,3 +320,44 @@
     @endpush
 @endif
 
+@push('style')
+   <style>
+       #alert{
+         display: flex;
+         justify-content: space-between;
+         /* flex-wrap: wrap; */
+         align-items: center;
+      }
+      #alertContent .content{
+         margin-left: 25px;
+      }
+      #alert .crossbtn i{
+         margin-right: 25px !important;
+          cursor: pointer;
+      }
+      #alertContent{
+         display: flex;
+         /* height: 100px; */
+         padding: 10px 20px;
+         flex-wrap: wrap;
+         align-items: center;
+
+      }
+      @media (max-width: 917px){
+
+         #alertContent button{
+            margin-top: 20px;
+         }
+      }
+      @media (max-width: 877px){
+         #alert{
+            position: relative;
+         }
+         #alert .crossbtn i{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+         }
+      }
+   </style>
+@endpush

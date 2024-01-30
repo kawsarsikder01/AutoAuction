@@ -237,6 +237,20 @@
                             <div class="card-body">
                                 <label class="row form-check form-switch" for="breadcrumbSwitch">
                                     <span class="col-8 col-sm-9 ms-0">
+                                      <span class="text-dark">@lang("Blog Status")
+                                          <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip"
+                                             data-bs-placement="top"
+                                             aria-label="@lang("Enable status for page publish")"
+                                             data-bs-original-title="@lang("Enable Blog Status")"></i></span>
+                                    </span>
+                                    <span class="col-4 col-sm-3 text-end">
+                                        <input type="hidden" name="status" value="0">
+                                        <input type="checkbox" class="form-check-input" name="status"
+                                               id="breadcrumb" value="1" {{ $blog->status == 1 ? 'checked' : '' }}>
+                                    </span>
+                                </label>
+                                <label class="row form-check form-switch mt-4" for="breadcrumbSwitch">
+                                    <span class="col-8 col-sm-9 ms-0">
                                       <span class="text-dark">@lang("Breadcrumb Status")
                                           <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip"
                                              data-bs-placement="top"

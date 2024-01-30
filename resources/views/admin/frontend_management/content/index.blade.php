@@ -1,6 +1,7 @@
 @extends('admin.layouts.app')
 @section('page_title', __('Manage Content'))
 @section('content')
+{{--@dd($errors->all())--}}
     <div class="content container-fluid">
         <div class="page-header">
             <div class="row align-items-end">
@@ -54,6 +55,7 @@
                                     <div class="card card-lg mb-3 mb-lg-4">
                                         <div class="card-body">
                                             @foreach($singleContent['field_name'] as $name => $type)
+{{--                                                @dd(isset($singleContentData[$language->id]))--}}
                                                 <div class="row justify-content-md-between">
                                                     @if($type == "text")
                                                         <div class="col-md-12 mb-3">
@@ -105,7 +107,7 @@
                                                         </div>
                                                     @endif
 
-                                                    @if($type == "number" && $language->default_status == 1)
+                                                    @if($type == "number")
                                                         <div class="col-md-12 mb-3">
                                                             <label class="form-label"
                                                                    for="@lang($name)">@lang(stringToTitle($name))</label>

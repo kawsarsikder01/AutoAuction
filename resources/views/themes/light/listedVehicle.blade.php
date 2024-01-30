@@ -5,7 +5,7 @@
     <div class="main row">
        <div class="col-12">
           <div class="dashboard-heading">
-             <h4 class="mb-0">Listed Vehicle</h4>
+             <h4 class="mb-0">@lang('Listed Vehicle')</h4>
 
           </div>
 
@@ -16,13 +16,13 @@
                    <form action="{{route('filter.listed-vehicle')}}" method="get">
                       <div class="row g-3 align-items-end">
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <input type="text" class="form-control" name="title" placeholder="Search" />
+                            <input type="text" class="form-control" value="{{request()->title}}" name="title" placeholder="Search" />
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
                             <select class="js-example-basic-single form-control" name="category">
-                               <option value="">Select Category</option>
+                               <option value="">@lang('Select Category')</option>
                                 @foreach($categories as $categorie)
-                                    <option value="{{$categorie->id}}">{{$categorie->name}}</option>
+                                    <option value="{{$categorie->id}}" @selected(request()->category == $categorie->id)>{{$categorie->name}}</option>
                                 @endforeach
 
 
@@ -30,29 +30,29 @@
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
                             <select class="js-example-basic-single form-control" name="brand">
-                               <option value="">Select Brand</option>
+                               <option value="">@lang('Select Brand')</option>
                                 @foreach($brands as $brands)
-                                    <option value="{{$brands->id}}">{{$brands->name}}</option>
+                                    <option value="{{$brands->id}}" @selected(request()->brand == $brands->id)>{{$brands->name}}</option>
                                 @endforeach
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
                             <select class="js-example-basic-single form-control" name="sold_status">
-                               <option value="">Select Sold Status</option>
-                               <option value="1">Sold</option>
-                               <option value="0">Unsold</option>
+                               <option value="0" @selected(request()->sold_status == 0) >@lang('All')</option>
+                               <option value="1" @selected(request()->sold_status == 1)>@lang('Sold')</option>
+                               <option value="2" @selected(request()->sold_status == 2)>@lang('Unsold')</option>
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
                             <select class="js-example-basic-single form-control" name="release_status">
-                               <option value="">Select Release Status</option>
-                               <option value="1">Released</option>
-                               <option value="0">Unreleased</option>
-                               <option value="2">Canceled</option>
+                               <option value="0" @selected(request()->release_status == 0)>@lang('All')</option>
+                               <option value="1" @selected(request()->release_status == 1)>@lang('Released')</option>
+                               <option value="3" @selected(request()->release_status == 3)>@lang('Unreleased')</option>
+                               <option value="2" @selected(request()->release_status == 2)>@lang('Canceled')</option>
                             </select>
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <button class="btn-custom w-100"><i class="fal fa-search"></i> Filter</button>
+                            <button class="btn-custom w-100"><i class="fal fa-search"></i> @lang('Filter')</button>
                          </div>
                       </div>
                    </form>
@@ -71,18 +71,18 @@
              <table class="table table-striped">
                 <thead>
                    <tr>
-                      <th scope="col">Title</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Total Bid</th>
-                      <th scope="col">Sold Status</th>
-                      <th scope="col">Initial Price</th>
-                      <th scope="col">Sold Price</th>
-                       <th scope="col">Released Status</th>
-                      <th scope="col">Action</th>
+                      <th scope="col">@lang('Title')</th>
+                      <th scope="col">@lang('Status')</th>
+                      <th scope="col">@lang('Total Bid')</th>
+                      <th scope="col">@lang('Sold Status')</th>
+                      <th scope="col">@lang('Initial Price')</th>
+                      <th scope="col">@lang('Sold Price')</th>
+                       <th scope="col">@lang('Released Status')</th>
+                      <th scope="col">@lang('Action')</th>
                    </tr>
                 </thead>
                 <tbody>
-                    @forelse($vehicles as $key => $vehicle)
+                    @foreach($vehicles as $key => $vehicle)
                     <tr>
                         <td data-label="@lang('Title')">
                                 <a href="{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}" id="viewAuctionDetails"><span>{{$vehicle->details->title}}</span></a>
@@ -130,44 +130,39 @@
                         <td data-label="@lang('Action')">
                             <div>
                                 @if($vehicle->details->sold_status == 1)
-                                @if($vehicle->release_status == 0)
-                                    <a href="javascript:void(0);" id="ReleaseProperty" data-route="{{route('user.release.property')}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-id="{{$vehicle->id}}" class="btn-action-icon bg-info" >
-                                        <i class="fa-solid fa-truck-fast" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Release Your Vehicle"></i>
-                                    </a>
-                                @endif
-                                <a href="{{route('user.vehicle.bidding.history',$vehicle->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Biddding History" class="btn-action-icon bg-warning">
-                                    <i class="fa-regular fa-history"></i>
-                                </a>
-                                    <a href="{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}" class="btn-action-icon bg-success">
-                                        <i class="fad fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('user.delete.vehicle', $vehicle->id) }}" class="btn-action-icon bg-primary">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
+                                    @if($vehicle->release_status == 0)
+                                        <a href="javascript:void(0);" id="ReleaseProperty" data-route="{{route('user.release.property')}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-id="{{$vehicle->id}}" class="btn-action-icon bg-info" >
+                                            <i class="fa-solid fa-truck-fast" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Release Your Vehicle"></i>
+                                        </a>
+                                    @endif
                                 @else
-                                <a href="{{route('user.vehicle.bidding.history',$vehicle->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Biddding History" class="btn-action-icon bg-warning">
-                                    <i class="fa-regular fa-history"></i>
-                                </a>
-                                    <a href="{{route('user.edit.vehicle',$vehicle->id)}}" class="btn-action-icon bg-info">
+                                    <a href="{{route('user.edit.vehicle',$vehicle->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Edit" class="btn-action-icon bg-info">
                                         <i class="fa-regular fa-pen-to-square"></i>
                                     </a>
-                                    <a href="{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}" class="btn-action-icon bg-success">
+                                @endif
+                                    <a href="{{route('user.vehicle.bidding.history',$vehicle->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Biddding History" class="btn-action-icon bg-warning">
+                                        <i class="fa-regular fa-history"></i>
+                                    </a>
+                                    <a href="{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="View"class="btn-action-icon bg-success">
                                         <i class="fad fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('user.delete.vehicle', $vehicle->id) }}" class="btn-action-icon bg-primary">
+                                    <a href="{{ route('user.delete.vehicle', $vehicle->id) }}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Delete" class="btn-action-icon bg-primary">
                                         <i class="fa-solid fa-trash"></i>
                                     </a>
-                                @endif
                             </div>
                          </td>
                     </tr>
-                @empty
-                    <tr class="text-center">
-                        <td>{{__('No Data Found!')}}</td>
-                    </tr>
-                @endforelse
+                @endforeach
                 </tbody>
              </table>
+             @if (count($vehicles) == 0)
+                <div class="text-center p-4">
+                    <img  class="dataTables-image mb-3 w-50"
+                         src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                         alt="Image Description">
+                    <p class="mb-0">@lang("No Vehicle Found")</p>
+                </div>
+                @endif
 
              <!-- pagination -->
              <nav aria-label="Page navigation example">
@@ -187,18 +182,18 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Release Model</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">@lang('Release Model')</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="" id="FormRoute" method="POST">
                @csrf
                 <div class="modal-body">
                     <input type="hidden" id="vehicle_id" value="" name="vehicle_id">
-                   <span id="setMessage">Are You Sure You Want To Release Your Vehicle ?</span>
+                   <span id="setMessage">@lang('Are You Sure You Want To Release Your Vehicle ?')</span>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn-custom">Confirm</button>
+                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">@lang('Close')</button>
+                    <button type="submit" class="btn-custom">@lang('Confirm')</button>
                 </div>
             </form>
         </div>

@@ -1,7 +1,7 @@
 {{-- <x-banner-component heading="Contact Us" page="Contact Us"/> --}}
 <iframe
 id="map"
-src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3615.337182229823!2d55.27369701188658!3d25.022628814644584!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f710571deae53%3A0x4540d9158c55eec2!2sAl%20Naseem%20B1!5e0!3m2!1sen!2sbd!4v1686720050207!5m2!1sen!2sbd"
+src="{{$contact['single']['map_url']??''}}"
 width="100%"
 height="600"
 style="border: 0"
@@ -23,7 +23,7 @@ referrerpolicy="no-referrer-when-downgrade"
              </div>
              <div class="row">
                 <div class="col-12">
-                   <h4>Get Ahold of Us</h4>
+                   <h4>@lang('Get Ahold of Us')</h4>
                    <div class="info-box">
                       <div class="icon">
                          <div class="icon"><i class="fa-light fa-envelope"></i></div>
@@ -60,7 +60,7 @@ referrerpolicy="no-referrer-when-downgrade"
                       <div class="col-md-12">
                          <div class="form-floating">
                             <input type="text" name="fullname" class="form-control" id="floatingName" placeholder="Name" />
-                            <label for="floatingName">Full Name</label>
+                            <label for="floatingName">@lang('Full Name')</label>
                          </div>
                       </div>
                       @error("fullname")
@@ -77,7 +77,7 @@ referrerpolicy="no-referrer-when-downgrade"
                                id="floatingInput"
                                placeholder="name@example.com"
                             />
-                            <label for="floatingInput">Email address</label>
+                            <label for="floatingInput">@lang('Email address')</label>
                          </div>
                       </div>
                       @error("email")
@@ -88,7 +88,7 @@ referrerpolicy="no-referrer-when-downgrade"
                       <div class="col-md-12">
                         <div class="form-floating">
                            <input type="text" name="subject" class="form-control" id="floatingSubject" placeholder="Subject" />
-                           <label for="floatingSubject">Subject</label>
+                           <label for="floatingSubject">@lang('Subject')</label>
                         </div>
                      </div>
                      @error("subject")
@@ -104,7 +104,7 @@ referrerpolicy="no-referrer-when-downgrade"
                                placeholder="Leave a comment here"
                                id="floatingTextarea"
                             ></textarea>
-                            <label for="floatingTextarea">Comments</label>
+                            <label for="floatingTextarea">@lang('Comments')</label>
                          </div>
                       </div>
                       @error("comment")

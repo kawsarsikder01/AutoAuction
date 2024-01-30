@@ -32,4 +32,8 @@ class Vehicle extends Model
     {
         return $this->hasMany(React::class,'vehicle_id');
     }
+    public function reports()
+    {
+        return $this->hasMany(Report::class,'vehicle_id');
+    }
 }

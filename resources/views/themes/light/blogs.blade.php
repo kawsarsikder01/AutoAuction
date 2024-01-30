@@ -21,7 +21,7 @@
                     <p>
                        {{$blog->details->short_description}}
                     </p>
-                    <a href="{{route('blog.details',$blog->details->slug)}}" class="btn-custom arrow"><span>View More</span></a>
+                    <a href="{{route('blog.details',$blog->details->slug)}}" class="btn-custom arrow"><span>@lang('View More')</span></a>
                     </div>
                 </div>
               @empty
@@ -50,7 +50,7 @@
                    </form>
                 </div>
                 <div class="side-box">
-                   <h4>categories</h4>
+                   <h4>@lang('categories')</h4>
                    <ul class="links">
                     @foreach ($categorys as $category)
                     <li>
@@ -64,5 +64,5 @@
        </div>
     </div>
  </section>
- @include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 @endsection

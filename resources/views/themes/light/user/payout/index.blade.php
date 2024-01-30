@@ -18,7 +18,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @forelse($payouts as $key => $value)
+                        @foreach($payouts as $key => $value)
 
                             <tr>
                                 <td data-label="@lang('SL')">{{ $loop->index + 1 }}</td>
@@ -43,13 +43,17 @@
                                     @endif
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <th colspan="100%" class="text-center">@lang('No data found')</th>
-                            </tr>
-                        @endforelse
+                        @endforeach
                         </tbody>
                     </table>
+                    @if (count($payouts) == 0)
+                        <div class="text-center p-4">
+                            <img  class="dataTables-image mb-3 w-50"
+                                    src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                                    alt="Image Description">
+                            <p class="mb-0">@lang("No Data Found")</p>
+                        </div>
+                    @endif
 
                     <!-- pagination -->
                     <nav aria-label="Page navigation example">

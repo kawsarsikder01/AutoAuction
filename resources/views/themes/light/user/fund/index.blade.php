@@ -39,6 +39,14 @@
                         @endforeach
                         </tbody>
                     </table>
+                    @if (count($funds) == 0)
+                        <div class="text-center p-4">
+                            <img  class="dataTables-image mb-3 w-50"
+                                    src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                                    alt="Image Description">
+                            <p class="mb-0">@lang("No Data Found")</p>
+                        </div>
+                    @endif
 
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-end mt-4">

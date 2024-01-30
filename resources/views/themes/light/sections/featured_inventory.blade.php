@@ -4,10 +4,10 @@
        <div class="row">
           <div class="col-12">
              <div class="section-header">
-                <h5>{{$featured_inventory['single']['sub_heading']}}</h5>
-                <h2>{{$featured_inventory['single']['heading']}}</h2>
+                <h5>{{$featured_inventory['single']['sub_heading']??''}}</h5>
+                <h2>{{$featured_inventory['single']['heading']??''}}</h2>
                 <p>
-                    {!! $featured_inventory['single']['description'] !!}
+                    {!! $featured_inventory['single']['description']??'' !!}
                 </p>
              </div>
           </div>
@@ -29,9 +29,9 @@
                         <div class="text-box">
                             <h4>{{$itemObject->details['title']}}</h4>
                             @if (collect($itemObject->bidding_history)->max('bid_amount'))
-                                <p>Current Bid: <span class="text-primary">{{collect($itemObject->bidding_history)->max('bid_amount')}}</span></p>
+                                <p>@lang('Current Bid') <span class="text-primary">{{collect($itemObject->bidding_history)->max('bid_amount')}}</span></p>
                             @else
-                                <h4>Vehicle Initial Price: {{$itemObject->details['price'] }} {{basicControl()->currency_symbol}}</h4>
+                                <h4>@lang("Vehicle Initial Price") {{$itemObject->details['price'] }} {{basicControl()->currency_symbol}}</h4>
                             @endif
                             <p>Location: {{$itemObject->user['address_one']}}</p>
                             <a href="{{route('auction.details',[slug($itemObject->details['title'])??'',$item['id']])}}" class="btn-custom arrow"> <span>Place a Bid</span> </a>

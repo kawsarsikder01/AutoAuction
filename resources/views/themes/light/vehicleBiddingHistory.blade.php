@@ -10,73 +10,17 @@
 
           <!-- table -->
           <div class="table-parent table-responsive mt-4">
-             <div class="table-search-bar">
-                <div class="d-none d-lg-block">
-                   <form>
-                      <div class="row g-3 align-items-end">
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <input type="text" class="form-control" placeholder="Search" />
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <select class="js-example-basic-single form-control" name="propertyType">
-                               <option value="type1">Category</option>
-                               <option value="type2">England</option>
-                               <option value="type3">Pakistan</option>
-                               <option value="type4">Palestine</option>
-                            </select>
-                         </div>
-                         <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <button class="btn-custom w-100"><i class="fal fa-search"></i> Filter</button>
-                         </div>
-                      </div>
-                   </form>
-                </div>
-                <div class="d-lg-none justify-content-end">
-                   <button
-                      type="button"
-                      class="btn-action"
-                      data-bs-toggle="modal"
-                      data-bs-target="#editModal"
-                   >
-                      Filter <i class="fa-light fa-filter"></i>
-                   </button>
-                </div>
-             </div>
              <table class="table table-striped">
                 <thead>
                    <tr>
-                      <th scope="col">Bidder</th>
-                      <th scope="col">Bid Amount</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Action</th>
+                      <th scope="col">@lang('Bidder')</th>
+                      <th scope="col">@lang('Bid Amount')</th>
+                      <th scope="col">@lang('Date')</th>
+                      <th scope="col">@lang('Action')</th>
                    </tr>
                 </thead>
                 <tbody>
-                    @forelse($historys as $key => $biddingHistory)
+                    @foreach($historys as $key => $biddingHistory)
                     <tr>
                         <td data-label="@lang('Bidder')">
                             <a class="d-flex align-items-center me-2" href="javascript:void(0);">
@@ -101,27 +45,33 @@
                         <td data-label="@lang('Action')">
                             <div>
                               @if ($biddingHistory->wining_status == 1)
-                              <a href="" class="btn-action-icon bg-primary" id="report" data-route="{{route('user.store.report',[$biddingHistory->vehicle->user_id??0,$biddingHistory->user_id,$biddingHistory->vehicle->id])}}" data-bs-toggle="modal" data-bs-target="#ReportModal">
-                                 <i class="fal fa-flag-alt" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report"></i>
-                               </a>
-                               <a href="{{route('user.messages',$biddingHistory->user_id)}}" class="btn-action-icon bg-warning">
+                              @if($report == null)
+                                <a href="" class="btn-action-icon bg-primary" id="report" data-route="{{route('user.store.report',[$biddingHistory->vehicle->user_id??0,$biddingHistory->user_id,$biddingHistory->vehicle->id])}}" data-bs-toggle="modal" data-bs-target="#ReportModal">
+                                    <i class="fal fa-flag-alt" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report"></i>
+                                </a>
+                              @endif
+                               <a href="{{route('user.messages',$biddingHistory->user_id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Message" class="btn-action-icon bg-warning">
                                  <i class="fa-brands fa-rocketchat"></i>
                              </a>
                               @endif
-                              <a href="{{ route('auction.details', [slug($biddingHistory->vehicle->details->title)??'',$biddingHistory->vehicle_id]) }}" class="btn-action-icon bg-success">
+                              <a href="{{ route('auction.details', [slug($biddingHistory->vehicle->details->title)??'',$biddingHistory->vehicle_id]) }}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="View" class="btn-action-icon bg-success">
                                  <i class="fad fa-eye"></i>
                              </a>
                             </div>
                          </td>
                     </tr>
-                @empty
-                    <tr class="text-center">
-                        <td>{{__('No Data Found!')}}</td>
-                    </tr>
-                @endforelse
+
+                @endforeach
                 </tbody>
              </table>
-
+              @if (count($historys) == 0)
+                  <div class="text-center p-4">
+                      <img  class="dataTables-image mb-3 w-50"
+                            src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                            alt="Image Description">
+                      <p class="mb-0">@lang("No Vehicle Found")</p>
+                  </div>
+              @endif
              <!-- pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end mt-4">
@@ -137,7 +87,7 @@
    <div class="modal-dialog modal-dialog-centered">
        <div class="modal-content">
            <div class="modal-header">
-               <h1 class="modal-title text-black fs-5" id="staticBackdropLabel">Report</h1>
+               <h1 class="modal-title text-black fs-5" id="staticBackdropLabel">@lang('Report')</h1>
                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
            </div>
            <form action="" id="FormRoute" method="POST">
@@ -174,8 +124,8 @@
                     </div>
                </div>
                <div class="modal-footer">
-                   <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">Close</button>
-                   <button type="submit" class="btn-custom">Confirm</button>
+                   <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">@lang('Close')</button>
+                   <button type="submit" class="btn-custom">@lang('Confirm')</button>
                </div>
            </form>
        </div>

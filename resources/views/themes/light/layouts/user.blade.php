@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/bootstrap.min.css')}}" />
     <!-- font awesome 6 -->
     <link rel="stylesheet" href="{{asset($themeTrue.'css/all.min.css')}}" />
-    {{-- <link rel="stylesheet" href="{{asset($themeTrue.'css/fontawesome.min.css')}}" /> --}}
     <!-- owl carousel -->
     <link rel="stylesheet" href="{{asset($themeTrue.'css/owl.carousel.min.css')}}" />
     <link rel="stylesheet" href="{{asset($themeTrue.'css/owl.theme.default.min.css')}}" />
@@ -24,10 +23,8 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/dashboard.css')}}" />
     <link rel="stylesheet" href="{{asset($themeTrue.'css/flatpickr.min.css')}}" />
     <link rel="stylesheet" href="{{asset($themeTrue.'css/quill.snow.min.css')}}" />
-{{--    <link rel="stylesheet" href="{{asset($themeTrue.'css/fileUpload.css')}}" />--}}
     <link rel="stylesheet" href="{{asset($themeTrue.'css/addProduct.css')}}" />
     <link rel="stylesheet" href="{{asset($themeTrue.'css/flatpickr.css')}}" />
-{{--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">--}}
     @stack('style')
     @stack("css-lib")
 
@@ -148,7 +145,7 @@
                           <div class="notification-dropdown">
                              <ul class="dropdown-box list-unstyled">
                                 <li  v-for="(item, index) in items">
-                                   <a class="dropdown-item" href="#">
+                                   <a class="dropdown-item" :href="item.description.link ">
                                       <i class="fal fa-bell"></i>
                                       <div class="text">
                                          <p>@{{ item.description.text }}</p>
@@ -251,6 +248,7 @@
                 axios.get("{{ route('user.push.notification.show') }}")
                     .then(function (res) {
                         app.items =res.data;
+                        console.log(res.data);
                     })
             },
             readAt(id, link) {

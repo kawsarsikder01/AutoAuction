@@ -13,15 +13,15 @@
              <table class="table table-striped">
                 <thead>
                    <tr>
-                      <th scope="col">No</th>
-                      <th scope="col">Subject</th>
-                      <th scope="col">Reporter</th>
-                      <th scope="col">Reported User</th>
-                      <th scope="col">Action</th>
+                      <th scope="col">@lang('No')</th>
+                      <th scope="col">@lang('Subject')</th>
+                      <th scope="col">@lang('Reporter')</th>
+                      <th scope="col">@lang('Reported User')</th>
+                      <th scope="col">@lang('Action')</th>
                    </tr>
                 </thead>
                 <tbody>
-                    @forelse($reports as $key => $report)
+                    @foreach($reports as $key => $report)
                     <tr>
                         <td data-label="@lang('No')">
                                 {{$key + 1}}
@@ -36,18 +36,22 @@
                           {{$report->repotedUser->firstname." ".$report->repotedUser->lastname}}
                         </td>
                         <td data-label="@lang('Action')">
-                            <a href="{{route('user.get.conversation',$report->id)}}" class="btn-action-icon bg-warning">
+                            <a href="{{route('user.get.conversation',$report->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Message"  class="btn-action-icon bg-warning">
                                 <i class="fa-brands fa-rocketchat"></i>
                             </a>
                          </td>
                     </tr>
-                @empty
-                    <tr class="text-center">
-                        <td>{{__('No Data Found!')}}</td>
-                    </tr>
-                @endforelse
+                @endforeach
                 </tbody>
              </table>
+             @if (count($reports) == 0)
+                <div class="text-center p-4">
+                    <img  class="dataTables-image mb-3 w-50"
+                         src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                         alt="Image Description">
+                    <p class="mb-0">@lang("No Reports Found")</p>
+                </div>
+                @endif
 
              <!-- pagination -->
              <nav aria-label="Page navigation example">

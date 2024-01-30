@@ -6,7 +6,7 @@
     <div class="main row">
        <div class="col-12">
           <div class="dashboard-heading">
-             <h4 class="mb-0">Report Conversation</h4>
+             <h4 class="mb-0">@lang('Report Conversation')</h4>
           </div>
 
           <div class="message-wrapper">
@@ -17,7 +17,7 @@
                       <div class="top-bar">
                          <div class="d-flex align-items-center">
                             <div class="name">
-                               <a href="javascript:void(0)">Conversation</a>
+                               <a href="javascript:void(0)">{{__('Conversation')}}</a>
                             </div>
                          </div>
                          <div>

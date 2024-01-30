@@ -184,8 +184,8 @@
                                                id="breadcrumb" value="1">
                                     </span>
                                 </label>
-                                <br>
-                                <label class="row form-check form-switch" for="breadcrumbSwitch">
+
+                                <label class="row form-check form-switch mt-4" for="breadcrumbSwitch">
                                     <span class="col-8 col-sm-9 ms-0">
                                       <span class="text-dark">@lang("Breadcrumb Status")
                                           <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip"

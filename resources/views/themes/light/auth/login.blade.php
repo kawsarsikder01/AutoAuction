@@ -9,7 +9,8 @@
                   <div class="row justify-content-center align-items-center">
                      <div class="col-lg-6">
                         <div class="img-box d-none d-lg-block">
-                           <img src="{{getFile($loginContent->first()->content->media->image->driver,$loginContent->first()->content->media->image->path)}}" alt="" class="img-fluid" />
+
+                           <img src="{{$loginContent->first()?getFile($loginContent->first()->content->media->image->driver,$loginContent->first()->content->media->image->path):''}}" alt="" class="img-fluid" />
                         </div>
                      </div>
                      <div class="col-lg-6">
@@ -18,7 +19,7 @@
                               @csrf
                               <div class="row g-4">
                                  <div class="col-12">
-                                    <h4>@lang($loginContent->first()->description->heading)</h4>
+                                    <h4>@lang($loginContent->first()->description->heading??'')</h4>
                                  </div>
                                  <div class="form-floating">
                                     <input
@@ -73,7 +74,7 @@
                </div>
             </div>
          </section>
-@include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 @endsection
 
 @push('js-lib')

@@ -11,13 +11,12 @@
               <div class="col-12">
                  <div class="section-header2" overlay-text="Pricing Plans">
                     <div class="box">
-                       <h5>Plans</h5>
+                       <h5>{{$plan->first()->contentDetails->first()->description->sub_heading}}</h5>
                     </div>
                     <div class="box">
-                       <h2>Membership Options</h2>
+                       <h2>{{$plan->first()->contentDetails->first()->description->heading}}</h2>
                        <p>
-                          As a Auto Auction Member, you'll be able to search our massive inventory for wholesale, used
-                          and repairable cars, trucks and SUVs.
+                           {!! $plan->first()->contentDetails->first()->description->short_text !!}
                        </p>
                     </div>
                  </div>
@@ -33,51 +32,51 @@
                     <ul class="list-unstyled">
                         <li>
                               <i class="fa-light fa-check"></i>
-                              <span>list up to {{$plan->number_of_listing}} vehicle</span>
+                              <span>@lang('list up to') {{$plan->number_of_listing}} @lang('vehicle')</span>
                         </li>
                         <li>
                            <i class="fa-light fa-check"></i>
-                           <span>Upload up to {{$plan->number_of_images}} images per listing</span>
+                           <span>@lang('Upload up to') {{$plan->number_of_images}} @lang('images per listing')</span>
                         </li>
                         <li>
                            <i class="fa-light fa-check"></i>
-                           <span>Expiry time {{$plan->expiry_time.' '.$plan->expiry_time_type}} </span>
+                           <span>@lang('Expiry time') {{$plan->expiry_time.' '.$plan->expiry_time_type}} </span>
                         </li>
                         @if ($plan->access_auction == 1)
                            <li>
                               <i class="fa-light fa-check"></i>
-                              <span>Access to the auction platform and bidding process.</span>
+                              <span>@lang('Access to the auction platform and bidding process.')</span>
                            </li>
                            @endif
                            @if($plan->customer_support == 1)
                            <li>
                               <i class="fa-light fa-check"></i>
-                              <span>Customer support via email or limited chat.</span>
+                              <span>@lang('Customer support via email or limited chat.')</span>
                            </li>
                            @endif
                            @if ($plan->promoted_listing ==1)
                            <li>
                               <i class="fa-light fa-check"></i>
-                              <span>Promoted listings or featured spots for higher visibility.</span>
+                              <span>@lang('Promoted listings or featured spots for higher visibility.')</span>
                            </li>
                            @endif
                            @if ($plan->top_search_result ==1)
                            <li>
                               <i class="fa-light fa-check"></i>
-                              <span>Premium placement on the platform (top of search results or featured sections).</span>
+                              <span>@lang('Premium placement on the platform (top of search results or featured sections).')</span>
                            </li>
                            @endif
                            @if ($plan->share_other_platform ==1)
                            <li>
                               <i class="fa-light fa-check"></i>
-                              <span>Additional promotional tools (highlighted listings, social media promotion, etc.).</span>
+                              <span>@lang('Additional promotional tools (highlighted listings, social media promotion, etc.).')</span>
                            </li>
                         @endif
                     </ul>
                        @if(Auth::user() && Auth::user()->plan)
                             @if(Auth::user()->plan_expire_date >= \Carbon\Carbon::now() )
                                 @if(Auth::user()->plan && $plan->id == Auth::user()->plan->id)
-                                    <button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" disabled>Already Purchased</button>
+                                    <button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" disabled>@lang('Already Purchased')</button>
                                 @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
@@ -86,7 +85,7 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
-                                            data-bs-target="#planModal" > Upgrade Now</button></a>
+                                            data-bs-target="#planModal" > @lang('Upgrade Now')</button></a>
                                 @elseif(Auth::user()->plan && $plan->price < Auth::user()->plan->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
@@ -95,7 +94,7 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.purchase.plan',$plan->id)}}"
                                             type="button"  data-bs-toggle="modal"
-                                            data-bs-target="#planModal" > Purchase Now</button></a>
+                                            data-bs-target="#planModal" > @lang('Purchase Now')</button></a>
                                 @else
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
@@ -104,7 +103,7 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.purchase.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
-                                            data-bs-target="#planModal" > Purchase Now</button></a>
+                                            data-bs-target="#planModal" > @lang('Purchase Now')</button></a>
                                 @endif
                             @else
                                 @if(Auth::user()->plan && $plan->id == Auth::user()->plan->id)
@@ -115,7 +114,7 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
-                                            data-bs-target="#planModal" >Expired Upgrade Now</button></a>
+                                            data-bs-target="#planModal" >@lang('Expired Upgrade Now')</button></a>
                                 @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
@@ -124,7 +123,7 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
-                                            data-bs-target="#planModal" > Upgrade Now</button></a>
+                                            data-bs-target="#planModal" > @lang('Upgrade Now')</button></a>
                                 @else
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
@@ -133,7 +132,7 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
-                                            data-bs-target="#planModal" > Purchase Now</button></a>
+                                            data-bs-target="#planModal" > @lang('Purchase Now')/button></a>
                                 @endif
                             @endif
                         @elseif(Auth::user() && !Auth::user()->plan)
@@ -144,7 +143,7 @@
                                     class="btn-custom purchasePlanOrUpgrade"
                                     data-route="{{route('user.purchase.plan',$plan->id)}}"
                                     type="button" data-bs-toggle="modal"
-                                    data-bs-target="#planModal" > Purchase Now</button></a>
+                                    data-bs-target="#planModal" > @lang('Purchase Now')</button></a>
                         @elseif(!Auth::user())
                             <a href="{{route('user.purchase.plan',$plan->id)}}"><button class="btn-custom" type="button"> Purchase Now</button></a>
                        @endif
@@ -154,12 +153,8 @@
            </div>
         </div>
      </section>
- @include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#planModal">
-    Launch demo modal
-</button>
 
 <!-- Modal -->
 <div class="modal fade" id="planModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -172,21 +167,21 @@
             <form id="planModalForm" action="" method="get">
                 <div class="modal-body">
                     <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">Price</div>
-                        <span class="plan-price" id="price">$10</span>
+                        <div class="ms-2 me-auto">@lang('Price')</div>
+                        <span class="plan-price" id="price"></span>
                     </li>
                     <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">No. Of Listing</div>
-                        <span class="plan-noOfListing" id="NoOfListing">$10</span>
+                        <div class="ms-2 me-auto">@lang('No. Of Listing')</div>
+                        <span class="plan-noOfListing" id="NoOfListing"></span>
                     </li>
                     <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">Validity</div>
-                        <span class="plan-validity" id="Validity">$10</span>
+                        <div class="ms-2 me-auto">@lang('Validity')</div>
+                        <span class="plan-validity" id="Validity"></span>
                     </li>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn-custom">Confirm</button>
+                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">@lang('Close')</button>
+                    <button type="submit" class="btn-custom">@lang('Confirm')</button>
                 </div>
 
             </form>

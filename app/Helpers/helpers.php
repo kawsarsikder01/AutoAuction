@@ -4,6 +4,7 @@ use App\Models\BasicControl;
 use App\Models\ManageMenu;
 use App\Models\PageDetail;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Models\Language;
@@ -12,13 +13,29 @@ use App\Models\Language;
 use Illuminate\Support\Facades\Storage;
 
 
-function checkReact($reacts){
-        foreach($reacts as $react){
-            if($react->ip_address === request()->ip()){
-                return true;
-            }
-        }
+function checkReport($biddingHistory,$vehicle = null){
+
+       if ($vehicle == null){
+           foreach($biddingHistory->vehicle->reports as $report){
+
+               if (($report->repoter_id == Auth::user()->id && $report->reported_user_id == $biddingHistory->vehicle->user_id) || ($report->repoter_id == $biddingHistory->vehicle->user_id && $report->reported_user_id == Auth::user()->id)){
+                   if ($report->vehicle_id == $biddingHistory->vehicle->id){
+                       return true;
+                   }
+               }
+           }
+       }elseif ($biddingHistory == null){
+           foreach ($vehicle->reports as $report){
+               if (($report->repoter_id == Auth::user()->id && $report->reported_user_id == $vehicle->user_id) || ($report->repoter_id == $vehicle->user_id && $report->reported_user_id == Auth::user()->id)){
+                   if ($report->vehicle_id == $vehicle->id){
+                       return true;
+                   }
+               }
+           }
+       }
+        return false;
 }
+
 
 
 

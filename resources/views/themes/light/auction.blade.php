@@ -20,7 +20,7 @@
                                       aria-expanded="false"
                                       aria-controls="collapseOne"
                                   >
-                                      Advanced Search
+                                      @lang('Advanced Search')
                                   </button>
                               </h5>
                               <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
@@ -28,21 +28,21 @@
                                       <div class="filter-box">
                                           <div class="row g-3">
                                               <div class="input-box col-12">
-                                                  <input type="text" class="form-control" name="name" placeholder="Search by name" />
+                                                  <input type="text" class="form-control" value="{{request()->name}}" name="name" placeholder="Search by name" />
                                               </div>
                                               <div class="input-box col-12">
                                                   <select class="js-example-basic-single form-control" name="brand">
-                                                      <option value="" >Select Brand</option>
+                                                      <option value="" >@lang('Select Brand')</option>
                                                       @foreach($carBrand as $brand)
-                                                          <option value="{{$brand->id}}" >{{$brand->name}}</option>
+                                                          <option value="{{$brand->id}}" @selected(request()->brand == $brand->id) >{{$brand->name}}</option>
                                                       @endforeach
                                                   </select>
                                               </div>
                                               <div class="input-box col-12">
                                                   <select class="js-example-basic-single form-control" name="category">
-                                                      <option value="" >Car Type</option>
+                                                      <option value="" >@lang('Car Type')</option>
                                                       @foreach($CarCategory as $category)
-                                                          <option value="{{$category->id}}" >{{$category->name}}</option>
+                                                          <option value="{{$category->id}}" @selected(request()->category == $category->id) >{{$category->name}}</option>
                                                       @endforeach
                                                   </select>
                                               </div>
@@ -61,14 +61,14 @@
                                       aria-expanded="false"
                                       aria-controls="collapseTwo"
                                   >
-                                      Price Range
+                                      @lang('Price Range')
                                   </button>
                               </h5>
                               <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
                                   <div class="accordion-body">
                                       <div class="filter-box">
                                           <div class="input-box">
-                                              <input type="text" class="js-range-slider" name="my_range" />
+                                              <input type="text" class="js-range-slider" @if(request()->my_range) data-range="{{request()->my_range}}" @endif name="my_range" />
                                               <label for="customRange1" class="form-label mt-3"> {{$minAmount." ".basicControl()->currency_symbol}} — {{$maxAmount.basicControl()->currency_symbol}}</label>
                                           </div>
                                       </div>
@@ -85,7 +85,7 @@
                                       aria-expanded="false"
                                       aria-controls="collapseThree"
                                   >
-                                      Status
+                                      @lang('Status')
                                   </button>
                               </h5>
                               <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree">
@@ -93,31 +93,31 @@
                                       <div class="filter-box">
                                           <!-- Checkbox -->
                                           <div class="form-check mb-3">
-                                              <input type="radio" id="formRadio1" name="status" value="1" class="form-check-input"  >
-                                              <label class="form-check-label" for="formRadio1">Sold</label>
+                                              <input type="radio" id="formRadio1" name="status" value="1" class="form-check-input" @if(request()->status == 1) checked @endif>
+                                              <label class="form-check-label" for="formRadio1">@lang('Sold')</label>
                                           </div>
                                           <!-- End Checkbox -->
 
                                           <!-- Checkbox -->
                                           <div class="form-check mb-3">
-                                              <input type="radio" id="formRadio2" name="status" value="0" class="form-check-input" >
-                                              <label class="form-check-label" for="formRadio2">Unsold</label>
+                                              <input type="radio" id="formRadio2" name="status" value="2" class="form-check-input" @if(request()->status == 2) checked @endif >
+                                              <label class="form-check-label" for="formRadio2">@lang('Unsold')</label>
                                           </div>
                                           <div class="form-check mb-3">
-                                              <input type="radio" id="formRadio3" name="status" value="" class="form-check-input" checked>
-                                              <label class="form-check-label" for="formRadio3">All</label>
+                                              <input type="radio" id="formRadio3" name="status" value="0" class="form-check-input" @if(request()->status == 0) checked @endif>
+                                              <label class="form-check-label" for="formRadio3">@lang('All')</label>
                                           </div>
                                       </div>
                                   </div>
                               </div>
                           </div>
-                          <button type="submit" class="btn-custom d-block m-auto w-100">Filter</button>
+                          <button type="submit" class="btn-custom d-block m-auto w-100">@lang('Filter')</button>
                       </div>
                   </form>
               </div>
               <div class="col-lg-9">
                  <div class="row g-4">
-                    @foreach ($vehicles as $vehicle)
+                    @forelse ($vehicles as $vehicle)
                         @if ($vehicle->status == 1)
                               <div class="col-lg-4">
                                  <div class="item-box">
@@ -133,17 +133,24 @@
                                     <div class="text-box">
                                        <h4>{{$vehicle->details->title}}</h4>
                                         @if ($vehicle->biddingHistory->max('bid_amount'))
-                                            <p>Current Bid: <span class="text-primary">{{number_format($vehicle->biddingHistory->max('bid_amount'), 2, '.', ',')}} {{basicControl()->currency_symbol}}</span></p>
+                                            <p>@lang('Current Bid') <span class="text-primary">{{number_format($vehicle->biddingHistory->max('bid_amount'), 2, '.', ',')}} {{basicControl()->currency_symbol}}</span></p>
                                         @else
-                                            <p>Initial Price: <span class="text-primary">{{number_format($vehicle->details->price, 2, '.', ',')}} {{basicControl()->currency_symbol}}</span></p>
+                                            <p>@lang('Initial Price') <span class="text-primary">{{number_format($vehicle->details->price, 2, '.', ',')}} {{basicControl()->currency_symbol}}</span></p>
                                         @endif
-                                       <p>Location: {{$vehicle->user->address_one}}</p>
+                                       <p>@lang('Location') {{$vehicle->user->address_one}}</p>
                                        <a href="{{route('auction.details',[slug($vehicle->details->title??''),$vehicle->id])}}" class="btn-custom arrow"> <span>Place a Bid</span> </a>
                                     </div>
                                  </div>
                               </div>
                            @endif
-                    @endforeach
+                           @empty
+                           <div class="text-center p-4">
+                            <img  class="dataTables-image mb-3 w-50"
+                                 src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                                 alt="Image Description">
+                            <p class="mb-0">@lang("No Vehicle Found")</p>
+                        </div>
+                    @endforelse
                  </div>
                  <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center mt-4">
@@ -156,17 +163,20 @@
            </div>
         </div>
      </section>
-@include($theme . 'partials.footer')
+@include($theme . 'sections.footer')
 @endsection
 @push('script')
     <script>
         let halfAmount = @json($maxAmount) / 2;
+        let range = @json(request()->my_range);
+        let requestRange =range? range.split(";").map(Number):[];
+
         $(".js-range-slider").ionRangeSlider({
             type: "double",
-            min: @json($minAmount),
+            min:@json($minAmount),
             max: @json($maxAmount),
-            from: @json($minAmount),
-            to: halfAmount,
+            from: requestRange[0]??@json($minAmount),
+            to: requestRange[1]??halfAmount,
             grid: true,
         });
     </script>

@@ -19,29 +19,96 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="card-title m-0">@lang('Blogs')</h4>
             <a href="{{route('admin.create.blog')}}" class="btn btn-primary">@lang('Create Blogs')</a>
+            <div class="dropdown">
+                <button type="button" class="btn btn-white btn-sm w-100"
+                        id="dropdownMenuClickable" data-bs-auto-close="false"
+                        id="usersFilterDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="bi-filter me-1"></i> @lang('Filter')
+                </button>
+                <div
+                    class="dropdown-menu dropdown-menu-sm-end dropdown-card card-dropdown-filter-centered filter_dropdown"
+                    aria-labelledby="dropdownMenuClickable">
+                    <div class="card">
+                        <div class="card-header card-header-content-between">
+                            <h5 class="card-header-title">@lang('Filter Category')</h5>
+                            <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm ms-2"
+                                    id="filter_close_btn">
+                                <i class="bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <form action="{{route('admin.filter.blog')}}" method="get">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12 mb-4">
+                                        <small class="text-cap text-body">@lang("Category Status")</small>
+                                        <div class="tom-select-custom">
+                                            <select
+                                                class="js-select js-datatable-filter form-select form-select-sm"
+                                                id="select_status"
+                                                name="status"
+                                                data-target-column-index="4" data-hs-tom-select-options='{
+                                                    "placeholder": "Any status",
+                                                    "searchInDropdown": false,
+                                                    "hideSearch": true,
+                                                    "dropdownWidth": "10rem"
+                                                    }'>
+                                                <option value="all"
+                                                        data-option-template='<span class="d-flex align-items-center"><span class="legend-indicator bg-secondary"></span>@lang("All Status")</span>'>
+                                                    @lang("All Status")
+                                                </option>
+                                                <option value="1"
+                                                        data-option-template='<span class="d-flex align-items-center"><span class="legend-indicator bg-success"></span>Active</span>'>
+                                                    @lang("Active")
+                                                </option>
+                                                <option value="0"
+                                                        data-option-template='<span class="d-flex align-items-center"><span class="legend-indicator bg-danger"></span>Inactive</span>'>
+                                                    @lang("Inactive")
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-4">
+                                        <span class="text-cap text-body">@lang("Title")</span>
+                                        <input type="text" class="form-control" name="title" id="username_filter_input"
+                                               autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" id="filter_button"
+                                            class="btn btn-primary">@lang('Apply')</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-thead-bordered table-nowrap table-align-middle card-table">
-                <thead class="thead-light">
-                <tr>
-                    <th>@lang('No.')</th>
-                    <th>@lang('Title')</th>
-                    <th>@lang('Status')</th>
-                    <th class="text-center">
-                        @foreach($languages as $language)
-                            <img class="avatar avatar-xss avatar-square me-2"
-                                 src="{{ getFile($language->flag_driver, $language->flag) }}"
-                                 alt="{{ $language->name }} Flag">
-                        @endforeach
-                    </th>
-                    <th>@lang('Action')</th>
-                </tr>
-                </thead>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-thead-bordered table-nowrap table-align-middle card-table">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>@lang('No.')</th>
+                        <th>@lang('Title')</th>
+                        <th>@lang('Status')</th>
+                        <th class="text-center">
+                            @foreach($languages as $language)
+                                <img class="avatar avatar-xss avatar-square me-2"
+                                     src="{{ getFile($language->flag_driver, $language->flag) }}"
+                                     alt="{{ $language->name }} Flag">
+                            @endforeach
+                        </th>
+                        <th>@lang('Action')</th>
+                    </tr>
+                    </thead>
 
-                <tbody>
+                    <tbody>
                     @php
                         $sl = 0;
                     @endphp
@@ -93,8 +160,22 @@
                             </td>
                         </tr>
                     @endforeach
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <!-- Pagination -->
+            <div class="row justify-content-center justify-content-sm-between align-items-sm-center">
+                <div class="col-sm-auto">
+                    <div class="d-flex justify-content-center justify-content-sm-end">
+                        <!-- Pagination -->
+                        {{ $blogs->appends($_GET)->links('admin.layouts.pagination') }}
+                    </div>
+                </div>
+                <!-- End Col -->
+            </div>
+            <!-- End Pagination -->
         </div>
     </div>
     </div>

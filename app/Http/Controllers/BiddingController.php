@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BiddingController extends Controller
 {
-   
+
     public function bid(Request $request,$id)
     {
       $user = Auth::user();

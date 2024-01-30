@@ -192,7 +192,8 @@ class PaymentController extends Controller
         $msg = [
             'username' => optional($data->user)->username,
             'amount' => currencyPosition($data->amount),
-            'gateway' => optional($data->gateway)->name
+            'gateway' => optional($data->gateway)->name,
+            'currency' => basicControl()->currency_symbol
         ];
         $action = [
             "name" => optional($data->user)->firstname . ' ' . optional($data->user)->lastname,

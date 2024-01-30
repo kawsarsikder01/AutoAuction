@@ -147,7 +147,7 @@
                                                     </div>
                                                     <div class="col ms-n2">
                                                         <h5 class="mb-1">@{{ item.description.name }}</h5>
-                                                        <p class="text-body fs-5">@{{ item.description.text }}</p>
+                                                        <p class="text-body fs-5" v-html="item.description.text"></p>
                                                         <small class="col-auto text-muted text-cap" v-cloak>@{{
                                                             item.formatted_date }}</small>
                                                     </div>
@@ -231,4 +231,4 @@
     </div>
 </header>
 <!-- ========== END HEADER ========== -->
-
+{{--@{{ removeHtmlTags(item.description.text)}}--}}

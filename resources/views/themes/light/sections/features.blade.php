@@ -4,10 +4,10 @@
        <div class="row">
           <div class="col-12">
              <div class="section-header" overlay-text="Working Process">
-                <h5>{{$features['single']['heading']}}</h5>
-                <h2>{{$features['single']['sub_heading']}}</h2>
+                <h5>{{$features['single']['heading']??''}}</h5>
+                <h2>{!! $features['single']['sub_heading']??'' !!}</h2>
                 <p>
-                   {{$features['single']['description']}}
+                   {!! $features['single']['description']??'' !!}
                 </p>
              </div>
           </div>
@@ -25,14 +25,14 @@
                <div class="text">
                   <h4>{{$objectItem->heading}}</h4>
                   <p>
-                     {{$objectItem->text}}
+                     {!! $objectItem->text !!}
                   </p>
                </div>
             </div>
          </div>
-             
+
           @endforeach
-          
+
        </div>
     </div>
  </section>
