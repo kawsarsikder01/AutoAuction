@@ -45,12 +45,13 @@
                 </tbody>
              </table>
              @if (count($reports) == 0)
-                <div class="text-center p-4">
-                    <img  class="dataTables-image mb-3 w-50"
-                         src="{{ asset('assets/admin/img/oc-error.svg') }}"
-                         alt="Image Description">
-                    <p class="mb-0">@lang("No Reports Found")</p>
-                </div>
+                  <div class="text-center p-4" >
+                      <img  class="dataTables-image mb-3"
+                            id="emptyImage"
+                            src="{{ asset($themeTrue.'img/img/no-data.png') }}"
+                            alt="Image Description">
+                      <p class="mb-0">@lang("No Data Found")</p>
+                  </div>
                 @endif
 
              <!-- pagination -->

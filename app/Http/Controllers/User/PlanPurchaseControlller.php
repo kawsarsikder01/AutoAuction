@@ -22,10 +22,10 @@ class PlanPurchaseControlller extends Controller
     {
       $plan = Plan::find($id);
 
-      if(Auth::user()->plan && $plan->price < Auth::user()->plan->price){
+      if(Auth::user()->plan->first() && $plan->price < Auth::user()->plan->first()->price){
         return back()->with('warning',"You Can Not Downgrade Your Plan");
       }
-        if(Auth::user()->plan){
+        if(Auth::user()->plan->first()){
             return  abort(404);
         }
        $user =  Auth::user();
@@ -195,12 +195,15 @@ public function confirmPlan(Request $request)
     {
         $user = Auth::user();
 
-        if(!$user->plan){
+        if(!$user->plan->first()){
             return abort(404);
         }
-        if ($user->plan->id == $id){
-            return abort(404);
+        if ($user->plan->first()->expiry_date > now()->format('Y-m-d H:i:s')){
+            if ($user->plan->first()->plan_id == $id){
+                return abort(404);
+            }
         }
+
         $plan = Plan::find($id);
         $data['plan_id'] =  $id;
         $data['plan'] = $plan;

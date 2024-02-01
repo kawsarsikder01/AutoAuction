@@ -48,7 +48,7 @@
                         <tr>
                             <td>{{++$sl}}</td>
                             <td>{{$item->name}}</td>
-                            
+
                             <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
                             <td class="text-center">
                                 @if($item->type !== 2)
@@ -72,7 +72,7 @@
                                 <div class="btn-group" role="group">
                                     <a class="btn btn-white btn-sm" href="{{route('admin.edit.car.category',[$item->id,$item->language_id])}}">
                                         <i class="bi-pencil-fill me-1"></i> Edit</a>
-                            
+
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-white btn-icon btn-sm dropdown-toggle dropdown-toggle-empty" id="pageEditDropdown" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end mt-1" aria-labelledby="pageEditDropdown">
@@ -111,6 +111,9 @@
                         <label class="form-label" for="name">@lang('Name')</label>
                         <input type="text" id="name"  class="form-control" name="name" placeholder="Name">
                       </div>
+                    @error("name")
+                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
             <div class="row mb-3">
@@ -136,7 +139,7 @@
   </div>
   <!-- End Modal -->
 
-  
+
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
 data-bs-backdrop="static"
@@ -179,25 +182,25 @@ aria-hidden="true">
 
 
 
-<!-- Modal -->
-<div class='modal fade bd-example-modal-sm' tabindex='-1' role='dialog' aria-labelledby='mySmallModalLabel' aria-hidden='true'>
-    <div class='modal-dialog modal-sm' role='document'>
-      <div class='modal-content'>
-        <div class='modal-header'>
-          <h5 class='modal-title h4' id='mySmallModalLabel'>Small modal</h5>
-          <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-        </div>
-        <form action=''>
-            <div class='modal-body'>
-                <p class='message'>Do you want to approved this Vehicle?</p>
-                   <input type='hidden' name='status' id='status' value=''>
-              </div>
-              <div class='modal-footer'>
-                <button type='button' class='btn btn-white' data-bs-dismiss='modal'>@lang('Close')</button>
-                <button type='submit' class='btn btn-primary'>@lang('Confirm')</button>
-            </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  <!-- End Modal -->
+{{--<!-- Modal -->--}}
+{{--<div class='modal fade bd-example-modal-sm' tabindex='-1' role='dialog' aria-labelledby='mySmallModalLabel' aria-hidden='true'>--}}
+{{--    <div class='modal-dialog modal-sm' role='document'>--}}
+{{--      <div class='modal-content'>--}}
+{{--        <div class='modal-header'>--}}
+{{--          <h5 class='modal-title h4' id='mySmallModalLabel'>Small modal</h5>--}}
+{{--          <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>--}}
+{{--        </div>--}}
+{{--        <form action=''>--}}
+{{--            <div class='modal-body'>--}}
+{{--                <p class='message'>Do you want to approved this Vehicle?</p>--}}
+{{--                   <input type='hidden' name='status' id='status' value=''>--}}
+{{--              </div>--}}
+{{--              <div class='modal-footer'>--}}
+{{--                <button type='button' class='btn btn-white' data-bs-dismiss='modal'>@lang('Close')</button>--}}
+{{--                <button type='submit' class='btn btn-primary'>@lang('Confirm')</button>--}}
+{{--            </div>--}}
+{{--        </form>--}}
+{{--      </div>--}}
+{{--    </div>--}}
+{{--  </div>--}}
+{{--  <!-- End Modal -->--}}

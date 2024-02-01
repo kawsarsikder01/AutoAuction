@@ -280,28 +280,17 @@
              },
          });
          let id = $("#inputImage").data('id');
-         $.ajax({
-            url: "{{ route('user.get.image', ':id') }}".replace(':id', id),
-            method: 'GET',
-            dataType: 'json', // Set the expected data type
-            success: function(response) {
-                let preloaded = [];
-                for(let i =0; i < response.length;i++){
-                    preloaded.push({id:i,src:response[i]})
-                }
-
-        $('#carImage').imageUploader({
-            preloaded: preloaded,
-            imagesInputName: 'images',
-            preloadedInputName: 'photos',
-        });
-
-            },
-            error: function(xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
+         let images = @json($images);
+         let oldImagePath = @json($vehicle->path_name);
+         let preloaded = [];
+         for(let i =0; i < images.length;i++){
+             preloaded.push({id:oldImagePath[i],src:images[i]})
+         }
+         $('#carImage').imageUploader({
+             preloaded: preloaded,
+             imagesInputName: 'images',
+             preloadedInputName: 'photos',
+         });
 
      })
 

@@ -31,8 +31,8 @@
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
                             <select class="js-example-basic-single form-control" name="brand">
                                <option value="">@lang('Select Brand')</option>
-                                @foreach($brands as $brands)
-                                    <option value="{{$brands->id}}" @selected(request()->brand == $brands->id)>{{$brands->name}}</option>
+                                @foreach($brands as $brand)
+                                    <option value="{{$brand->id}}" @selected(request()->brand == $brand->id)>{{$brand->name}}</option>
                                 @endforeach
                             </select>
                          </div>
@@ -96,7 +96,7 @@
                                 <span class="badge bg-primary">@lang('Rejected')</span>
                             @endif
                         </td>
-                        <td>
+                        <td data-label="@lang('Total Bid')">
                             {{count($vehicle->biddingHistory)}}
                         </td>
                         <td data-label="@lang('Sold Status')">
@@ -156,12 +156,13 @@
                 </tbody>
              </table>
              @if (count($vehicles) == 0)
-                <div class="text-center p-4">
-                    <img  class="dataTables-image mb-3 w-50"
-                         src="{{ asset('assets/admin/img/oc-error.svg') }}"
-                         alt="Image Description">
-                    <p class="mb-0">@lang("No Vehicle Found")</p>
-                </div>
+                  <div class="text-center p-4" >
+                      <img  class="dataTables-image mb-3"
+                            id="emptyImage"
+                            src="{{ asset($themeTrue.'img/img/no-data.png') }}"
+                            alt="Image Description">
+                      <p class="mb-0">@lang("No Data Found")</p>
+                  </div>
                 @endif
 
              <!-- pagination -->
@@ -196,6 +197,62 @@
                     <button type="submit" class="btn-custom">@lang('Confirm')</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Search</h5>
+                <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fal fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('filter.listed-vehicle')}}" method="get">
+                    <div class="row g-3 align-items-end">
+                        <div class="input-box col-12">
+                            <input type="text" value="{{request()->title}}" name="title" class="form-control" placeholder="Search" />
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="category">
+                                <option value="">@lang('Select Category')</option>
+                                @foreach($categories as $categorie)
+                                    <option value="{{$categorie->id}}" @selected(request()->category == $categorie->id)>{{$categorie->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="brand">
+                                <option value="">@lang('Select Brand')</option>
+                                @foreach($brands as $brand)
+                                    <option value="{{$brand->id}}" @selected(request()->brand == $brand->id)>{{$brand->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="sold_status">
+                                <option value="0" @selected(request()->sold_status == 0) >@lang('All')</option>
+                                <option value="1" @selected(request()->sold_status == 1)>@lang('Sold')</option>
+                                <option value="2" @selected(request()->sold_status == 2)>@lang('Unsold')</option>
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="release_status">
+                                <option value="0" @selected(request()->release_status == 0)>@lang('All')</option>
+                                <option value="1" @selected(request()->release_status == 1)>@lang('Released')</option>
+                                <option value="3" @selected(request()->release_status == 3)>@lang('Unreleased')</option>
+                                <option value="2" @selected(request()->release_status == 2)>@lang('Canceled')</option>
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <button class="btn-custom w-100"><i class="fal fa-search"></i> Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Models\Fund;
 use App\Models\Plan;
+use App\Models\PlanPurchaseHistory;
 use App\Models\Transaction;
 use App\Traits\Notify;
 use GPBMetadata\Google\Api\Auth;
@@ -81,35 +82,36 @@ class BasicService
             $this->adminFirebasePushNotification('ADD_FUND_USER_ADMIN', $params, $firebaseAction);
         }elseif ($deposit->depositable_type == Plan::class && $deposit->depositable_id){
             $user = $deposit->user;
-            if(!$user->plan){
+            if(!$user->plan->first()){
                 $plan = Plan::find($deposit->depositable_id);
                 if ($plan){
                     $user->plan_id = $plan->id;
-                    $user->plan_purchase_date = Carbon::now()->toDateTimeString();
+                    $planPurchaseHistory = new PlanPurchaseHistory();
+                    $planPurchaseHistory->plan_name = $plan->plan_name;
+                    $planPurchaseHistory->plan_id = $plan->id;
+                    $planPurchaseHistory->user_id = $user->id;
+                    $planPurchaseHistory->price =  $plan->price;
+                    $planPurchaseHistory->noOfListing = $plan->number_of_listing;
+                    $planPurchaseHistory->noOfMaxImg = $plan->number_of_images;
+                    $planPurchaseHistory->access_auction = $plan->access_auction;
+                    $planPurchaseHistory->customer_support = $plan->customer_support;
+                    $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
+                    $planPurchaseHistory->top_search_result = $plan->top_search_result;
+                    $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
+                    $planPurchaseHistory->status = 1;
+                    $planPurchaseHistory->purchase_date = Carbon::now()->toDateTimeString();
                     if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
-                        $user->plan_expire_date = Carbon::now()->addDays($plan->expiry_time);
+                        $planPurchaseHistory->expiry_date = Carbon::now()->addDays($plan->expiry_time);
                     } elseif ($plan->expiry_time_type == 'months' || $plan->expiry_time_type == 'month') {
-                        $user->plan_expire_date = Carbon::now()->addMonths($plan->expiry_time);
+                        $planPurchaseHistory->expiry_date = Carbon::now()->addMonths($plan->expiry_time);
                     } elseif ($plan->expiry_time_type == 'years' || $plan->expiry_time_type == 'year') {
-                        $user->plan_expire_date = Carbon::now()->addYears($plan->expiry_time);
+                        $planPurchaseHistory->expiry_date = Carbon::now()->addYears($plan->expiry_time);
                     } else {
                         $user->expire_date = null;
                     }
                 }
                 $user->update();
-                $params = [
-                    'amount' => currencyPosition($deposit->payable_amount_in_base_currency),
-                    'trx_id' => $deposit->trx_id,
-                ];
-
-                $action = [
-                    "link" => "#",
-                    "icon" => "fa fa-money-bill-alt text-white"
-                ];
-                $firebaseAction = '#';
-                $this->sendMailSms($deposit->user, 'PLAN_PURCHASE_USER', $params);
-                $this->userPushNotification($deposit->user, 'PLAN_PURCHASE_USER', $params, $action);
-                $this->userFirebasePushNotification($deposit->user, 'PLAN_PURCHASE_USER', $params, $firebaseAction);
+                $planPurchaseHistory->save();
 
                 $params = [
                     'username' => optional($deposit->user)->username,
@@ -124,40 +126,43 @@ class BasicService
                 ];
 
                 $firebaseAction = "#";
-                $this->adminMail('PLAN_PURCHASE_USER_ADMIN', $params, $action);
+                $this->adminMail('PLAN_PURCHASE_USER_ADMIN', $params);
                 $this->adminPushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $firebaseAction);
-            }elseif($user->plan){
+            }elseif($user->plan->first()){
                 $plan = Plan::find($deposit->depositable_id);
-                $user->plan_id =$plan->id;
-                $user->plan_purchase_date = Carbon::now()->toDateTimeString();
-                if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
-                    $user->plan_expire_date = Carbon::now()->addDays($plan->expiry_time);
-                } elseif ($plan->expiry_time_type == 'months' || $plan->expiry_time_type == 'month') {
-                    $user->plan_expire_date = Carbon::now()->addMonths($plan->expiry_time);
-                } elseif ($plan->expiry_time_type == 'years' || $plan->expiry_time_type == 'year') {
-                    $user->plan_expire_date = Carbon::now()->addYears($plan->expiry_time);
-                } else {
-                    $user->expire_date = null;
+                if ($plan){
+                    $oldPlan = $user->plan->first();
+                    $oldPlan->status = 0;
+                    $oldPlan->update();
+                    $user->plan_id = $plan->id;
+                    $user->total_listed_car = 0;
+                    $planPurchaseHistory = new PlanPurchaseHistory();
+                    $planPurchaseHistory->plan_name = $plan->plan_name;
+                    $planPurchaseHistory->plan_id = $plan->id;
+                    $planPurchaseHistory->user_id = $user->id;
+                    $planPurchaseHistory->price =  $plan->price;
+                    $planPurchaseHistory->noOfListing = $plan->number_of_listing;
+                    $planPurchaseHistory->noOfMaxImg = $plan->number_of_images;
+                    $planPurchaseHistory->access_auction = $plan->access_auction;
+                    $planPurchaseHistory->customer_support = $plan->customer_support;
+                    $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
+                    $planPurchaseHistory->top_search_result = $plan->top_search_result;
+                    $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
+                    $planPurchaseHistory->status = 1;
+                    $planPurchaseHistory->purchase_date = Carbon::now()->toDateTimeString();
+                    if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
+                        $planPurchaseHistory->expiry_date = Carbon::now()->addDays($plan->expiry_time);
+                    } elseif ($plan->expiry_time_type == 'months' || $plan->expiry_time_type == 'month') {
+                        $planPurchaseHistory->expiry_date = Carbon::now()->addMonths($plan->expiry_time);
+                    } elseif ($plan->expiry_time_type == 'years' || $plan->expiry_time_type == 'year') {
+                        $planPurchaseHistory->expiry_date = Carbon::now()->addYears($plan->expiry_time);
+                    } else {
+                        $user->expire_date = null;
+                    }
                 }
-                $user->total_listed_car = 0;
                 $user->update();
-
-
-
-                $params = [
-                    'amount' => currencyPosition($deposit->payable_amount_in_base_currency),
-                    'trx_id' => $deposit->trx_id,
-                ];
-
-                $action = [
-                    "link" => "#",
-                    "icon" => "fa fa-money-bill-alt text-white"
-                ];
-                $firebaseAction = '#';
-                $this->sendMailSms($deposit->user, 'PLAN_UPGRADE_USER', $params);
-                $this->userPushNotification($deposit->user, 'PLAN_UPGRADE_USER', $params, $action);
-                $this->userFirebasePushNotification($deposit->user, 'PLAN_UPGRADE_USER', $params, $firebaseAction);
+                $planPurchaseHistory->save();
 
                 $params = [
                     'username' => optional($deposit->user)->username,
@@ -172,7 +177,7 @@ class BasicService
                 ];
 
                 $firebaseAction = "#";
-                $this->adminMail('PLAN_UPGRADE_USER_ADMIN', $params, $action);
+                $this->adminMail('PLAN_UPGRADE_USER_ADMIN', $params);
                 $this->adminPushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $firebaseAction);
             }

@@ -111,6 +111,9 @@
                         <label class="form-label" for="name">@lang('Name')</label>
                         <input type="text" id="name"  class="form-control" name="name" placeholder="Name">
                       </div>
+                    @error("name")
+                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
             <div class="row mb-3">

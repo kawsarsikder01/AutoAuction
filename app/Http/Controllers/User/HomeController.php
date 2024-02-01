@@ -99,33 +99,6 @@ class HomeController extends Controller
 
     public function profileUpdateImage(Request $request)
     {
-     $req = $request->except('_method', '_token');
-        $rules = [
-            'image' => 'required|max:4096|mimes:jpg,png,jpeg',
-        ];
-        $validator = Validator::make($req, $rules);
-
-        if ($validator->fails()) {
-            $validator->errors()->add('profileImage', '1');
-
-            return back()->withErrors($validator)->withInput();
-        }
-//        $this->validate($request, [
-//            'image' => [
-//                'nullable',
-//                'max:4096',
-//                function ($fail) use ($image, $allowedExtensions) {
-//                    $ext = strtolower($image->getClientOriginalExtension());
-//                    if (($image->getSize() / 1000000) > 2) {
-//                        throw ValidationException::withMessages(['image' => "Images MAX  2MB ALLOW!"]);
-//                    }
-//                    if (!in_array($ext, $allowedExtensions)) {
-//
-//                        throw ValidationException::withMessages(['image' => "Only png, jpg, jpeg images are allowed"]);
-//                    }
-//                }
-//            ]
-//        ]);
         $user = Auth::user();
         if ($request->hasFile('image')) {
             $image = $this->fileUpload($request->image, config('filelocation.userProfile.path'), null,null,'avif', 60, $user->image, $user->image_driver);

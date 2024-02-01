@@ -10,4 +10,8 @@ class CarBrand extends Model
     protected  $table = 'auction_car_brand';
     protected  $guarded = ['id'];
     use HasFactory;
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class,'brand_id');
+    }
 }

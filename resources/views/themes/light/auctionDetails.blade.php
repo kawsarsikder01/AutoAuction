@@ -3,7 +3,7 @@
 
 @section('title',trans('Auctioin Details'))
 @section('content')
-<x-banner-component pagetitle="Auction Details" :path="$vehicle->path_name[mt_rand(0,count($vehicle->path_name) - 1)]??''" :driver="$vehicle->driver??''"/>
+<x-banner-component pagetitle="Auction Details" :path="$vehicle->path_name?$vehicle->path_name[mt_rand(0,count($vehicle->path_name) - 1)]??'':''" :driver="$vehicle->driver??''"/>
 
      <!-- auction details -->
      <section class="auction-details">
@@ -13,24 +13,28 @@
                  <div class="col-lg-6">
                     <div class="gallery-box">
                        <div id="mainCarousel" class="carousel mx-auto main_carousel">
-                          @foreach ($vehicle->path_name as $path)
-                            <div
-                            class="carousel__slide"
-                            data-src="{{getFile($vehicle->driver,$path)}}"
-                            data-fancybox="gallery"
-                            data-caption=""
-                        >
-                            <img class="img-fluid" src="{{getFile($vehicle->driver,$path)}}" />
-                        </div>
-                          @endforeach
+                          @if($vehicle->path_name)
+                           @foreach ($vehicle->path_name as $path)
+                               <div
+                                   class="carousel__slide"
+                                   data-src="{{getFile($vehicle->driver,$path)}}"
+                                   data-fancybox="gallery"
+                                   data-caption=""
+                               >
+                                   <img class="img-fluid" src="{{getFile($vehicle->driver,$path)}}" />
+                               </div>
+                           @endforeach
+                          @endif
                        </div>
 
                        <div id="thumbCarousel" class="carousel max-w-xl mx-auto thumb_carousel">
-                        @foreach ($vehicle->path_name as $path)
-                        <div class="carousel__slide">
-                            <img class="panzoom__content img-fluid" src="{{getFile($vehicle->driver,$path)}}" />
-                         </div>
-                          @endforeach
+                        @if($vehicle->path_name)
+                           @foreach ($vehicle->path_name as $path)
+                               <div class="carousel__slide">
+                                   <img class="panzoom__content img-fluid" src="{{getFile($vehicle->driver,$path)}}" />
+                               </div>
+                           @endforeach
+                        @endif
 
                        </div>
                     </div>
@@ -57,9 +61,9 @@
                               @endif
                           </div>
                        </div>
-                       <h3>{{$vehicle->details->title}}</h3>
+                       <h3>{{$vehicle->details->title??''}}</h3>
                        <p>
-                         {!!$vehicle->details->short_description!!}
+                         {!!$vehicle->details->short_description??''!!}
                        </p>
                        @if($vehicle->details->sold_status == 0)
                             @if ($vehicle->biddingHistory->max('bid_amount'))
@@ -279,8 +283,9 @@
                        </div>
                      @endforeach
                      @else
-                     <div class="text-center p-4">
+                     <div class="text-center p-4" id="emptyImageDib">
                         <img  class="dataTables-image mb-3 w-50"
+                              id="emptyImage"
                              src="{{ asset('assets/admin/img/oc-error.svg') }}"
                              alt="Image Description">
                         <p class="mb-0">@lang("No Bidding History Found")</p>

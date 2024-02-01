@@ -2,6 +2,7 @@
 @section('page_title',__('Payout'))
 
 @section('content')
+
     <div class="container-fluid">
         <div class="main row">
             <div class="section-header">

@@ -1,7 +1,7 @@
 @extends($theme.'layouts.user')
 @section('title',trans('Dashboard'))
 @section('content')
-<div class="container-fluid content" style="">
+<div class="container-fluid content">
     <div class="main row">
        <div class="col-12">
           <div class="row g-4">
@@ -22,14 +22,17 @@
                    <div class="row align-items-end">
                       <div class="col-lg-8">
                          <div class="p-4">
-                            <h4 class="text-primary">Welcome Trista Francis! 🎉</h4>
-                            <p>
-                               You have done 72% more sales today. Check your new badge in your profile.
-                            </p>
-                            <a href="influencer-create-listing.html" class="btn-custom">Create Listing</a>
+                            <h4 class="text-primary fs-2">Welcome {{Auth::user()->firstname." ".Auth::user()->lastname}} ! 🎉</h4>
+                             @if(Auth::user()->plan->first())
+                                 <p class="fs-6">Your Current Plan : Basic </p>
+                                 <p class="fs-6">You Can List Up to {{Auth::user()->plan->first()->noOfListing}} vehicle </p>
+                                 <p class="fs-6">You Can upload Up to {{Auth::user()->plan->first()->noOfMaxImg}} Images Per Listing </p>
+                                 <p class="fs-6">You have listed {{Auth::user()->total_listed_car}} vehicles under this plan.</p>
+                             @endif
+                            <a href="" class="btn-custom">Sell Your Vehicle</a>
                          </div>
                       </div>
-                      <div class="col-lg-4 text-center text-sm-left d-none d-lg-block">
+                      <div class="col-lg-4 text-center text-sm-left d-none d-xl-block mb-5">
                          <div class="text-right mb-4">
                             <img
                                src="{{asset($themeTrue.('img/img/bugatti.png'))}}"
@@ -116,7 +119,7 @@
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{Auth::user()->total_listed_car}}</h4>
+                            <h4>{{count(Auth::user()->vehicle)}}</h4>
                             <i class="fa-light fa-chart-network"></i>
                          </div>
                          <p class="mb-0">Total Listed Vehicle</p>
@@ -197,23 +200,13 @@
                       </div>
                       <p class="mb-0">Total Win Auction</p>
                    </div>
-                </div>
-             </div>
-             <div class="col-12">
-                <div class="card-box refferal-box">
-                   <h5>Your refferal link</h5>
-                   <div class="input-group">
-                      <input
-                         type="text"
-                         class="form-control"
-                         value="https://www.upwork.com/jobs/~01737b2cff792fde61"
-                         id="jobLink"
-                         disabled=""
-                      />
-                      <button id="copyBtn" onclick="copyText('jobLink')" class="btn text-white">
-                         Copy Link
-                      </button>
-                   </div>
+                    <div class="card-box">
+                        <div class="d-flex justify-content-between">
+                            <h4>{{Auth::user()->plan->first()->plan_name}}</h4>
+                            <i class="fa-light fa-file-chart-pie"></i>
+                        </div>
+                        <p class="mb-0">Current Plan</p>
+                    </div>
                 </div>
              </div>
           </div>

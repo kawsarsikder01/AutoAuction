@@ -8,39 +8,40 @@
                     <form class="form-row" action="{{route('user.ticket.store')}}" method="post"
                           enctype="multipart/form-data">
                         @csrf
-                        <div class="col-md-12">
-                            <div class="form-group mb-2">
-                                <label>@lang('Subject')</label>
-                                <input class="form-control" type="text" name="subject"
-                                       value="{{old('subject')}}" placeholder="@lang('Enter Subject')">
-                                @error('subject')
-                                <div class="error text-danger">@lang($message) </div>
-                                @enderror
-                            </div>
+                        <div class="input-box col-md-12">
+                            <label for="subject">@lang('Subject')</label>
+                            <input type="text" name="subject" value="{{ old('subject') }}" class="form-control" placeholder="Subject" />
+                            @error("subject")
+                            <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                            @enderror
                         </div>
-
-                        <div class="col-md-12">
-                            <div class="form-group mb-2">
-                                <label>@lang('Message')</label>
-                                <textarea class="form-control ticket-box" name="message" rows="5"
-                                          id="textarea1"
-                                          placeholder="@lang('Enter Message')">{{old('message')}}</textarea>
-                                @error('message')
-                                <div class="error text-danger">@lang($message) </div>
-                                @enderror
-                            </div>
+                        <div class="input-box col-md-12">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message">{{ old('message') }}</textarea>
+                            @error("message")
+                            <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                            @enderror
                         </div>
 
 
-                        <div class="col-md-12">
-                            <div class="form-group mb-2">
-                                <input type="file" name="attachments[]"
-                                       class="form-control "
-                                       multiple
-                                       placeholder="@lang('Upload File')">
-
-                                @error('attachments')
-                                <span class="text-danger">{{trans($message)}}</span>
+                        <div class="card-box mt-4">
+                            <div class="input-box col-md-12">
+                                <div class="input-field">
+                                    <div class="input-images-1" id="carImage" name="images[]" ></div>
+                                </div>
+                                @error("images.*")
+                                <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                                @error("images")
+                                <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
                             </div>
                         </div>
@@ -57,8 +58,31 @@
         </div>
     </div>
 @endsection
+@push('css-lib')
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/summernote-bs5.min.css') }}">
+    <link rel="stylesheet" href="{{asset($themeTrue.'css/image-uploader.min.css')}}" />
+    <link rel="stylesheet" href="{{asset($themeTrue.'css/image-uploader.css')}}" />
+@endpush
+@push('js-lib')
+    <script src="{{ asset('assets/admin/js/summernote-bs5.min.js') }}"></script>
+    <script src="{{asset($themeTrue.'js/image-uploader.min.js')}}"></script>
+    <script src="{{asset('assets/admin/js/hs-file.min.js')}}"></script>
+@endpush
 @push('script')
     <script>
+        $(document).ready(function (){
+            $('#message').summernote({
+                placeholder: 'C/D Test Results.',
+                height: 160,
+                callbacks: {
+                    onBlurCodeview: function () {
+                        let codeviewHtml = $(this).siblings('div.note-editor').find('.note-codable').val();
+                        $(this).val(codeviewHtml);
+                    }
+                },
+            });
+            $('.input-images-1').imageUploader();
+        })
         function copyFunction() {
             var copyText = document.getElementById("referralURL");
             copyText.select();

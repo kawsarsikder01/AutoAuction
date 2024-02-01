@@ -73,11 +73,11 @@
                            </li>
                         @endif
                     </ul>
-                       @if(Auth::user() && Auth::user()->plan)
-                            @if(Auth::user()->plan_expire_date >= \Carbon\Carbon::now() )
-                                @if(Auth::user()->plan && $plan->id == Auth::user()->plan->id)
+                       @if(Auth::user() && Auth::user()->plan->first())
+                            @if(Auth::user()->plan->first()->expiry_date >= \Carbon\Carbon::now() )
+                                @if(Auth::user()->plan->first() && $plan->id == Auth::user()->plan->first()->plan_id)
                                     <button class="btn-custom" type="button" data-bs-toggle="modal" data-bs-target="#planModal" disabled>@lang('Already Purchased')</button>
-                                @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
+                                @elseif(Auth::user()->plan->first() && $plan->price > Auth::user()->plan->first()->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
                                             data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
@@ -86,7 +86,7 @@
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
                                             data-bs-target="#planModal" > @lang('Upgrade Now')</button></a>
-                                @elseif(Auth::user()->plan && $plan->price < Auth::user()->plan->price)
+                                @elseif(Auth::user()->plan->first() && $plan->price < Auth::user()->plan->first()->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
                                             data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
@@ -106,7 +106,7 @@
                                             data-bs-target="#planModal" > @lang('Purchase Now')</button></a>
                                 @endif
                             @else
-                                @if(Auth::user()->plan && $plan->id == Auth::user()->plan->id)
+                                @if(Auth::user()->plan->first() && $plan->id == Auth::user()->plan->first()->plan_id)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
                                             data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
@@ -115,7 +115,7 @@
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
                                             data-bs-target="#planModal" >@lang('Expired Upgrade Now')</button></a>
-                                @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
+                                @elseif(Auth::user()->plan->first() && $plan->price > Auth::user()->plan->first()->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
                                             data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
@@ -132,10 +132,10 @@
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
                                             type="button" data-bs-toggle="modal"
-                                            data-bs-target="#planModal" > @lang('Purchase Now')/button></a>
+                                            data-bs-target="#planModal" > @lang('Purchase Now')</button></a>
                                 @endif
                             @endif
-                        @elseif(Auth::user() && !Auth::user()->plan)
+                        @elseif(Auth::user() && !Auth::user()->plan->first())
                             <a href="javascript:void(0);"><button
                                     data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
                                     data-price="{{$plan->price." ".basicControl()->currency_symbol}}"

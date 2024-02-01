@@ -134,12 +134,13 @@
                 </tbody>
              </table>
              @if (count($biddingHistorys) == 0)
-                <div class="text-center p-4">
-                    <img  class="dataTables-image mb-3 w-50"
-                         src="{{ asset('assets/admin/img/oc-error.svg') }}"
-                         alt="Image Description">
-                    <p class="mb-0">@lang("No Bidding History Found")</p>
-                </div>
+                  <div class="text-center p-4" >
+                      <img  class="dataTables-image mb-3"
+                            id="emptyImage"
+                            src="{{ asset($themeTrue.'img/img/no-data.png') }}"
+                            alt="Image Description">
+                      <p class="mb-0">@lang("No Data Found")</p>
+                  </div>
                 @endif
 
              <!-- pagination -->
@@ -222,6 +223,61 @@
            </form>
        </div>
    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Search</h5>
+                <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fal fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('filter.bidding-history')}}" method="get">
+                    <div class="row g-3 align-items-end">
+                        <div class="input-box col-12">
+                            <input type="text" class="form-control" value="{{request()->title}}" name="title" placeholder="Search" />
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="sold_status">
+                                <option value="0" @selected(request()->sold_status == 0)>@lang('Select Sold Status')</option>
+                                <option value="1" @selected(request()->sold_status == 1)>@lang('Sold')</option>
+                                <option value="2" @selected(request()->sold_status == 2)>@lang('Unsold')</option>
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="win_status">
+                                <option value="0" @selected(request()->win_status == 0)>@lang('Select Win Status')</option>
+                                <option value="1" @selected(request()->win_status == 1)>@lang('Win')</option>
+                                <option value="2" @selected(request()->win_status == 2)>@lang('Not Win')</option>
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="category">
+                                <option value="">@lang('Select Category')</option>
+                                @foreach($categories as $categorie)
+                                    <option value="{{$categorie->id}}" @selected(request()->category == $categorie->id)>{{$categorie->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="input-box col-12">
+                            <select class="js-example-basic-single form-control" name="brand">
+                                <option value="">@lang('Select Brand')</option>
+                                @foreach($brands  as $brand)
+                                    <option value="{{$brand->id}}" @selected(request()->brand == $brand->id)>{{$brand->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="input-box col-lg-3 col-md-6 col-xl-2">
+                            <button class="btn-custom w-100"><i class="fal fa-search"></i> @lang('Filter')</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 

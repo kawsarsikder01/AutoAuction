@@ -92,7 +92,7 @@
              </div>
              <div class="language-dropdown-items">
                  @foreach($languages as $language)
-                     <a href="{{route('language',$language->short_name)}}">{{$language->name}}</a>
+                     <a href="{{route('language',$language->short_name)}}" class="{{session('lang')==$language->short_name?'text-decoration-underline':''}}">{{$language->name}}</a>
                  @endforeach
              </div>
           </div>

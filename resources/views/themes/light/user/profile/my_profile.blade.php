@@ -7,7 +7,6 @@
          <div class="dashboard-heading">
             <h4 class="mb-0">Edit Profile</h4>
          </div>
-         {{-- data-bs-toggle="modal" --}}
          <section class="profile-setting">
             <div class="row g-4 g-lg-5">
                <div class="col-xl-4">
@@ -95,21 +94,21 @@
                            <div class="row g-4">
                               <div class="input-box col-md-6">
                                  <label>First name</label>
-                                 <input type="text" class="form-control" value="{{ old('first_name', $user->firstname) }}" name="first_name" placeholder="Mr. John" />
+                                 <input type="text" class="form-control" value="{{ old('first_name', $user->firstname) }}" name="first_name" placeholder="Mr. John" autocomplete="off"/>
                                  @if($errors->has('first_name'))
                                     <div class="error text-danger">@lang($errors->first('first_name')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
                                  <label>last name</label>
-                                 <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->lastname) }}"  />
+                                 <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->lastname) }}" autocomplete="off" />
                                  @if($errors->has('last_name'))
                                     <div class="error text-danger">@lang($errors->first('last_name')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
                                  <label>username</label>
-                                 <input type="text" name="username" class="form-control" value=" {{ old('username', $user->username) }}" placeholder="johndoe" />
+                                 <input type="text" name="username" class="form-control" value=" {{ old('username', $user->username) }}" placeholder="johndoe"  autocomplete="off"/>
                                  @if($errors->has('username'))
                                     <div class="error text-danger">@lang($errors->first('username')) </div>
                                  @endif
@@ -122,6 +121,7 @@
                                     value="{{ old('email', $user->email) }}"
                                     class="form-control"
                                     placeholder="example@gmail.com"
+                                    autocomplete="off"
                                  />
                                  @if($errors->has('email'))
                                     <div class="error text-danger">@lang($errors->first('email')) </div>
@@ -129,7 +129,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label>phone number</label>
-                                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control" placeholder="01234567891" />
+                                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control" placeholder="01234567891" autocomplete="off" />
                                  @if($errors->has('phone'))
                                     <div class="error text-danger">@lang($errors->first('phone')) </div>
                                  @endif
@@ -147,13 +147,6 @@
                                  @endforeach
                                  </select>
                               </div>
-                              {{-- <div class="input-box col-12">
-                                 <label>select file</label>
-                                 <div class="attach-file">
-                                    <span class="prev"> <i class="fa-duotone fa-link"></i> </span>
-                                    <input class="form-control" accept="image/*" type="file" />
-                                 </div>
-                              </div> --}}
                               <div class="input-box col-12">
                                  <label>address</label>
                                  <textarea
@@ -191,14 +184,14 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label>New Password</label>
-                                 <input type="password" name="password" class="form-control" placeholder="" />
+                                 <input type="password" name="password" class="form-control" placeholder="" autocomplete="off"/>
                                  @if($errors->has('password'))
                                     <div class="error text-danger">@lang($errors->first('password')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
                                  <label>Confirm Password</label>
-                                 <input type="password" name="password_confirmation" class="form-control" placeholder="" />
+                                 <input type="password" name="password_confirmation" class="form-control" placeholder="" autocomplete="off"/>
                                  @if($errors->has('password_confirmation'))
                                     <div class="error text-danger">@lang($errors->first('password_confirmation')) </div>
                                  @endif
@@ -228,7 +221,7 @@
                                                           <label for="">{{ $value->field_label }}</label>
                                                           <input type="text" class="form-control"
                                                                  name="{{ $value->field_name }}"
-                                                                 placeholder="{{ $value->field_label }}"/>
+                                                                 placeholder="{{ $value->field_label }}" autocomplete="off"/>
                                                           @if($errors->has($value->field_name))
                                                               <div
                                                                   class="error text-danger">@lang($errors->first($value->field_name)) </div>
@@ -240,7 +233,7 @@
                                                           <label for="">{{ $value->field_label }}</label>
                                                           <input type="text" class="form-control"
                                                                  name="{{ $value->field_name }}"
-                                                                 placeholder="{{ $value->field_label }}"/>
+                                                                 placeholder="{{ $value->field_label }}" autocomplete="off"/>
                                                           @if($errors->has($value->field_name))
                                                               <div
                                                                   class="error text-danger">@lang($errors->first($value->field_name)) </div>
@@ -252,7 +245,7 @@
                                                           <label for="">{{ $value->field_label }}</label>
                                                           <input type="date" class="form-control"
                                                                  name="{{ $value->field_name }}"
-                                                                 placeholder="{{ $value->field_label }}"/>
+                                                                 placeholder="{{ $value->field_label }}" autocomplete="off"/>
                                                           @if($errors->has($value->field_name))
                                                               <div
                                                                   class="error text-danger">@lang($errors->first($value->field_name)) </div>
@@ -301,18 +294,6 @@
                               </div>
                         @empty
                         @endforelse
-
-                     {{-- <div
-                        class="tab-pane fade"
-                        id="tab-2"
-                        role="tabpanel"
-                        aria-labelledby="tab-2-tab" >
-                        <div class="alert mb-0">
-                           <i class="fal fa-check-circle"></i>
-                           <span>Your address is not verified</span>
-
-                        </div>
-                     </div> --}}
                   </div>
                </div>
             </div>

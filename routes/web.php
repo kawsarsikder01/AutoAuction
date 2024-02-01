@@ -133,6 +133,7 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
             Route::get('payout-supported-currency', [PayoutController::class, 'payoutSupportedCurrency'])->name('payout.supported.currency');
             Route::get('payout-check-amount', [PayoutController::class, 'checkAmount'])->name('payout.checkAmount');
             Route::post('request-payout', [PayoutController::class, 'payoutRequest'])->name('payout.request');
+            Route::post('payment-request', [DepositController::class, 'paymentRequest'])->name('payment.request');
 
             Route::match(['get', 'post'], 'confirm-payout/{trx_id}', [PayoutController::class, 'confirmPayout'])->name('payout.confirm');
             Route::post('confirm-payout/flutterwave/{trx_id}', [PayoutController::class, 'flutterwavePayout'])->name('payout.flutterwave');

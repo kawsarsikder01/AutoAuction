@@ -54,9 +54,10 @@
                 </tbody>
              </table>
              @if (count($tickets) == 0)
-               <div class="text-center p-4">
-                  <img  class="dataTables-image mb-3 w-50"
-                        src="{{ asset('assets/admin/img/oc-error.svg') }}"
+               <div class="text-center p-4" >
+                  <img  class="dataTables-image mb-3"
+                        id="emptyImage"
+                        src="{{ asset($themeTrue.'img/img/no-data.png') }}"
                         alt="Image Description">
                   <p class="mb-0">@lang("No Data Found")</p>
                </div>
@@ -73,3 +74,4 @@
     </div>
  </div>
 @endsection
+

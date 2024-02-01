@@ -13,8 +13,8 @@ class Card
 		$AccountID = optional($method->parameters)->Account_ID;
 		$PassPhrase = optional($method->parameters)->Passphrase;
 		$Payer_Account = optional($method->parameters)->Payer_Account;
-
-		$info = json_decode($payout->withdraw_information);
+        $info = $payout->information;
+//		$info = json_decode($information);
 		$amount = $info->amount->field_value;
 
 		$params = array('AccountID' => $AccountID,

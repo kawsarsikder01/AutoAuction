@@ -11,12 +11,9 @@
           <a class="active" href="{{route('user.dashboard')}}"><i class="fal fa-th-large"></i>@lang('Dashboard')</a>
        </li>
        <li>
-          <a href="{{route('user.profile')}}"><i class="fal fa-user-edit"></i>@lang('My Profile')</a>
-       </li>
-       <li>
          <a href="{{route('user.sell-car.submit')}}"><i class="fa-solid fa-car-side"></i>@lang("Sell Your Vehicle")</a>
       </li>
-       @if (Auth::user()->plan)
+       @if (Auth::user()->plan->first())
        <li>
           <a href="{{route('user.listed.vehicle')}}"><i class="fa-solid fa-list"></i>@lang("Listed Vehicle")</a>
        </li>
@@ -25,8 +22,11 @@
          <a href="{{route('user.bidding.history')}}"><i class="fa-regular fa-file"></i>@lang("Bid History")</a>
       </li>
       <li>
-         <a href="{{route('user.reports.conversation')}}"><i class="fal fa-flag-alt"></i></i>@lang("Reports")</a>
+         <a href="{{route('user.reports.conversation')}}"><i class="fal fa-flag-alt"></i>@lang("Reports")</a>
+      </li><li>
+            <a href="{{route('user.reports.conversation')}}"><i class="fa-solid fa-clock-rotate-left"></i>@lang("Purchase History")</a>
       </li>
+
       <li>
          <a
              class="dropdown-toggle"
@@ -74,7 +74,7 @@
          <a href="{{route('user.ticket.list')}}"><i class="fa-regular fa-paper-plane"></i>@lang("Support Ticket")</a>
       </li>
         <li>
-            <a href="{{route('user.twostep.security')}}"><i class="fal fa-lock"></i></i>@lang("2FA Security")</a>
+            <a href="{{route('user.twostep.security')}}"><i class="fal fa-lock"></i>@lang("2FA Security")</a>
         </li>
        <li>
          <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form1').submit();"> <i class="fal fa-sign-out-alt"></i>@lang('Sign Out') </a>

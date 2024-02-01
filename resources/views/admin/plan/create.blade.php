@@ -59,7 +59,7 @@
                                                        id="PlanName"
                                                        placeholder="@lang("Plan Name")" autocomplete="off">
                                             </div>
-                                            @error("name")
+                                            @error("plan_name")
                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                             @enderror
                                         </div>
@@ -114,7 +114,7 @@
                                                    placeholder="@lang("Number of Listing")"
                                                    autocomplete="off">
 
-                                            @error("number_of_image")
+                                            @error("number_of_listing")
                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                             @enderror
                                         </div>
@@ -133,7 +133,7 @@
                                                    >
 
 
-                                            @error("expiry_time")
+                                            @error("number_of_images")
                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                             @enderror
                                         </div>

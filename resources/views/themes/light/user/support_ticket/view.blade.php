@@ -43,18 +43,18 @@
                                            <div class="text-wrapper">
                                                <div class="text">
                                                    <p>
-                                                       {{$item->message}}
+                                                       {!! $item->message !!}
                                                    </p>
                                                </div>
                                                @if(0 < count($item->attachments))
                                                <div class="attachment-wrapper">
                                                    @foreach($item->attachments as $k=> $file)
-                                                   <a
-                                                      class="attachment"
-                                                      href="{{route('user.ticket.download',encrypt($file->id))}}"
-                                                      data-fancybox="gallery">
-                                                      <i class="fa fa-file"></i> @lang('File') {{++$k}}
-                                                   </a>
+                                                       <a
+                                                           class="attachment"
+                                                           href="{{route('user.ticket.download',encrypt($file->id))}}"
+                                                           data-fancybox="gallery">
+                                                           <i class="fa fa-file"></i> @lang('File') {{++$k}}
+                                                       </a>
                                                    @endforeach
                                                </div>
                                                @endif
@@ -73,7 +73,7 @@
                                        <div class="text-wrapper">
                                            <div class="text">
                                                <p>
-                                                   {{$item->message}}
+                                                   {!! $item->message !!}
                                                </p>
                                            </div>
                                            <div class="attachment-wrapper">
@@ -101,7 +101,7 @@
                             </button>
                             <img
                                id="attachment"
-                               src="{{ getFile($user->image_driver, $user->image) }}"
+                               src="atachment.jpg"
                                alt=""
                                class="img-fluid"
                             />

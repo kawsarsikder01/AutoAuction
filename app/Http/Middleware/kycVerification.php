@@ -19,7 +19,7 @@ class kycVerification
      */
     public function handle(Request $request, Closure $next): Response
     {
-//
+
 //     $user = Auth::user();
 //
 //       $kyc = Kyc::get();

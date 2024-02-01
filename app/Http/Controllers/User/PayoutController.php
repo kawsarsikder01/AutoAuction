@@ -417,6 +417,7 @@ class PayoutController extends Controller
 
 
         $validate = Validator::make($request->all(), $rules);
+//        dd($validate);
         if ($validate->fails()) {
 
             return back()->withErrors($validate)->withInput();

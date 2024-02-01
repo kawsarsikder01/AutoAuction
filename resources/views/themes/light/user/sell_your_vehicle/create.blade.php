@@ -16,7 +16,7 @@
                            <div class="row g-4">
                               <div class="input-box col-md-12">
                                  <label for="Title">Title</label>
-                                 <input type="title" name="title" value="{{ old('title') }}" class="form-control" placeholder="Title" />
+                                 <input type="title" name="title" value="{{ old('title') }}" class="form-control" placeholder="Title" autocomplete="off" />
                                   @error("title")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -25,7 +25,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="VehicleType">Vehicle Type</label>
-                                 <input type="text" name="vehicle_type" value="{{ old('vehicle_type') }}" class="form-control" placeholder="Vehicle Type" />
+                                 <input type="text" name="vehicle_type" value="{{ old('vehicle_type') }}" class="form-control" placeholder="EX : front-engine, rear-wheel-drive, 4-passenger coupe" autocomplete="off" />
                                   @error("vehicle_type")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -34,7 +34,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="EngineType">Engine Type</label>
-                                 <input type="text" name="engine_type" value="{{ old('engine_type') }}" class="form-control" placeholder="Engine Type" />
+                                 <input type="text" name="engine_type" value="{{ old('engine_type') }}" class="form-control" placeholder="EX : V-8, water-cooled, cast iron block and heads" autocomplete="off" />
                                   @error("engine_type")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -43,7 +43,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="power">Power</label>
-                                 <input type="text" name="power" value="{{ old('power') }}" class="form-control" placeholder="Power" />
+                                 <input type="text" name="power" value="{{ old('power') }}" class="form-control" placeholder="EX : 335 hp @ 5200 rpm" autocomplete="off"/>
                                   @error("power")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -52,7 +52,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="torque">Torque</label>
-                                 <input type="text" name="torque" value="{{ old('torque') }}" class="form-control" placeholder="Torque" />
+                                 <input type="text" name="torque" value="{{ old('torque') }}" class="form-control" placeholder="EX : 440 lb-ft @ 3400 rpm" autocomplete="off" />
                                   @error("torque")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -61,7 +61,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="displacement">Displacement</label>
-                                 <input type="text" name="displacement" value="{{ old('displacement') }}" class="form-control" placeholder="Displacement" />
+                                 <input type="text" name="displacement" value="{{ old('displacement') }}" class="form-control" placeholder="EX : 428 in3, 7002 cm3" autocomplete="off" />
                                   @error("displacement")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -70,7 +70,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="transmission">Transmission</label>
-                                 <input type="text" name="transmission" value="{{ old('transmission') }}" class="form-control" placeholder="Transmission" />
+                                 <input type="text" name="transmission" value="{{ old('transmission') }}" class="form-control" placeholder="EX : 3-speed automatic" autocomplete="off" />
                                   @error("transmission")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -118,7 +118,7 @@
                         </div>
                         <div class="card-box mt-4">
                             <div class="input-box col-md-12">
-                               <label class="mb-2" for="carImage">Car Images</label>
+                               <label class="mb-2" for="carImage">Vehicle Images</label>
                                 <div class="input-field">
                                     <div class="input-images-1" id="carImage" name="images[]" ></div>
                                 </div>
@@ -144,7 +144,7 @@
 
                                     <label for="InitialPrice" class="form-label  ">@lang("Initial Price")</label>
                                     <div class="input-group mb-3">
-                                        <input type="number" class="form-control" value="{{old('price')}}" name="price" placeholder="Initial Price" aria-label="Initial Price" aria-describedby="InitialPrice">
+                                        <input type="number" class="form-control" value="{{old('price')}}" name="price" placeholder="Initial Price" aria-label="Initial Price" aria-describedby="InitialPrice" autocomplete="off">
                                         <span class="input-group-text" id="InitialPrice">{{basicControl()->base_currency}}</span>
                                     </div>
                                      @error("price")
@@ -160,8 +160,7 @@
                            <h5>Auction Validity</h5>
                            <div class="row g-3">
                               <div class="input-box col-12">
-                                  <label for="torque">Auction Ending Date</label>
-                                  <input type="text" name="auction_ending_date" value="{{old('auction_ending_date')}}" class="form-control" id="datetimepicker" placeholder="Auction Ending Date">
+                                  <input type="text" name="auction_ending_date" value="{{old('auction_ending_date')}}" class="form-control" id="datetimepicker" placeholder="Auction Ending Date" autocomplete="off">
                                   @error("last_date")
                                     <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -193,7 +192,6 @@
                                          <option value="{{$item->id}}">{{$item->name}}</option>
                                      @endforeach
                                  </select>
-                                 <small>Add this Category to a collection so it’s easy to find in your store.</small>
                                   @error("category_id")
                                       <span class="invalid-feedback d-block" role="alert">
                                           <strong>{{ $message }}</strong>
@@ -236,7 +234,12 @@
          });
          // $("#fileUpload").fileUpload();
          $('#testResult').summernote({
-             placeholder: 'C/D Test Results.',
+         placeholder:   `Ex :
+                         Zero to 60 mph: 5.7 sec ,
+                         Zero to 100 mph: 14.3 sec ,
+                         Standing ¼-mile: 14.3 sec @ 100 mph ,
+                         Top speed (est): 115 mph ,
+                         Braking, 80-0 mph: 256 ft `,
              height: 160,
              callbacks: {
                  onBlurCodeview: function () {
@@ -246,7 +249,14 @@
              },
          });
          $('#dimensions').summernote({
-             placeholder: 'Dimensions',
+             placeholder: `
+                            Ex :
+                            Wheelbase: 108.0 in ,
+                            Length: 187.4 in ,
+                            Width: 71.3 in ,
+                            Height: 51.2 in ,
+                            Curb weight: 3607 lb
+                            `,
              height: 160,
              callbacks: {
                  onBlurCodeview: function () {

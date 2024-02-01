@@ -272,7 +272,7 @@ class PayoutLogController extends Controller
                 $payout->save();
             }
         }
-        $payout->user->balance = $payout->user->balance - ($payout->amount_in_base_currency + $payout->charge_in_base_currency);
+        $payout->user->balance = $payout->user->balance - $payout->net_amount_in_base_currency;
         $payout->user->update();
 
         return back()->with('success', 'Payment Confirmed');

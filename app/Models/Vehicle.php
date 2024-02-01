@@ -36,4 +36,12 @@ class Vehicle extends Model
     {
         return $this->hasMany(Report::class,'vehicle_id');
     }
+    public function category()
+    {
+        return $this->belongsTo(CarCategory::class,'category_id ');
+    }
+    public function brand()
+    {
+        return $this->belongsTo(CarBrand::class,'brand_id');
+    }
 }

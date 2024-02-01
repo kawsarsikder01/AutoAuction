@@ -93,7 +93,7 @@ class PaymentController extends Controller
             return redirect()->route('success');
         }
 
-        try {
+//        try {
             $gateway = Gateway::where('code', $code)->first();
             if (!$gateway) {
                 throw new Exception('Invalid Payment Gateway.');
@@ -106,12 +106,14 @@ class PaymentController extends Controller
             $gatewayObj = 'App\\Services\\Gateway\\' . $code . '\\Payment';
             $data = $gatewayObj::ipn($request, $gateway, $deposit ?? null, $trx ?? null, $type ?? null);
 
-        } catch (\Exception $exception) {
-            return back()->with('error', $exception->getMessage());
-        }
-        if (isset($data['redirect'])) {
-            return redirect($data['redirect'])->with($data['status'], $data['msg']);
-        }
+            if (isset($data['redirect'])) {
+                return redirect($data['redirect'])->with($data['status'], $data['msg']);
+            }
+
+//        } catch (\Exception $exception) {
+//            return back()->with('error', $exception->getMessage());
+//        }
+
     }
 
 

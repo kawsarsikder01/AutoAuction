@@ -122,10 +122,12 @@
                               <div class="col-lg-4">
                                  <div class="item-box">
                                     <div class="img-box">
-                                       @foreach ($vehicle->path_name as $path)
-                                       <img src="{{getFile($vehicle->driver,$path)}}" alt="" class="img-fluid" />
-                                       @break
-                                       @endforeach
+                                      @if($vehicle->path_name)
+                                        @foreach ($vehicle->path_name as $path)
+                                            <img src="{{getFile($vehicle->driver,$path)}}" alt="" class="img-fluid" />
+                                            @break
+                                        @endforeach
+                                      @endif
 
                                        <div class="countdown" data-countdown="{{$vehicle->details->auction_ending_date}}"></div>
 
@@ -144,12 +146,13 @@
                               </div>
                            @endif
                            @empty
-                           <div class="text-center p-4">
-                            <img  class="dataTables-image mb-3 w-50"
-                                 src="{{ asset('assets/admin/img/oc-error.svg') }}"
-                                 alt="Image Description">
-                            <p class="mb-0">@lang("No Vehicle Found")</p>
-                        </div>
+                         <div class="text-center p-4" id="emptyImageDib">
+                             <img  class="dataTables-image mb-3 w-50"
+                                   id="emptyImage"
+                                   src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                                   alt="Image Description">
+                             <p class="mb-0">@lang("No Vehicle Found")</p>
+                         </div>
                     @endforelse
                  </div>
                  <nav aria-label="Page navigation example">

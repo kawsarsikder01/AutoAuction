@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CarBrand;
 use App\Models\Language;
+use App\Traits\Upload;
 use Illuminate\Http\Request;
 use App\Models\CarCategory;
 
 class AuctionController extends Controller
 {
+    use Upload;
     //  Category  section
 
     public function category()
@@ -41,7 +43,11 @@ class AuctionController extends Controller
     }
     public function updateCategory(Request $request,$id)
     {
+//        dd($request->all());
         $category = CarCategory::findOrFail($id);
+        $request->validate([
+            'name' => 'required|string'
+        ]);
         $category->name = $request->name;
         $category->status = $request->status?1:0;
         $category->language_id =  $request->language_id;
@@ -51,6 +57,14 @@ class AuctionController extends Controller
     public function deleteCategory($id)
     {
         $category = CarCategory::findOrFail($id);
+        foreach($category->vehicles as $vehicle){
+            $vehicle->biddingHistory()->delete();
+            foreach ($vehicle->path_name as $image){
+                $this->fileDelete($vehicle->driver,$image);
+            }
+            $vehicle->details->delete();
+            $vehicle->delete();
+        }
         $category->delete();
         return back()->with('success', 'Category deleted successfully.');
     }
@@ -88,6 +102,9 @@ class AuctionController extends Controller
     public function updateBrand(Request $request,$id)
     {
         $brand = CarBrand::findOrFail($id);
+        $request->validate([
+            'name' => 'required'
+        ]);
         $brand->name = $request->name;
         $brand->status = $request->status?1:0;
         $brand->language_id =  $request->language_id;
@@ -97,6 +114,14 @@ class AuctionController extends Controller
     public function deleteBrand($id)
     {
         $brand = CarBrand::findOrFail($id);
+        foreach ($brand->vehicles as $vehicle){
+            $vehicle->biddingHistory()->delete();
+            foreach ($vehicle->path_name as $image){
+                $this->fileDelete($vehicle->driver,$image);
+            }
+            $vehicle->details->delete();
+            $vehicle->delete();
+        }
         $brand->delete();
         return back()->with('success', 'Brand deleted successfully.');
     }

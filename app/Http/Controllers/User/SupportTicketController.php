@@ -47,18 +47,19 @@ class SupportTicketController extends Controller
 
     public function store(Request $request)
     {
+//        dd($request->all());
         $this->newTicketValidation($request);
         $random = rand(100000, 999999);
         $ticket = $this->saveTicket($request, $random);
 
         $message = $this->saveMsgTicket($request, $ticket);
 
-        if (!empty($request->attachments)) {
-            $numberOfAttachments = count($request->attachments);
+        if (!empty($request->images)) {
+            $numberOfAttachments = count($request->images);
             for ($i = 0; $i < $numberOfAttachments; $i++) {
-                if ($request->hasFile('attachments.' . $i)) {
-                    $file = $request->file('attachments.' . $i);
-                    $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), config('filesystems.default'));
+                if ($request->hasFile('images.' . $i)) {
+                    $file = $request->file('images.' . $i);
+                    $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), null,null, 'avif',60);
                     if (empty($supportFile['path'])) {
                         throw new \Exception('File could not be uploaded.');
                     }

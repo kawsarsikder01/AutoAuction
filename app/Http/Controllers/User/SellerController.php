@@ -132,23 +132,20 @@ class SellerController extends Controller
         if($vehicle->user_id != Auth::user()->id){
             return abort(404);
         }
+        $images = [];
+        if ($vehicle->path_name){
+            foreach ($vehicle->path_name as $image){
+                $images[] = getFile($vehicle->driver,$image);
+            }
+        }
         $category = CarCategory::where('status',1)->get();
         $brand = CarBrand::where('status',1)->get();
 
-        return view('themes.light.user.sell_your_vehicle.edit',compact('vehicle','category','brand'));
+        return view('themes.light.user.sell_your_vehicle.edit',compact('vehicle','category','brand','images'));
     }
-    public function getImage($id)
-    {
-        $vehicle = Vehicle::with('details')->whereHas('details',function($query){
-            $query->select('path_name');
-        })->find($id);
-        $images = $vehicle->path_name;
-        return response()->json($images);
 
-    }
     public function update(Request $request,$id)
     {
-
         if( $request->images && $request->photos){
             $length = count($request->images) + count($request->photos);
         }elseif($request->photos){
@@ -195,9 +192,11 @@ class SellerController extends Controller
                  }
              }
          }else{
-             foreach($vehicle->path_name as $key => $image){
+             if ($vehicle->path_name){
+                 foreach($vehicle->path_name as $key => $image){
 
-                 $this->fileDelete($vehicle->driver,$image);
+                     $this->fileDelete($vehicle->driver,$image);
+                 }
              }
          }
            try{

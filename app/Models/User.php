@@ -173,7 +173,8 @@ class User extends Authenticatable
     }
     public function plan()
     {
-        return $this->belongsTo(Plan::class,'plan_id');
+        return $this->hasMany(PlanPurchaseHistory::class,'user_id')
+            ->where('status',1);
 
     }
     public function vehicle()
