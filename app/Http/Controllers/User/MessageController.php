@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\BiddingHistory;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,18 +11,62 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function index($id)
+    public function index($id,$bid_id)
     {
-        
-        $messages = Message::where(function ($query) use ($id) {
-            $query->where('sender_id', Auth::user()->id)
-                ->where('receiver_id', $id);
-        })->orWhere(function ($query) use ($id) {
-            $query->where('sender_id', $id)
-                ->where('receiver_id', Auth::user()->id);
-        })->get();
-        $user = User::findOrFail($id);
-        return view(template().'message',compact('messages','user'));
+
+        try {
+            $bid = BiddingHistory::where('wining_status',1)->findOrFail($bid_id);
+            if ($bid->vehicle->user_id != Auth::user()->id){
+                throw new \Exception('not found');
+            }
+            $vehicleMaxBid = BiddingHistory::where('vehicle_id',$bid->vehicle_id)
+            ->where('wining_status',1)->first();
+            if ($vehicleMaxBid->user_id != $id){
+                throw new \Exception('not found');
+            }
+            $user = User::findOrFail($id);
+            $messages = Message::where(function ($query) use ($id) {
+                $query->where('sender_id', Auth::user()->id)
+                    ->where('receiver_id', $id);
+            })->orWhere(function ($query) use ($id) {
+                $query->where('sender_id', $id)
+                    ->where('receiver_id', Auth::user()->id);
+            })->get();
+
+            if ($messages->first() && ($messages->first()->sender_id !=  Auth::user()->id && $messages->first()->receiver_id != Auth::user()->id)){
+                throw new \Exception('not found');
+            }
+            return view(template().'user.pages.message',compact('messages','user'));
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
+        }
+    }
+    public function showMessagesForBidder($id,$bid_id)
+    {
+        try {
+            $bid = BiddingHistory::where('wining_status',1)->findOrFail($bid_id);
+            if ($bid->user_id != Auth::user()->id){
+                throw new \Exception('not found');
+            }
+            if ($bid->vehicle->user_id != $id){
+                throw new \Exception('not found');
+            }
+            $user = User::findOrFail($id);
+            $messages = Message::where(function ($query) use ($id) {
+                $query->where('sender_id', Auth::user()->id)
+                    ->where('receiver_id', $id);
+            })->orWhere(function ($query) use ($id) {
+                $query->where('sender_id', $id)
+                    ->where('receiver_id', Auth::user()->id);
+            })->get();
+
+            if ($messages->first() && ($messages->first()->sender_id !=  Auth::user()->id && $messages->first()->receiver_id != Auth::user()->id)){
+                throw new \Exception('not found');
+            }
+            return view(template().'user.pages.message',compact('messages','user'));
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
+        }
     }
 
     public function sendMessage(Request $request)

@@ -20,7 +20,6 @@ class SearchingController extends Controller
         $pageSeo = Page::where('name', 'auction')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
         $search = $request->all();
         $vehiclePriceRange = isset($search['my_range'])?explode(";", $search['my_range']):'';
-//        dd($request->all());
         $vehicles = Vehicle::with('details')
             ->when(!empty($search['name']), function ($q) use($search,$request){
                 return $q->whereHas('details', function ($q2) use($search,$request){
@@ -56,7 +55,7 @@ class SearchingController extends Controller
         $data['minAmount'] =  VehicleDetails::get()->min('price');
         $data['carBrand']  = CarBrand::where('status',1)->get();
         $data['CarCategory'] = CarCategory::where('status',1)->get();
-        return view('themes.light.auction', compact('vehicles','pageSeo'),$data);
+        return view(template().'auction.auction', compact('vehicles','pageSeo'),$data);
     }
 
     public function filterBiddingHistory(Request $request)
@@ -106,7 +105,7 @@ class SearchingController extends Controller
 
         $data['categories'] =  CarCategory::get();
         $data['brands'] =  CarBrand::get();
-        return view(template().'biddingHistory',compact('biddingHistorys'),$data);
+        return view(template().'user.pages.biddingHistory',compact('biddingHistorys'),$data);
     }
 
     public function filterListedVehicle(Request $request)
@@ -114,7 +113,7 @@ class SearchingController extends Controller
         $user = Auth::user();
         if(!$user->plan){
 
-            return abort(404);
+            return view(template().'errors.404');
         }
         $search = $request;
         $vehicles =  Vehicle::with('details')
@@ -154,7 +153,7 @@ class SearchingController extends Controller
 
             $data['categories'] =  CarCategory::get();
             $data['brands'] =  CarBrand::get();
-            return view(template().'listedVehicle',compact('vehicles'),$data);
+            return view(template().'user.pages.listedVehicle',compact('vehicles'),$data);
     }
     public function blogSearching(Request $request)
     {
@@ -166,6 +165,6 @@ class SearchingController extends Controller
         })->paginate(basicControl()->paginate);
         $pageSeo = Page::where('name', 'blog')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
         $categorys = BlogCategory::where('status',1)->get();
-        return view(template().'blogs',compact('blogs','categorys','pageSeo'));
+        return view(template().'blog.blogs',compact('blogs','categorys','pageSeo'));
     }
 }

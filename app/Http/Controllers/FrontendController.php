@@ -24,7 +24,6 @@ class FrontendController extends Controller
 
     public function page($slug = '/')
     {
-
         $selectedTheme = basicControl()->theme;
         $pageDetails = PageDetail::with('page')
             ->whereHas('page', function ($query) use ($slug, $selectedTheme) {
@@ -45,7 +44,7 @@ class FrontendController extends Controller
     {
         $pageSeo = Page::where('name', 'plan')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
         $plans = Plan::get();
-        return view('themes.light.plan', compact('plans', 'pageSeo'));
+        return view(template().'plans.plan', compact('plans', 'pageSeo'));
     }
 
     public function auction()
@@ -68,7 +67,7 @@ class FrontendController extends Controller
         $data['minAmount'] = VehicleDetails::get()->min('price');
         $data['carBrand'] = CarBrand::where('status', 1)->get();
         $data['CarCategory'] = CarCategory::where('status', 1)->get();
-        return view('themes.light.auction', compact('vehicles', 'pageSeo'), $data);
+        return view(template().'auction.auction', compact('vehicles', 'pageSeo'), $data);
     }
 
     public function blogs()
@@ -77,7 +76,7 @@ class FrontendController extends Controller
         $blogs = Blog::with('category', 'details')->orderBy('id', 'desc')
             ->paginate(basicControl()->paginate);
         $categorys = BlogCategory::where('status', 1)->get();
-        return view(template() . 'blogs', compact('blogs', 'categorys', 'pageSeo'));
+        return view(template() . 'blog.blogs', compact('blogs', 'categorys', 'pageSeo'));
     }
 
     public function categoryBlogs($category, $id)
@@ -85,6 +84,6 @@ class FrontendController extends Controller
         $pageSeo = Page::where('name', 'blog')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
         $blogs = Blog::with('category', 'details')->where('category_id', $id)->paginate(3);
         $categorys = BlogCategory::where('status', 1)->get();
-        return view(template() . 'blogs', compact('blogs', 'categorys', 'pageSeo'));
+        return view(template() . 'blog.blogs', compact('blogs', 'categorys', 'pageSeo'));
     }
 }

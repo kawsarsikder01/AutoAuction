@@ -51,13 +51,12 @@ class VehicleController extends Controller
                 return $item->details->engine_type;
             })
             ->addColumn('price', function ($item) {
-                return $item->details->price;
+                return currencyPosition($item->details->price);
             })
             ->addColumn('action', function ($item) {
-                $editUrl = route('admin.user.edit', $item->id);
-                $viewProfile = route('admin.user.view.profile', $item->id);
+                $viewUrl = route('auction.details',[slug($item->details->title)??'',$item->id]);
                 return "<div class='btn-group' role='group'>
-                      <a href' class='btn btn-white btn-sm edit_user_btn'>
+                      <a href ='$viewUrl' class='btn btn-white btn-sm edit_user_btn'>
                         <i class='bi-eye-fill dropdown-item-icon'></i> ".trans('View')."
                       </a>
                     <div class='btn-group'>
@@ -125,10 +124,14 @@ class VehicleController extends Controller
 
     public function statusUpdate($id)
     {
+       try {
         $vehicle = Vehicle::findOrFail($id);
         $vehicle->status = 1;
         $vehicle->update();
         return back()->with('success','Vehicle Approved Successfully');
+       } catch (\Exception $exception) {
+        return view(template().'errors.404');
+       }
     }
 
 
@@ -165,7 +168,7 @@ class VehicleController extends Controller
                 return count($item->biddingHistory);
             })
             ->addColumn('max_bid', function ($item) {
-                return $item->biddingHistory->max('bid_amount')? $item->biddingHistory->max('bid_amount') ." ".basicControl()->currency_symbol:0 ." ".basicControl()->currency_symbol;
+                return $item->biddingHistory->max('bid_amount')? currencyPosition($item->biddingHistory->max('bid_amount')): currencyPosition(0) ;
             })
             ->addColumn('status', function ($item) {
                 $status = $item->details->sold_status == 1 ? 'Sold' : 'Unsold';
@@ -199,20 +202,24 @@ class VehicleController extends Controller
 
     public function vehicleReject(Request $request,$id)
     {
-       $validator = Validator::make($request->all(),['rejected_reason' => 'required|string']);
-       if ($validator->fails()){
-           return back()->with('error','Rejected reason is required');
-       }
-       $vehicle = Vehicle::with('details')->find($id);
-        if ($vehicle){
-            $vehicle->update([
-                'status' => 2
-            ]);
-            $vehicle->details->update([
-                'rejected_reason' => $request->rejected_reason
-            ]);
+        $validator = Validator::make($request->all(),['rejected_reason' => 'required|string']);
+        if ($validator->fails()){
+            return back()->with('error','Rejected reason is required');
         }
-        return  back()->with('success','Vehicle Rejected Successfully');
+      try {
+        $vehicle = Vehicle::with('details')->findOrFail($id);
+         if ($vehicle){
+             $vehicle->update([
+                 'status' => 2
+             ]);
+             $vehicle->details->update([
+                 'rejected_reason' => $request->rejected_reason
+             ]);
+         }
+         return  back()->with('success','Vehicle Rejected Successfully');
+      } catch (\Exception $exception) {
+          return view(template().'errors.404');
+      }
     }
 
     public function getRejectedList()
@@ -247,13 +254,13 @@ class VehicleController extends Controller
                 return $item->details->engine_type;
             })
             ->addColumn('price', function ($item) {
-                return $item->details->price;
+                return currencyPosition($item->details->price);
             })
             ->addColumn('action', function ($item) {
                 $editUrl = route('admin.user.edit', $item->id);
-                $viewProfile = route('admin.user.view.profile', $item->id);
+                $viewUrl = route('auction.details',[slug($item->details->title)??'',$item->id]);
                 return "<div class='btn-group' role='group'>
-                      <a href' class='btn btn-white btn-sm edit_user_btn'>
+                      <a href='$viewUrl' class='btn btn-white btn-sm edit_user_btn'>
                         <i class='bi-eye-fill dropdown-item-icon'></i> ".trans('View')."
                       </a>
                   </div>
@@ -268,7 +275,7 @@ class VehicleController extends Controller
     }
     public function getBiddingHistory($id)
     {
-        $vehicle = Vehicle::with('biddingHistory')->find($id);
+        $vehicle = Vehicle::with('biddingHistory')->findOrFail($id);
         $biddingHistory = $vehicle->biddingHistory;
         return DataTables::of($biddingHistory)
             ->addColumn('no', function ($item) {
@@ -317,24 +324,35 @@ class VehicleController extends Controller
     }
     public function deleteHistory($id)
     {
-        $bid = BiddingHistory::find($id);
-        if($bid->wining_status == 1){
-            return back()->with('warning','You Can Not Delete This Bid');
+        try {
+            $bid = BiddingHistory::findOrFail($id);
+            if($bid->wining_status == 1){
+                return back()->with('warning','You Can Not Delete This Bid');
+            }
+            $bid->delete();
+            return back()->with('success',"Bid Delete Successfully");
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
         }
-        $bid->delete();
-        return back()->with('success',"Bid Delete Successfully");
     }
     public function destroy(Request $request)
     {
-        $vehicle = Vehicle::find($request->id);
-       foreach($vehicle->biddingHistory as $item){
-        $item->delete();
-       }
-        $vehicle->details->delete();
-        foreach ($vehicle->path_name as $path){
-            $this->fileDelete($vehicle->driver,$path);
+        try {
+            $vehicle = Vehicle::findOrFail($request->id);
+            if (!$vehicle->biddingHistory->first()) {
+                $vehicle->user->total_listed_car = $vehicle->user->total_listed_car - 1;
+                $vehicle->user->update();
+            }
+            $vehicle->biddingHistory()->delete();
+
+            $vehicle->details->delete();
+            foreach ($vehicle->path_name as $path){
+                $this->fileDelete($vehicle->driver,$path);
+            }
+            $vehicle->delete();
+            return redirect()->route('auction')->with('success','Vehicle Delete Successfully');
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
         }
-        $vehicle->delete();
-       return redirect()->route('auction')->with('success','Vehicle Delete Successfully');
     }
 }

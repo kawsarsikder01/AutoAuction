@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\BiddingHistory;
 use App\Models\Payout;
 use App\Models\PayoutMethod;
 use App\Traits\Notify;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Stevebauman\Purify\Facades\Purify;
+use App\Rules\CheckUserBalance;
 
 class PayoutController extends Controller
 {
@@ -144,17 +146,20 @@ class PayoutController extends Controller
 
     public function payoutRequest(Request $request)
     {
+
         try {
             $amount = $request->amount;
             $payoutMethod = $request->payout_method_id;
             $supportedCurrency = $request->supported_currency;
 
             $checkAmountValidateData = $this->checkAmountValidate($amount, $supportedCurrency, $payoutMethod);
+            $request->validate([
+                'amount' => [new CheckUserBalance($checkAmountValidateData['net_amount_in_base_currency'])]
+            ]);
 
             if (!$checkAmountValidateData['status']) {
                 return back()->withInput()->with('error', $checkAmountValidateData['message']);
             }
-
             $user = Auth::user();
             $payout = new Payout();
             $payout->user_id = $user->id;

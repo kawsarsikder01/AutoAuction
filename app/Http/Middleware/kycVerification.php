@@ -20,8 +20,8 @@ class kycVerification
     public function handle(Request $request, Closure $next): Response
     {
 
-//     $user = Auth::user();
-//
+     $user = Auth::user();
+
 //       $kyc = Kyc::get();
 //       foreach($kyc as $item){
 //          $validateForm =  UserKyc::where('user_id', $user->id)->where('kyc_type',$item->name)->get();

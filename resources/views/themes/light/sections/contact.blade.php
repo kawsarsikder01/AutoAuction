@@ -59,7 +59,7 @@ referrerpolicy="no-referrer-when-downgrade"
                    <div class="row g-4">
                       <div class="col-md-12">
                          <div class="form-floating">
-                            <input type="text" name="fullname" class="form-control" id="floatingName" placeholder="Name" />
+                            <input type="text" name="fullname" class="form-control" id="floatingName" placeholder="Name" autocomplete="off" />
                             <label for="floatingName">@lang('Full Name')</label>
                          </div>
                       </div>
@@ -76,6 +76,7 @@ referrerpolicy="no-referrer-when-downgrade"
                                class="form-control"
                                id="floatingInput"
                                placeholder="name@example.com"
+                               autocomplete="off"
                             />
                             <label for="floatingInput">@lang('Email address')</label>
                          </div>
@@ -87,7 +88,7 @@ referrerpolicy="no-referrer-when-downgrade"
                      @enderror
                       <div class="col-md-12">
                         <div class="form-floating">
-                           <input type="text" name="subject" class="form-control" id="floatingSubject" placeholder="Subject" />
+                           <input type="text" name="subject" class="form-control" id="floatingSubject" placeholder="Subject" autocomplete="offf"/>
                            <label for="floatingSubject">@lang('Subject')</label>
                         </div>
                      </div>

@@ -20,7 +20,7 @@ class BlogController extends Controller
         $categoryId = $data['blogDetails']->blog->category_id;
         $category = BlogCategory::findOrFail($categoryId);
         $categoryBlogs = $category->blogs;
-        return view('themes.light.blog_details',$data,compact('blogCategories','categoryBlogs'));
+        return view(template().'blog.blog_details',$data,compact('blogCategories','categoryBlogs'));
     }
 
 

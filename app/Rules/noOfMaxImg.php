@@ -23,7 +23,7 @@ class noOfMaxImg implements ValidationRule
     {
         $user =  Auth::user();
 
-        $noMaximumImage = $user->plan->number_of_images;
+        $noMaximumImage = $user->plan->first()->noOfMaxImg;
         if($noMaximumImage < $this->numberOfRequestImage){
 
             $fail("You can not upload more than $noMaximumImage image");

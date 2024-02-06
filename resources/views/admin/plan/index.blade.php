@@ -53,7 +53,7 @@
                         <tr>
                             <td>{{++$sl}}</td>
                             <td>{{$item->plan_name}}</td>
-                            <td>{{$item->price == 0 ? 'Free':  $item->price.' '.basicControl()->currency_symbol}}</td>
+                            <td>{{$item->price == 0 ? 'Free':  currencyPosition($item->price)}}</td>
                             <td>{{$item->expiry_time ==0 ? 'Unlimited':$item->expiry_time. ' '. ucfirst($item->expiry_time_type)}}</td>
 
                             <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>

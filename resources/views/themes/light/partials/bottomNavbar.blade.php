@@ -36,7 +36,6 @@
      <!-- offcanvas side nav -->
      <div class="offcanvas offcanvas-start offcanvas-lg user-side-menu" tabindex="-1" id="userSideMenu" aria-labelledby="userSideMenu">
         <div class="offcanvas-header">
-           <a class="navbar-brand" href="index.html"> <img src="./img/icon/logo.png" alt="" /></a>
            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">

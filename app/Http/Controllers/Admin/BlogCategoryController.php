@@ -13,8 +13,8 @@ class BlogCategoryController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { 
-        
+    {
+
         $defaultLanguage = Language::where('default_status', true)->first();
         $languages = Language::get();
         $blogCategory = BlogCategory::where('language_id',  $defaultLanguage->id)->get();
@@ -34,7 +34,7 @@ class BlogCategoryController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    { 
+    {
         $request->validate([
             'name' => 'required | max:90',
         ]);
@@ -49,20 +49,19 @@ class BlogCategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-    }
-
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id,$language =NULL)
     {
-        $language = Language::findOrFail($language);
-        $blogCategory = BlogCategory::findOrFail($id);
-        $defaultLanguage = Language::where('default_status', true)->first();
-        return view('admin.blog_management.blog_category.create' , compact('blogCategory','language','defaultLanguage'));
+        try{
+            $language = Language::findOrFail($language);
+            $blogCategory = BlogCategory::findOrFail($id);
+            $defaultLanguage = Language::where('default_status', true)->first();
+            return view('admin.blog_management.blog_category.create' , compact('blogCategory','language','defaultLanguage'));
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
+        }
     }
 
     /**
@@ -70,15 +69,19 @@ class BlogCategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $blogCategory = BlogCategory::findOrFail($id);
-        $blogCategory->name = $request->name;
-        if($request->status){
-            $blogCategory->status = 1;
-        }else{
-            $blogCategory->status = 0;
+        try{
+            $blogCategory = BlogCategory::findOrFail($id);
+            $blogCategory->name = $request->name;
+            if($request->status){
+                $blogCategory->status = 1;
+            }else{
+                $blogCategory->status = 0;
+            }
+            $blogCategory->update();
+            return redirect(route('admin.blogCategory'));
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
         }
-       $blogCategory->update();
-       return redirect(route('admin.blogCategory'));
     }
 
     /**
@@ -86,8 +89,13 @@ class BlogCategoryController extends Controller
      */
     public function destroy(Request $request)
     {
-        $blogCategory = BlogCategory::findOrFail($request->id);
-        $blogCategory->delete();
-        return redirect(route('admin.blogCategory'));
+        try{
+            $blogCategory = BlogCategory::findOrFail($request->id);
+            $blogCategory->delete();
+            return redirect(route('admin.blogCategory'));
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
+        }
+
     }
 }

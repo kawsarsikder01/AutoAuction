@@ -113,6 +113,7 @@ class DashboardController extends Controller
         $data['userLoginsBrowserData'] = $userLoginsData->groupBy('browser')->map->count();
         $data['userLoginsOSData'] = $userLoginsData->groupBy('os')->map->count();
         $data['userLoginsDeviceData'] = $userLoginsData->groupBy('get_device')->map->count();
+//        dd($data['userLoginsDeviceData']);
 
 
         $totalDepositThisMonth = Deposit::whereMonth('created_at', Carbon::now()->month)->sum('payable_amount');

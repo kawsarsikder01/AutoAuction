@@ -25,7 +25,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="VehicleType">Vehicle Type</label>
-                                 <input type="text" name="vehicle_type" value="{{ old('vehicle_type') }}" class="form-control" placeholder="EX : front-engine, rear-wheel-drive, 4-passenger coupe" autocomplete="off" />
+                                 <input type="text" name="vehicle_type" value="{{ old('vehicle_type') }}" class="form-control" placeholder="e.g : front-engine, rear-wheel-drive, 4-passenger coupe" autocomplete="off" />
                                   @error("vehicle_type")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -34,7 +34,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="EngineType">Engine Type</label>
-                                 <input type="text" name="engine_type" value="{{ old('engine_type') }}" class="form-control" placeholder="EX : V-8, water-cooled, cast iron block and heads" autocomplete="off" />
+                                 <input type="text" name="engine_type" value="{{ old('engine_type') }}" class="form-control" placeholder="e.g : V-8, water-cooled, cast iron block and heads" autocomplete="off" />
                                   @error("engine_type")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -43,7 +43,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="power">Power</label>
-                                 <input type="text" name="power" value="{{ old('power') }}" class="form-control" placeholder="EX : 335 hp @ 5200 rpm" autocomplete="off"/>
+                                 <input type="text" name="power" value="{{ old('power') }}" class="form-control" placeholder="e.g : 335 hp @ 5200 rpm" autocomplete="off"/>
                                   @error("power")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -52,7 +52,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="torque">Torque</label>
-                                 <input type="text" name="torque" value="{{ old('torque') }}" class="form-control" placeholder="EX : 440 lb-ft @ 3400 rpm" autocomplete="off" />
+                                 <input type="text" name="torque" value="{{ old('torque') }}" class="form-control" placeholder="e.g : 440 lb-ft @ 3400 rpm" autocomplete="off" />
                                   @error("torque")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -61,7 +61,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="displacement">Displacement</label>
-                                 <input type="text" name="displacement" value="{{ old('displacement') }}" class="form-control" placeholder="EX : 428 in3, 7002 cm3" autocomplete="off" />
+                                 <input type="text" name="displacement" value="{{ old('displacement') }}" class="form-control" placeholder="e.g : 428 in3, 7002 cm3" autocomplete="off" />
                                   @error("displacement")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -70,7 +70,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="transmission">Transmission</label>
-                                 <input type="text" name="transmission" value="{{ old('transmission') }}" class="form-control" placeholder="EX : 3-speed automatic" autocomplete="off" />
+                                 <input type="text" name="transmission" value="{{ old('transmission') }}" class="form-control" placeholder="e.g : 3-speed automatic" autocomplete="off" />
                                   @error("transmission")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -142,7 +142,7 @@
                               <div class="input-box col-12">
                                  <div class="form-group">
 
-                                    <label for="InitialPrice" class="form-label  ">@lang("Initial Price")</label>
+                                    <label for="InitialPrice" class="form-label  ">@lang("Bid Start")</label>
                                     <div class="input-group mb-3">
                                         <input type="number" class="form-control" value="{{old('price')}}" name="price" placeholder="Initial Price" aria-label="Initial Price" aria-describedby="InitialPrice" autocomplete="off">
                                         <span class="input-group-text" id="InitialPrice">{{basicControl()->base_currency}}</span>
@@ -234,7 +234,7 @@
          });
          // $("#fileUpload").fileUpload();
          $('#testResult').summernote({
-         placeholder:   `Ex :
+         placeholder:   `e.g :
                          Zero to 60 mph: 5.7 sec ,
                          Zero to 100 mph: 14.3 sec ,
                          Standing ¼-mile: 14.3 sec @ 100 mph ,
@@ -250,7 +250,7 @@
          });
          $('#dimensions').summernote({
              placeholder: `
-                            Ex :
+                            e.g :
                             Wheelbase: 108.0 in ,
                             Length: 187.4 in ,
                             Width: 71.3 in ,

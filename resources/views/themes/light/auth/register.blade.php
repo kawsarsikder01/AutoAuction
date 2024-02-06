@@ -1,7 +1,7 @@
 @extends('themes.light.layouts.app')
 @section('title',trans($pageSeo->page_title??''))
 @section('content')
-<x-banner-component :pagetitle="$pageSeo->page_title??''" :path="$pageSeo->breadcrumb_image??''" :driver="$pageSeo->breadcrumb_image_driver??''"/>>
+<x-banner-component :pagetitle="$pageSeo->page_title??''" :path="$pageSeo->breadcrumb_image??''" :driver="$pageSeo->breadcrumb_image_driver??''"/>
     <!-- login section -->
     <section class="login-section">
         <div class="container">
@@ -32,17 +32,6 @@
                                  </span>
                              @enderror
                           </div>
-                          {{-- <div class="col-md-6">
-                             <select class="form-select" id="countrycode" aria-label="Floating label select example">
-                                <option selected value="1">+880</option>
-                                <option value="2">+330</option>
-                                <option value="3">+420</option>
-                             </select>
-                          </div> --}}
-                          {{-- <div class="col-md-6 form-floating">
-                             <input type="number" class="form-control" id="phone" placeholder="name@example.com" />
-                             <label for="phone">Phone Number</label>
-                          </div> --}}
                           <div class="col-md-6 form-floating">
                              <input type="email" name="email" class="form-control"  id="email" placeholder="name@example.com" />
                              <label for="email">@lang('Email address')</label>
@@ -64,7 +53,7 @@
                           <div class="col-md-12 form-floating">
                              <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" />
                              <label for="id_password">@lang('Password')</label>
-                             <i class="fal fa-eye" id="togglePassword"></i>
+                              <i class="fa-regular fa-eye-slash" id="togglePassword"></i>
                              @error('password')
                              <span class="invalid-feedback d-block" role="alert">
                                      <strong>{{ $message }}</strong>
@@ -72,27 +61,17 @@
                              @enderror
                           </div>
                           <div class="col-md-12 form-floating">
-                           <input type="password" name="password_confirmation" class="form-control" id="id_password" placeholder="Password" />
-                           <label for="id_password">@lang('Confirm Password')</label>
-                           <i class="fal fa-eye" id="togglePassword"></i>
+                           <input type="password" name="password_confirmation" class="form-control" id="confirmPassword" placeholder="Password" />
+                           <label for="confirmPassword">@lang('Confirm Password')</label>
+                              <i class="fa-regular fa-eye-slash" id="confirmTogglePassword"></i>
                            @error('password_confirmation')
                            <span class="invalid-feedback d-block" role="alert">
                                    <strong>{{ $message }}</strong>
                                </span>
                            @enderror
                         </div>
-                          {{-- <div class="col-12">
-                             <div class="links">
-                                <div class="form-check">
-                                   <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                   <label class="form-check-label" for="flexCheckDefault">
-                                      I Agree with the Terms & conditions
-                                   </label>
-                                </div>
-                             </div>
-                          </div> --}}
                        </div>
-                       <button class="btn-custom w-100">@lang('Create Account')</button>
+                       <button class="btn-custom w-100 mt-4">@lang('Create Account')</button>
                        <div class="bottom">
                           @lang('Already have an account?')
                           <a href="{{ route("login") }}">@lang('Login here')</a>
@@ -106,8 +85,37 @@
     <!-- End Contact Section -->
 @include($theme . 'sections.footer')
 @endsection
-
 @push('js-lib')
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+@endpush
+@push('script')
+    <script>
+        $(document).ready(function (){
+            $('#togglePassword').on('click',function (){
+               let currentType =  $('#id_password').attr('type');
+               if (currentType === "password"){
+                   $('#id_password').attr('type','text');
+                   $(this).removeClass('fa-eye-slash');
+                   $(this).addClass('fa-eye');
+               }else{
+                   $('#id_password').attr('type','password');
+                   $(this).addClass('fa-eye-slash');
+                   $(this).removeClass('fa-eye');
+               }
+            });
+            $('#confirmTogglePassword').on('click',function (){
+                let currentType =  $('#confirmPassword').attr('type');
+                if (currentType === "password"){
+                    $('#confirmPassword').attr('type','text');
+                    $(this).removeClass('fa-eye-slash');
+                    $(this).addClass('fa-eye');
+                }else{
+                    $('#confirmPassword').attr('type','password');
+                    $(this).addClass('fa-eye-slash');
+                    $(this).removeClass('fa-eye');
+                }
+            })
+        })
+    </script>
 @endpush
 

@@ -57,7 +57,13 @@ if (!function_exists('staticPagesAndRoutes')) {
             'blog' => 'blog',
             'plan' => 'plan',
             'auction' => 'auction',
-            'login' => 'login'
+            'login' => 'login',
+            'registation' => 'registation',
+            'payment option'  => 'payment option',
+            'forget-password' => 'forget-password',
+            'email-verification' => 'email-verification',
+            'sms-verification' => 'sms-verification',
+            '2FA-verification' => '2FA-verification'
         ][$name];
     }
 }
@@ -251,14 +257,6 @@ function getPageSections()
             $fileBaseNames[$basenameWithoutExtension] = $basenameWithoutExtension;
         }
     }
-
-//    $sectionNameWithWhitespace = array_map(function ($string) {
-//        $string = preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
-//        $string = preg_replace('/-/', ' ', $string);
-//        $string = str_replace('_', ' ', $string);
-//        $string = str_replace('-', ' ', $string);
-//        return $string;
-//    }, $fileBaseNames);
 
     return $fileBaseNames;
 }
@@ -515,22 +513,6 @@ if (!function_exists('removeHyphenInString')) {
 }
 
 
-function updateWallet($user_id, $currency_id, $amount, $action = 0)
-{
-    $wallet = Wallet::firstOrCreate(['user_id' => $user_id, 'currency_id' => $currency_id]);
-    $balance = 0;
-
-    if ($action == 1) { //add money
-        $balance = $wallet->balance + $amount;
-        $wallet->balance = $balance;
-    } elseif ($action == 0) { //deduct money
-        $balance = $wallet->balance - $amount;
-        $wallet->balance = $balance;
-    }
-
-    $wallet->save();
-    return $balance;
-}
 
 function updateBalance($user_id, $amount, $action = 0)
 {
@@ -572,7 +554,7 @@ if (!function_exists('currencyPosition')) {
         return $basic->is_currency_position == 'left' && $basic->has_space_between_currency_and_amount ? "{$basic->currency_symbol} {$amount}" :
             ($basic->is_currency_position == 'left' && !$basic->has_space_between_currency_and_amount ? "{$basic->currency_symbol}{$amount}" :
                 ($basic->is_currency_position == 'right' && $basic->has_space_between_currency_and_amount ? "{$amount} {$basic->base_currency} " :
-                    "{$amount}{$basic->base_currency}"));
+                    "{$amount} {$basic->base_currency}"));
     }
 
 }

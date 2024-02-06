@@ -19,12 +19,6 @@ class ContactController extends Controller
             'subject' => 'required | string',
             'comment' => 'required | max:400'
         ]);
-//        $contact = new Contact();
-//        $contact->fullname = $request->fullname;
-//        $contact->email = $request->email;
-//        $contact->subject = $request->subject;
-//        $contact->comment = $request->comment;
-//        $contact->save();
         $msg = [
             "fullname" => $request->fullname,
             "email" => $request->email,

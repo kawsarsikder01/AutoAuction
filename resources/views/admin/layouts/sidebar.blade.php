@@ -63,8 +63,15 @@
                             <span class="nav-link-title">@lang('Plan')</span>
                         </a>
                     </div>
+                    <div class="nav-item">
+                        <a class="nav-link {{ menuActive(['admin.show.plan.purchase.history']) }}"
+                           href="{{ route('admin.show.plan.purchase.history') }}" data-placement="left">
+                            <i class="bi bi-clock-history nav-icon"></i>
+                            <span class="nav-link-title">@lang('Plan Purchase History')</span>
+                        </a>
+                    </div>
                       <div class="nav-item">
-                          <a class="nav-link dropdown-toggle {{ menuActive(['admin.category', 'admin.brand'], 2) }}"
+                          <a class="nav-link dropdown-toggle {{ menuActive(['admin.car.category', 'admin.car.brand'], 2) }}"
                              href="#navbarVerticalAuction"
                              role="button"
                              data-bs-toggle="collapse"
@@ -75,17 +82,17 @@
                               <span class="nav-link-title">@lang('Auction Management')</span>
                           </a>
                           <div id="navbarVerticalAuction"
-                               class="nav-collapse collapse {{ menuActive(['admin.category', 'admin.brand'], 2) }}"
+                               class="nav-collapse collapse {{ menuActive(['admin.car.category', 'admin.car.brand'], 2) }}"
                                data-bs-parent="#navbarVerticalAuction">
-                              <a class="nav-link {{ menuActive(['admin.category']) }}"
+                              <a class="nav-link {{ menuActive(['admin.car.category']) }}"
                                  href="{{ route('admin.car.category') }}">@lang('Category')</a>
 
-                              <a class="nav-link  {{ menuActive(['admin.brand']) }}"
+                              <a class="nav-link  {{ menuActive(['admin.car.brand']) }}"
                                  href="{{ route("admin.car.brand") }}">@lang('Brand')</a>
                           </div>
                       </div>
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.approved.vehicle', 'admin.pending.vehicle'], 2) }}"
+                        <a class="nav-link dropdown-toggle {{menuActive(['admin.vehicle.list'], 3)}}"
                            href="#navbarVerticalVehicleRequest"
                            role="button"
                            data-bs-toggle="collapse"
@@ -96,19 +103,19 @@
                             <span class="nav-link-title">@lang('Vehicle Request')</span>
                         </a>
                         <div id="navbarVerticalVehicleRequest"
-                             class="nav-collapse collapse {{ menuActive(['admin.pending.vehicle', 'admin.approved.vehicle','admin.rejected.vehicle'], 3) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.vehicle.list'], 3) }}"
                              data-bs-parent="#navbarVerticalVehicleRequest">
-                            <a class="nav-link {{ menuActive(['admin.pending.vehicle']) }}"
+                            <a class="nav-link {{ Request::is('admin/pending/vehicle')?'active':''}}"
                                href="{{ route('admin.pending.vehicle') }}">@lang('Pending Vehicle')</a>
 
-                            <a class="nav-link  {{ menuActive(['admin.approved.vehicle']) }}"
+                            <a class="nav-link  {{ Request::is('admin/approved/vehicle')?'active':''}}}}"
                                href="{{ route("admin.approved.vehicle") }}">@lang('Approved Vehicle')</a>
-                            <a class="nav-link  {{ menuActive(['admin.rejected.vehicle.list']) }}"
+                            <a class="nav-link  {{ Request::is('admin/vehicle/rejected/list')?'active':''}}"
                                href="{{ route("admin.vehicle.rejected.list") }}">@lang('Rejected Vehicle')</a>
                         </div>
                     </div>
                     <div class="nav-item">
-                        <a class="nav-link {{ menuActive(['admin.reports.list']) }}"
+                        <a class="nav-link {{ menuActive(['admin.reports']) }}"
                            href="{{ route('admin.reports') }}" data-placement="left">
                             <i class="bi bi-flag nav-icon"></i>
                             <span class="nav-link-title">@lang('Reports')</span>

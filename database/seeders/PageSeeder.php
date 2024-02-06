@@ -16,8 +16,7 @@ class PageSeeder extends Seeder
     {
 
         $pages = [
-            ['name' => 'forget password', 'slug' => 'forget-password', 'template_name' => 'light', 'type' => 1],
-            ['name' => 'verification code', 'slug' => 'verification-code', 'template_name' => 'light', 'type' => 1]
+            ['name' => '2FA verification', 'slug' => '2FA-verification', 'template_name' => 'light', 'type' => 1]
         ];
 
         foreach ($pages as $page) {

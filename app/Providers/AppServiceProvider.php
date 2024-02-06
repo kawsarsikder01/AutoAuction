@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
             $data['theme'] . 'auth.login',
             $data['theme'] . 'partials.searchItem',
             $data['theme'] . 'page',
-            $data['theme'] . 'plan'
+            $data['theme'] . 'plans.plan'
         ], function ($view) {
 
             $languages = Language::orderBy('name')->where('status', 1)->get();

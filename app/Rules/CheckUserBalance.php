@@ -12,7 +12,7 @@ class CheckUserBalance implements ValidationRule
 {
     protected $bid_amount;
     protected $vehicle_id;
-    public function __construct($request_bid,$vehicle_id)
+    public function __construct($request_bid,$vehicle_id = null)
     {
         $this->bid_amount = $request_bid;
         $this->vehicle_id = $vehicle_id;
@@ -37,12 +37,12 @@ class CheckUserBalance implements ValidationRule
               }
               $totalBidAmount = $totalBidAmount + $biddingHistory->bid_amount;
               if ($biddingHistory->vehicle->biddingHistory->max('bid_amount') == $biddingHistory->bid_amount){
-                  if($this->vehicle_id == $biddingHistory->vehicle_id){
+                  if($this->vehicle_id && $this->vehicle_id == $biddingHistory->vehicle_id){
                       $totalBidAmount = $totalBidAmount - $biddingHistory->bid_amount;
                   }
               }
           }
-        if ($biddingHistorys->first() && $totalBidAmount -$this->bid_amount > 0){
+        if ($biddingHistorys->first() && $totalBidAmount -$this->bid_amount > 0  ){
             if($totalBidAmount  > $user->balance){
                 $totalBidAmount = $totalBidAmount-$this->bid_amount;
                 $fail("Your balance is low because your $totalBidAmount ".basicControl()->currency_symbol." is hold");

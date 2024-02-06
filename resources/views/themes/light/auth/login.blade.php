@@ -28,6 +28,7 @@
                                        class="form-control"
                                        id="floatingInput1"
                                        placeholder="Username Or Email Address"
+                                       autocomplete="off"
                                     />
                                     <label for="floatingInput">@lang('Email address')</label>
                                     @error('username')
@@ -43,8 +44,10 @@
                                        class="form-control"
                                        id="floatingInput2"
                                        placeholder="Password"
+                                       autocomplete="off"
                                     />
                                     <label for="floatingInput">@lang('Password')</label>
+                                     <i class="fa-regular fa-eye-slash" id="togglePassword"></i>
                                     @error('password')
                                     <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -79,4 +82,22 @@
 
 @push('js-lib')
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+@endpush
+@push('script')
+    <script>
+        $(document).ready(function (){
+            $('#togglePassword').on('click',function (){
+                let currentType =  $('#floatingInput2').attr('type');
+                if (currentType === "password"){
+                    $('#floatingInput2').attr('type','text');
+                    $(this).removeClass('fa-eye-slash');
+                    $(this).addClass('fa-eye');
+                }else{
+                    $('#floatingInput2').attr('type','password');
+                    $(this).addClass('fa-eye-slash');
+                    $(this).removeClass('fa-eye');
+                }
+            });
+        })
+    </script>
 @endpush

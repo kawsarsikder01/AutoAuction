@@ -18,10 +18,10 @@ class CheckSeller
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
-        if($user->plan->first() && $user->plan->first()->expiry_date < now()->format('Y-m-d H:i:s')){
+        if($user->plan && $user->plan->expiry_date < now()->format('Y-m-d H:i:s')){
             return redirect()->route('plan')->with('warning','Please Upgrade Your Plan');
         }
-        if(!$user->plan->first()){
+        if(!$user->plan){
             return redirect()->route('plan')->with('warning','Please Purchase Plan and Sell Your Vehicle');
         }
         return $next($request);

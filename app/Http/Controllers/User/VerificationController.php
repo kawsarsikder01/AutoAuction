@@ -54,7 +54,8 @@ class VerificationController extends Controller
                 session()->flash('success', 'Email verification code has been sent');
             }
             $page_title = 'Email Verification';
-            return view(template() . 'auth.verification.email', compact('user', 'page_title'));
+            $pageSeo = Page::where('name', 'email verification')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
+            return view(template() . 'auth.verification.email', compact('user', 'page_title','pageSeo'));
         } elseif (!$user->sms_verification) {
             if (!$this->checkValidCode($user, $user->verify_code)) {
                 $user->verify_code = code(6);
@@ -67,9 +68,10 @@ class VerificationController extends Controller
                 session()->flash('success', 'SMS verification code has been sent');
             }
             $page_title = 'SMS Verification';
-            return view(template() . 'auth.verification.sms', compact('user', 'page_title'));
+            $pageSeo = Page::where('name', 'sms verification')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
+            return view(template() . 'auth.verification.sms', compact('user', 'page_title','pageSeo'));
         } elseif (!$user->two_fa_verify) {
-            $pageSeo = Page::where('name', 'verification code')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
+            $pageSeo = Page::where('name', '2FA verification')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
             return view(template() . 'auth.verification.2stepSecurity', compact('user', 'pageSeo'));
 
         }

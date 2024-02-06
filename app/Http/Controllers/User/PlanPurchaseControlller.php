@@ -7,6 +7,7 @@ use App\Models\Deposit;
 use App\Models\Fund;
 use App\Models\Gateway;
 use App\Models\Page;
+use App\Models\PlanPurchaseHistory;
 use App\Traits\PaymentValidationCheck;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -20,24 +21,28 @@ class PlanPurchaseControlller extends Controller
     use PaymentValidationCheck;
     public  function purchasePlan ($id)
     {
-      $plan = Plan::find($id);
+      try {
+        $plan = Plan::findOrFail($id);
 
-      if(Auth::user()->plan->first() && $plan->price < Auth::user()->plan->first()->price){
+      if(Auth::user()->plan && $plan->price < Auth::user()->plan->price){
         return back()->with('warning',"You Can Not Downgrade Your Plan");
       }
-        if(Auth::user()->plan->first()){
-            return  abort(404);
+        if(Auth::user()->plan){
+            throw new \Exception('not found');
         }
        $user =  Auth::user();
-        if($user->plan_id == $id){
-            return abort(404);
+        if($user->plan && $user->plan->plan_id == $id){
+            throw new \Exception('not found');
           }
 
         $data['plan_id'] =  $id;
         $data['plan'] = $plan;
         $data['pageSeo'] = Page::where('name', 'payment option')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
         $data['gateways'] = Gateway::where('status', 1)->orderBy('sort_by', 'ASC')->get();
-       return view(template().'selectGateway',$data);
+       return view(template().'plans.selectGateway',$data);
+      } catch (\Exception $exception) {
+        return view(template().'errors.404');
+      }
     }
 
     public function checkAmount(Request $request)
@@ -150,7 +155,7 @@ public function confirmPlan(Request $request)
         'gateway_id'=>'required',
         'supported_currency' => 'required'
     ]);
-    $plan = Plan::find($request->plan_id);
+    $plan = Plan::findOrFail($request->plan_id);
     $amount = $plan->price;
     $gateway = $request->gateway_id;
     $currency = $request->supported_currency;
@@ -193,31 +198,31 @@ public function confirmPlan(Request $request)
 
     public  function upgradePlan($id)
     {
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        if(!$user->plan->first()){
-            return abort(404);
-        }
-        if ($user->plan->first()->expiry_date > now()->format('Y-m-d H:i:s')){
-            if ($user->plan->first()->plan_id == $id){
-                return abort(404);
+            if(!$user->plan){
+                throw new \Exception('not found');
             }
+            if ($user->plan->expiry_date > now()->format('Y-m-d H:i:s')){
+                if ($user->plan->plan_id == $id){
+                    throw new \Exception('not found');
+                }
+            }
+
+            $plan = Plan::findOrFail($id);
+            $data['plan_id'] =  $id;
+            $data['plan'] = $plan;
+            $data['pageSeo'] = Page::where('name', 'payment option')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
+            $data['gateways'] = Gateway::where('status', 1)->orderBy('sort_by', 'ASC')->get();
+            return view(template().'plans.selectGateway',$data);
+        }catch (\Exception $exception){
+            return view(template().'errors.404');
         }
-
-        $plan = Plan::find($id);
-        $data['plan_id'] =  $id;
-        $data['plan'] = $plan;
-        $data['pageSeo'] = Page::where('name', 'payment option')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
-        $data['gateways'] = Gateway::where('status', 1)->orderBy('sort_by', 'ASC')->get();
-        return view(template().'selectGateway',$data);
     }
-
-
-
-    public function purch($id)
+    public function purchaseHistory()
     {
-
-
-
+        $purchaseHistorys = PlanPurchaseHistory::where('user_id',Auth::user()->id)->paginate(basicControl()->paginate);
+        return view(template().'user.pages.purchaseHistory',compact('purchaseHistorys'));
     }
 }

@@ -63,7 +63,7 @@ class User extends Authenticatable
         'password',
         'email_verified_at',
         'remember_token',
-        'plan_id',
+        'purchased_plan_id',
         'plan_purchase_date',
         'plan_expire_date',
         'total_listed_car',
@@ -106,6 +106,10 @@ class User extends Authenticatable
     public function funds()
     {
         return $this->hasMany(Fund::class)->latest()->where('status', '!=', 0);
+    }
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class,'user_id');
     }
 
 
@@ -173,8 +177,7 @@ class User extends Authenticatable
     }
     public function plan()
     {
-        return $this->hasMany(PlanPurchaseHistory::class,'user_id')
-            ->where('status',1);
+        return $this->belongsTo(PlanPurchaseHistory::class,'purchased_plan_id');
 
     }
     public function vehicle()

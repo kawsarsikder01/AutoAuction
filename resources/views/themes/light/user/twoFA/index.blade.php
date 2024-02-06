@@ -10,7 +10,7 @@
                     @if(auth()->user()->two_fa)
                     <div class="col-lg-6 col-md-6 mb-3">
                         <div class="card text-center search-bar">
-                            <div class="card-header">
+                            <div class="card-header bg-white">
                                 <h5>@lang('Two Factor Authenticator')</h5>
                             </div>
                             <div class="card-body">
@@ -38,7 +38,7 @@
                     @else
                         <div class="col-lg-6 mb-3" >
                             <div class="card search-bar text-center br-4">
-                                <div class="card-header">
+                                <div class="card-header bg-white">
                                     <h5>@lang('Two Factor Authenticator')</h5>
                                 </div>
                                 <div class="card-body">
@@ -66,7 +66,7 @@
                     @endif
                     <div class="col-lg-6 mb-3">
                         <div class="card text-center search-bar" id="googleAuthenticator">
-                            <div class="card-header">
+                            <div class="card-header bg-white">
                                 <h5>@lang('Google Authenticator')</h5>
                             </div>
                             <div class="card-body">

@@ -36,37 +36,49 @@ class AuctionController extends Controller
     }
     public function editCategory($id,$language)
     {
-        $defaultLanguage = Language::findOrFail($language);
-        $carCategory = CarCategory::findOrFail($id);
-        return view('admin.auctionManagement.category.edit',compact('defaultLanguage','carCategory'));
+        try {
+            $defaultLanguage = Language::findOrFail($language);
+            $carCategory = CarCategory::findOrFail($id);
+            return view('admin.auctionManagement.category.edit',compact('defaultLanguage','carCategory'));
+        }catch (\Exception $exception){
+            return view(template().'errors.error');
+        }
 
     }
     public function updateCategory(Request $request,$id)
     {
-//        dd($request->all());
-        $category = CarCategory::findOrFail($id);
-        $request->validate([
-            'name' => 'required|string'
-        ]);
-        $category->name = $request->name;
-        $category->status = $request->status?1:0;
-        $category->language_id =  $request->language_id;
-        $category->update();
-        return redirect()->route('admin.car.category')->with('success','Category Update Successfull');
+        try {
+
+            $category = CarCategory::findOrFail($id);
+            $request->validate([
+                'name' => 'required|string'
+            ]);
+            $category->name = $request->name;
+            $category->status = $request->status?1:0;
+            $category->language_id =  $request->language_id;
+            $category->update();
+            return redirect()->route('admin.car.category')->with('success','Category Update Successfull');
+        }catch (\Exception $exception){
+            return view(template().'errors.error');
+        }
     }
     public function deleteCategory($id)
     {
-        $category = CarCategory::findOrFail($id);
-        foreach($category->vehicles as $vehicle){
-            $vehicle->biddingHistory()->delete();
-            foreach ($vehicle->path_name as $image){
-                $this->fileDelete($vehicle->driver,$image);
+        try {
+            $category = CarCategory::findOrFail($id);
+            foreach($category->vehicles as $vehicle){
+                $vehicle->biddingHistory()->delete();
+                foreach ($vehicle->path_name as $image){
+                    $this->fileDelete($vehicle->driver,$image);
+                }
+                $vehicle->details->delete();
+                $vehicle->delete();
             }
-            $vehicle->details->delete();
-            $vehicle->delete();
+            $category->delete();
+            return back()->with('success', 'Category deleted successfully.');
+        }catch (\Exception $exception){
+            return view(template().'errors.error');
         }
-        $category->delete();
-        return back()->with('success', 'Category deleted successfully.');
     }
 
 
@@ -94,35 +106,49 @@ class AuctionController extends Controller
     }
     public function editBrand($id,$language)
     {
-        $defaultLanguage = Language::findOrFail($language);
-        $brand = CarBrand::findOrFail($id);
-        return view('admin.auctionManagement.brand.edit',compact('defaultLanguage','brand'));
+        try {
+            $defaultLanguage = Language::findOrFail($language);
+            $brand = CarBrand::findOrFail($id);
+            return view('admin.auctionManagement.brand.edit',compact('defaultLanguage','brand'));
+        }catch (\Exception $exception){
+            return view(template().'errors.error');
+        }
+
 
     }
     public function updateBrand(Request $request,$id)
     {
-        $brand = CarBrand::findOrFail($id);
-        $request->validate([
-            'name' => 'required'
-        ]);
-        $brand->name = $request->name;
-        $brand->status = $request->status?1:0;
-        $brand->language_id =  $request->language_id;
-        $brand->update();
-        return redirect()->route('admin.car.brand')->with('success','Category Update Successfull');
+        try {
+            $brand = CarBrand::findOrFail($id);
+            $request->validate([
+                'name' => 'required'
+            ]);
+            $brand->name = $request->name;
+            $brand->status = $request->status?1:0;
+            $brand->language_id =  $request->language_id;
+            $brand->update();
+            return redirect()->route('admin.car.brand')->with('success','Category Update Successfull');
+        }catch (\Exception $exception){
+            return view(template().'errors.error');
+        }
+
     }
     public function deleteBrand($id)
     {
-        $brand = CarBrand::findOrFail($id);
-        foreach ($brand->vehicles as $vehicle){
-            $vehicle->biddingHistory()->delete();
-            foreach ($vehicle->path_name as $image){
-                $this->fileDelete($vehicle->driver,$image);
+        try {
+            $brand = CarBrand::findOrFail($id);
+            foreach ($brand->vehicles as $vehicle){
+                $vehicle->biddingHistory()->delete();
+                foreach ($vehicle->path_name as $image){
+                    $this->fileDelete($vehicle->driver,$image);
+                }
+                $vehicle->details->delete();
+                $vehicle->delete();
             }
-            $vehicle->details->delete();
-            $vehicle->delete();
+            $brand->delete();
+            return back()->with('success', 'Brand deleted successfully.');
+        }catch (\Exception $exception){
+            return view(template().'errors.error');
         }
-        $brand->delete();
-        return back()->with('success', 'Brand deleted successfully.');
     }
 }

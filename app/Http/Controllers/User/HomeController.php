@@ -10,10 +10,13 @@ use App\Models\Deposit;
 use App\Models\Gateway;
 use App\Models\Kyc;
 use App\Models\Language;
+use App\Models\Payout;
+use App\Models\PlanPurchaseHistory;
 use App\Models\UserKyc;
 use App\Models\Vehicle;
 use App\Models\VehicleDetails;
 use App\Traits\Upload;
+use Carbon\Carbon;
 use hisorange\BrowserDetect\Parser as Browser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,34 +55,38 @@ class HomeController extends Controller
 
     public function index()
     {
-        $data['user'] = Auth::user();
-        $data['firebaseNotify'] = config('firebase');
-        $data['soldedVehicle'] = Vehicle::with('details')->whereHas('details',function ($query){
-            $query->where('sold_status',1);
-        })->where('user_id',Auth::user()->id)->get();
-
-//        $data['averageSell'] = BiddingHistory::with(['Vehicle'=>function ($query) {
-//            $query->where('user_id',Auth::user()->id);
-//        }])->whereIn('bid_amount',function ($query){
-//            $query->selectRaw('MAX(bid_amount)')->from('bidding_history')->groupBy('vehicle_id');
-//        })->whereHas('Vehicle',function ($query){
-//            $query->where('user_id',Auth::user()->id);
-//        })
-//            ->where('wining_status',1)->avg('bid_amount');
-        $data['cancelAuction'] = Vehicle::where('release_status',2)->where('user_id',Auth::user()->id)->get();
-        $data['totalWinAuction'] = Vehicle::with(['biddingHistory'=>function ($query) {
-            $query->where('wining_status',1)->where('user_id',Auth::user()->id);
-        },'details'=>function ($query) {
-            $query->where('sold_status',1);
-        }])
-            ->whereHas('details', function ($query) {
-                $query->where('sold_status', 1);
-            })
-            ->whereHas('biddingHistory',function ($query){
+        try {
+            $data['user'] = Auth::user();
+            $data['firebaseNotify'] = config('firebase');
+            $data['soldedVehicle'] = Vehicle::with('details')->whereHas('details',function ($query){
+                $query->where('sold_status',1);
+            })->where('user_id',Auth::user()->id)->get();
+            $data['cancelAuction'] = Vehicle::where('release_status',2)->where('user_id',Auth::user()->id)->get();
+            $data['totalWinAuction'] = Vehicle::with(['biddingHistory'=>function ($query) {
                 $query->where('wining_status',1)->where('user_id',Auth::user()->id);
-            })
-            ->get();
-        return view(template() . 'user.dashboard', $data);
+            },'details'=>function ($query) {
+                $query->where('sold_status',1);
+            }])
+                ->whereHas('details', function ($query) {
+                    $query->where('sold_status', 1);
+                })
+                ->whereHas('biddingHistory',function ($query){
+                    $query->where('wining_status',1)->where('user_id',Auth::user()->id);
+                })
+                ->get();
+            $userLoginsData = DB::table('user_logins')
+                ->whereDate('created_at', '>=', now()->subDays(30))
+                ->select('browser', 'os', 'get_device')
+                ->where('user_id',Auth::user()->id)
+                ->get();
+
+            $data['userLoginsBrowserData'] = $userLoginsData->groupBy('browser')->map->count();
+            $data['userLoginsOSData'] = $userLoginsData->groupBy('os')->map->count();
+            $data['userLoginsDeviceData'] = $userLoginsData->groupBy('get_device')->map->count();
+            return view(template() . 'user.dashboard', $data);
+        }catch (\Exception $exception){
+            return view(template(),'errors.404');
+        }
     }
 
     public function kycShow($slug, $id)
@@ -351,6 +358,66 @@ class HomeController extends Controller
         } else {
             return back()->with('error', 'Wrong Verification Code.');
         }
+    }
+    public function getChartData()
+    {
+        $purchasePlun = PlanPurchaseHistory::where('user_id',Auth::user()->id)
+        ->selectRaw('DAY(purchase_date) as day, SUM(price) as total')
+            ->whereMonth('purchase_date', now()->month)
+            ->groupBy('day')
+            ->get();
+        $depositData = Deposit::where('depositable_type','App\Models\Fund')->where('user_id',Auth::user()->id)
+        ->selectRaw('DAY(created_at) as day, SUM(payable_amount_in_base_currency) as total')
+            ->whereMonth('created_at', now()->month)
+            ->groupBy('day')
+            ->get();
+        $payoutData =  Payout::where('user_id',Auth::user()->id)
+            ->where('status',2)
+            ->selectRaw('DAY(created_at) as day, SUM(net_amount_in_base_currency) as total')
+            ->whereMonth('created_at', now()->month)
+            ->groupBy('day')
+            ->get();
+        $bidHistory =  BiddingHistory::where('user_id',Auth::user()->id)
+            ->selectRaw('DAY(created_at) as day, SUM(bid_amount) as total')
+            ->whereMonth('created_at', now()->month)
+            ->groupBy('day')
+            ->get();
+
+        $xValues = $this->getFormattedDates();
+        return response()->json([
+            'xValues' => $xValues,
+            'purchasePlan' => $this->formatChartData($purchasePlun),
+            'deposit' => $this->formatChartData($depositData),
+            'payout' => $this->formatChartData($payoutData),
+            'bidHistory'=>$this->formatChartData($bidHistory),
+        ]);
+    }
+    private function getDayNumbers()
+    {
+        // Assuming 30 days in a month, adjust accordingly
+        return range(1, 30);
+    }
+    private function getFormattedDates()
+    {
+        $currentMonth = now();
+        $formattedDates = [];
+        $daysInMonth = $currentMonth->now()->endOfMonth()->day;
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $formattedDates[] = $currentMonth->day($day)->format('jS M');
+        }
+
+        return $formattedDates;
+    }
+
+    private function formatChartData($data)
+    {
+        $formattedData = array_fill(0, 30, 0);
+
+        foreach ($data as $item) {
+            $formattedData[$item->day - 1] = $item->total;
+        }
+
+        return $formattedData;
     }
 
 }

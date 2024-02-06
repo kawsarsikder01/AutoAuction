@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController as UserLoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SearchingController;
@@ -92,6 +93,11 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
             Route::middleware('kycVerification')->group(function () {
 
                 /* Manage Buy and Sell Vehicle and Manage Plan*/
+                Route::get('plan/purchase/history',[PlanPurchaseControlller::class,'purchaseHistory'])->name('purchase.history');
+                Route::get('purchase/plan/{plan_id}', [PlanPurchaseControlller::class, 'purchasePlan'])->name('purchase.plan');
+                Route::get('upgrade/plan/{id}',[PlanPurchaseControlller::class,'upgradePlan'])->name('upgrade.plan');
+                Route::get('payment-check-amount',[PlanPurchaseControlller::class,'checkAmount'])->name('plan.checkAmount');
+                Route::post('confirm-plan',[PlanPurchaseControlller::class,'confirmPlan'])->name('confirm-plan');
                 Route::post('/bid/{id}',[\App\Http\Controllers\BiddingController::class,'bid'])->name('bid');
                 Route::get('sell/your/vehicle', [SellerController::class, 'index'])->name('sell-car.submit')->middleware(['CheckSeller']);
                 Route::post('store/your/store', [SellerController::class, 'store'])->name('sell-car.store')->middleware(['CheckSeller']);
@@ -100,13 +106,19 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
                 Route::post('update/vehicle/{id}',[SellerController::class,'update'])->name('update.vehicle');;
                 Route::get('get/image/{id}',[SellerController::class,'getImage'])->name('get.image');
                 Route::get('delete/vehicle/{id}',[SellerController::class,'destroy'])->name('delete.vehicle');
-                Route::get('bidding/history',[BidderController::class,'UserBiddingHistory'])->name('bidding.history');
-                Route::post('release/property',[SellerController::class,'releseProperty'])->name('release.property');
+
+                Route::get('bidding/history',[BidderController::class,'userBiddingHistory'])->name('bidding.history');
+
+                Route::post('release/property',[SellerController::class,'releaseProperty'])->name('release.property');
+
+
                 Route::post('confirm/payment',[BidderController::class,'payNow'])->name('confirm.payment');
                 Route::post('store/report/{repoter_id}/{repoted_id}/{vehicle_id}',[ReportController::class,'store'])->name('store.report');
-                Route::get('vehicle/bidding/History/{id}',[SellerController::class,'vehicleBiddingHistory'])->name('vehicle.bidding.history');
-                Route::post('delete/vehicle/bidding/history',[SellerController::class,'deleteHistory'])->name('delete.vehicle.bidding.history');
-                Route::get('messages/{id}',[MessageController::class,'index'])->name('messages');
+
+                Route::get('vehicle/bidding/history/{id}',[SellerController::class,'vehicleBiddingHistory'])->name('vehicle.bidding.history');
+
+                Route::get('vehicle-owner/messages/{id}/{bid_id}',[MessageController::class,'index'])->name('messages');
+                Route::get('bidder/messages/{id}/{bid_id}',[MessageController::class,'showMessagesForBidder'])->name('bidder.message.show');
                 Route::get('get/message/{id}',[MessageController::class,'getMessage'])->name('get.message');
                 Route::post('send/message/',[MessageController::class,'sendMessage'])->name('send.message');
                 Route::get('reports/conversation',[ReportController::class,'index'])->name('reports.conversation');
@@ -117,14 +129,15 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
             /*Get Mor Info */
            Route::post('get/more/info',[GetInformationController::class,'getInfo'])->name('get.info');
 
+            /*Get Chart Data*/
+
+                Route::get('get/chart/data',[HomeController::class,'getChartData'])->name('get.chart.data');
+
             /*Contact */
            Route::post('store/contact/information',[ContactController::class,'store'])->name('store.contact.information');
             /* Manage User Plan Payment */
 
-            Route::get('purchase/plan/{plan_id}', [PlanPurchaseControlller::class, 'purchasePlan'])->name('purchase.plan');
-            Route::get('upgrade/plan/{id}',[PlanPurchaseControlller::class,'upgradePlan'])->name('upgrade.plan');
-            Route::get('payment-check-amount',[PlanPurchaseControlller::class,'checkAmount'])->name('plan.checkAmount');
-            Route::post('confirm-plan',[PlanPurchaseControlller::class,'confirmPlan'])->name('confirm-plan');
+
             /* PAYMENT REQUEST BY USER */
             Route::get('payout-list', [PayoutController::class, 'index'])->name('payout.index');
             Route::get('payout-search', [PayoutController::class, 'search'])->name('payout.search');
@@ -193,6 +206,7 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
     Route::get('blogs/{category}/{id}',[FrontendController::class,'categoryBlogs'])->name('category.blogs');
     Route::get('blog-details/{slug}', [BlogController::class, 'blogDetails'])->name('blog.details');
     Route::get('property/details/{slug?}/{id}',[\App\Http\Controllers\BidderController::class,'viewAuctionDetails'])->name('auction.details');
+//    Route::get('/registation',[RegisterController::class,'showRegistrationForm'])->name('registation');
 
     Route::get('language/{locale}', function ($locale) {
         $language = Language::where('short_name', $locale)->first();

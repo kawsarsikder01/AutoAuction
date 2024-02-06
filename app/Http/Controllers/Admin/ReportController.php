@@ -75,20 +75,29 @@ class ReportController extends Controller
     }
     public function destroy($id)
     {
-        $report  = Report::findOrFail($id);
-        $report->delete();
-        return back()->with('success','Report Deleted Successfully');
+        try {
+            $report  = Report::findOrFail($id);
+            $report->delete();
+            return back()->with('success','Report Deleted Successfully');
+        }catch (Exception $exception){
+            return view(template().'errors.404');
+        }
     }
     public function viewReport($id)
     {
-        $report  = Report::findOrFail($id);
-        $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
-            ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
 
-        $conversations = ReportConversation::where('reporter_id',$report->repoter_id)
-            ->where('reported_id',$report->reported_user_id )
-            ->where('report_id',$report->id)->get();
-        return view('admin.Reports.view',compact('report','conversations','bid'));
+        try {
+            $report  = Report::findOrFail($id);
+            $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
+                ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
+
+            $conversations = ReportConversation::where('reporter_id',$report->repoter_id)
+                ->where('reported_id',$report->reported_user_id )
+                ->where('report_id',$report->id)->get();
+            return view('admin.Reports.view',compact('report','conversations','bid'));
+        }catch (Exception $exception){
+            return view(template().'errors.404');
+        }
     }
     public  function sendMessage(Request $request)
     {
@@ -108,17 +117,18 @@ class ReportController extends Controller
 
     public function releaseSellerPayment($id)
     {
-        $report = Report::with('Vehicle')->findOrFail($id);
-        if ($report->Vehicle->details->sold_status == 0){
-            return abort(404);
-        };
 
-        $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
-            ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
-        if($bid->bidder->id != $report->repoter_id && $bid->bidder->id != $report->reported_user_id){
-            return abort(404);
-        }
         try {
+            $report = Report::with('Vehicle')->findOrFail($id);
+            if ($report->Vehicle->details->sold_status == 0){
+                throw new Exception('not found');
+            };
+
+            $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
+                ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
+            if($bid->bidder->id != $report->repoter_id && $bid->bidder->id != $report->reported_user_id){
+                throw new Exception('not found');
+            }
             $bid->bidder->hold_balance = $bid->bidder->hold_balance - $report->Vehicle->biddingHistory->max('bid_amount');
             $bid->bidder->update();
             $report->Vehicle->user->balance = $report->Vehicle->user->balance + $report->Vehicle->biddingHistory->max('bid_amount');
@@ -156,23 +166,22 @@ class ReportController extends Controller
             $this->sendMailSms($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER',$msg2);
             return back()->with('success','Seller Payment Release Successfully');
         }catch (Exception $error){
-            return back()->with('error', $error->getMessage());
+            return view(template().'errors.404');
         }
     }
     public function releaseBidderPayment($id)
     {
-
-        $report = Report::with('Vehicle')->findOrFail($id);
-        if ($report->Vehicle->details->sold_status == 0){
-            return abort(404);
-        };
-
-        $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
-            ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
-        if($bid->bidder->id != $report->repoter_id && $bid->bidder->id != $report->reported_user_id){
-            return abort(404);
-        }
         try {
+            $report = Report::with('Vehicle')->findOrFail($id);
+            if ($report->Vehicle->details->sold_status == 0){
+                throw new Exception('not found');
+            };
+
+            $bid = BiddingHistory::with('bidder')->where('vehicle_id',$report->Vehicle->id)
+                ->where('bid_amount',$report->Vehicle->biddingHistory->max('bid_amount'))->first();
+            if($bid->bidder->id != $report->repoter_id && $bid->bidder->id != $report->reported_user_id){
+                throw new Exception('not found');
+            }
             $bid->bidder->hold_balance = $bid->bidder->hold_balance - $report->Vehicle->biddingHistory->max('bid_amount');
             $bid->bidder->balance = $bid->bidder->balance + $report->Vehicle->biddingHistory->max('bid_amount');
             $bid->bidder->update();
@@ -207,7 +216,7 @@ class ReportController extends Controller
             $this->sendMailSms($report->Vehicle->user, 'CANCEL_AUCTION',$msg1);
             return back()->with('success','Release Bidder Payment Successfully');
         }catch (Exception $error){
-            return back()->with('error', $error->getMessage());
+            return view(template().'errors.404');
         }
 
     }

@@ -13,18 +13,19 @@
        <li>
          <a href="{{route('user.sell-car.submit')}}"><i class="fa-solid fa-car-side"></i>@lang("Sell Your Vehicle")</a>
       </li>
-       @if (Auth::user()->plan->first())
+       @if (Auth::user()->plan)
        <li>
           <a href="{{route('user.listed.vehicle')}}"><i class="fa-solid fa-list"></i>@lang("Listed Vehicle")</a>
        </li>
+        <li>
+            <a href="{{route('user.purchase.history')}}"><i class="fa-solid fa-clock-rotate-left"></i>@lang("Purchase History")</a>
+        </li>
        @endif
        <li>
          <a href="{{route('user.bidding.history')}}"><i class="fa-regular fa-file"></i>@lang("Bid History")</a>
       </li>
       <li>
          <a href="{{route('user.reports.conversation')}}"><i class="fal fa-flag-alt"></i>@lang("Reports")</a>
-      </li><li>
-            <a href="{{route('user.reports.conversation')}}"><i class="fa-solid fa-clock-rotate-left"></i>@lang("Purchase History")</a>
       </li>
 
       <li>

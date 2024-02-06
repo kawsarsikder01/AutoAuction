@@ -82,10 +82,9 @@ class BasicService
             $this->adminFirebasePushNotification('ADD_FUND_USER_ADMIN', $params, $firebaseAction);
         }elseif ($deposit->depositable_type == Plan::class && $deposit->depositable_id){
             $user = $deposit->user;
-            if(!$user->plan->first()){
+            if(!$user->plan){
                 $plan = Plan::find($deposit->depositable_id);
                 if ($plan){
-                    $user->plan_id = $plan->id;
                     $planPurchaseHistory = new PlanPurchaseHistory();
                     $planPurchaseHistory->plan_name = $plan->plan_name;
                     $planPurchaseHistory->plan_id = $plan->id;
@@ -98,7 +97,9 @@ class BasicService
                     $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
                     $planPurchaseHistory->top_search_result = $plan->top_search_result;
                     $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
+                    $planPurchaseHistory->trx_id = $deposit->trx_id;
                     $planPurchaseHistory->status = 1;
+                    $planPurchaseHistory->payment_method =  optional($deposit->gateway)->name;
                     $planPurchaseHistory->purchase_date = Carbon::now()->toDateTimeString();
                     if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
                         $planPurchaseHistory->expiry_date = Carbon::now()->addDays($plan->expiry_time);
@@ -110,8 +111,10 @@ class BasicService
                         $user->expire_date = null;
                     }
                 }
-                $user->update();
                 $planPurchaseHistory->save();
+                $user->purchased_plan_id = $planPurchaseHistory->id;
+                $user->total_listed_car = 0;
+                $user->update();
 
                 $params = [
                     'username' => optional($deposit->user)->username,
@@ -129,14 +132,12 @@ class BasicService
                 $this->adminMail('PLAN_PURCHASE_USER_ADMIN', $params);
                 $this->adminPushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $firebaseAction);
-            }elseif($user->plan->first()){
+            }elseif($user->plan){
                 $plan = Plan::find($deposit->depositable_id);
                 if ($plan){
-                    $oldPlan = $user->plan->first();
-                    $oldPlan->status = 0;
-                    $oldPlan->update();
-                    $user->plan_id = $plan->id;
-                    $user->total_listed_car = 0;
+                    $oldPurchasedPlun = $user->plan;
+                    $oldPurchasedPlun->status = 0;
+                    $oldPurchasedPlun->update();
                     $planPurchaseHistory = new PlanPurchaseHistory();
                     $planPurchaseHistory->plan_name = $plan->plan_name;
                     $planPurchaseHistory->plan_id = $plan->id;
@@ -150,6 +151,8 @@ class BasicService
                     $planPurchaseHistory->top_search_result = $plan->top_search_result;
                     $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
                     $planPurchaseHistory->status = 1;
+                    $planPurchaseHistory->trx_id = $deposit->trx_id;
+                    $planPurchaseHistory->payment_method =  optional($deposit->gateway)->name;
                     $planPurchaseHistory->purchase_date = Carbon::now()->toDateTimeString();
                     if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
                         $planPurchaseHistory->expiry_date = Carbon::now()->addDays($plan->expiry_time);
@@ -161,8 +164,10 @@ class BasicService
                         $user->expire_date = null;
                     }
                 }
-                $user->update();
                 $planPurchaseHistory->save();
+                $user->purchased_plan_id = $planPurchaseHistory->id;
+                $user->total_listed_car = 0;
+                $user->update();
 
                 $params = [
                     'username' => optional($deposit->user)->username,

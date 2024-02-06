@@ -4,56 +4,61 @@
     <div class="container-fluid" id="create_ticket">
         <div class="main row d-flex align-items-center justify-content-center">
             <div class="col-lg-8 col-sm-10">
-                <div class="search-bar">
-                    <form class="form-row" action="{{route('user.ticket.store')}}" method="post"
-                          enctype="multipart/form-data">
-                        @csrf
-                        <div class="input-box col-md-12">
-                            <label for="subject">@lang('Subject')</label>
-                            <input type="text" name="subject" value="{{ old('subject') }}" class="form-control" placeholder="Subject" />
-                            @error("subject")
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h4 class="card-header-title ">
+                            Create Ticket
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form class="form-row" action="{{route('user.ticket.store')}}" method="post"
+                        enctype="multipart/form-data">
+                    @csrf
+                    <div class="input-box col-md-12">
+                        <label for="subject">@lang('Subject')</label>
+                        <input type="text" name="subject" value="{{ old('subject') }}" class="form-control" placeholder="Subject"  autocomplete="off"/>
+                        @error("subject")
+                        <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                        @enderror
+                    </div>
+                    <div class="input-box col-md-12 mt-2">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message">{{ old('message') }}</textarea>
+                        @error("message")
+                        <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                        @enderror
+                    </div>
+
+                        <div class="input-box col-md-12 mt-4">
+                            <div class="input-field">
+                                <div class="input-images-1" id="carImage" name="images[]" ></div>
+                            </div>
+                            @error("images.*")
                             <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            @error("images")
+                            <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
-                        <div class="input-box col-md-12">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message">{{ old('message') }}</textarea>
-                            @error("message")
-                            <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                            @enderror
-                        </div>
 
-
-                        <div class="card-box mt-4">
-                            <div class="input-box col-md-12">
-                                <div class="input-field">
-                                    <div class="input-images-1" id="carImage" name="images[]" ></div>
-                                </div>
-                                @error("images.*")
-                                <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                @error("images")
-                                <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                    <div class="col-md-12">
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <span>@lang('Submit')</span></button>
                         </div>
-
-                        <div class="col-md-12">
-                            <div class="form-group mt-3">
-                                <button type="submit" class="btn btn-primary">
-                                    <span>@lang('Submit')</span></button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
+                </form>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>

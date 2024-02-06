@@ -20,34 +20,34 @@ class ReportController extends Controller
         })->orWhere(function ($query){
             $query->where('reported_user_id',Auth::user()->id);
     })->paginate(basicControl()->paginate);
-        return view(template().'reports',compact('reports'));
+        return view(template().'user.pages.reports',compact('reports'));
     }
     public function store(Request $request,$repoter_id,$repoted_id,$vehicle_id)
     {
-    if (Auth::user()->id != $repoter_id){
-        return abort(404);
-    }
-        $request->validate([
-            'subject' => 'required | string | max:50',
-            'reason' => 'required | string | min:5 | max:300'
-        ]);
-
-        $report  = Report::where(function ($query)use($repoter_id,$repoted_id,$vehicle_id){
-            $query->where('repoter_id',$repoter_id)
-                ->where('reported_user_id',$repoted_id)
-                ->where('vehicle_id',$vehicle_id);
-        })
-            ->orWhere(function ($query)use($vehicle_id,$repoter_id,$repoted_id){
-                $query->where('repoter_id',$repoted_id)
-                    ->where('reported_user_id',$repoter_id)
-                    ->where('vehicle_id',$vehicle_id);
-            })->first();
-
-        if ($report != null){
-            return abort(404);
-        }
 
         try {
+            if (Auth::user()->id != $repoter_id){
+                throw new \Exception('not found');
+            }
+            $request->validate([
+                'subject' => 'required | string | max:50',
+                'reason' => 'required | string | min:5 | max:300'
+            ]);
+
+            $report  = Report::where(function ($query)use($repoter_id,$repoted_id,$vehicle_id){
+                $query->where('repoter_id',$repoter_id)
+                    ->where('reported_user_id',$repoted_id)
+                    ->where('vehicle_id',$vehicle_id);
+            })
+                ->orWhere(function ($query)use($vehicle_id,$repoter_id,$repoted_id){
+                    $query->where('repoter_id',$repoted_id)
+                        ->where('reported_user_id',$repoter_id)
+                        ->where('vehicle_id',$vehicle_id);
+                })->first();
+
+            if ($report != null){
+                throw new Exception('not found');
+            }
             $report = new Report();
             $report->repoter_id = $repoter_id;
             $report->reported_user_id = $repoted_id;
@@ -83,15 +83,24 @@ class ReportController extends Controller
 
             return back()->with('success','Your Report send Successfully');
         }catch (Exception $error){
-            return back()->with('error', $error->getMessage());
+            return view(template(),'errors.404');
         }
     }
 
     public function getConversation($id)
     {
-        $report =  Report::findOrFail($id);
-        $conversations = ReportConversation::where('report_id',$id)->get();
-        return view(template().'reportConversation',compact('report','conversations'));
+        try {
+            $report =  Report::findOrFail($id);
+            $conversations = ReportConversation::where('report_id',$id)->get();
+
+            if ( $report && ( $report->repoter_id != Auth::user()->id && $report->reported_user_id != Auth::user()->id)){
+               throw new Exception('Report Not Found');
+            }
+            return view(template().'user.pages.reportConversation',compact('report','conversations'));
+        }catch (Exception $exception){
+            return view(template().'errors.404');
+        }
+
     }
     public function sendMessage(Request $request)
     {

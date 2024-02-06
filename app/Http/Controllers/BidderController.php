@@ -8,6 +8,7 @@ use App\Models\CarCategory;
 use App\Models\User;
 use App\Models\Vehicle;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\Notify;
@@ -16,19 +17,31 @@ class BidderController extends Controller
     use Notify;
     public function viewAuctionDetails($slug = 'your-property-name',$id)
     {
-        $vehicle = Vehicle::with('details','user')->find($id);
-        if(($vehicle->status == 0 || $vehicle->status == 2) && $vehicle->user_id != Auth::user()->id){
-            return abort(404);
+        try {
+            $vehicle = Vehicle::with('details','user')->findOrFail($id);
+        if(!Auth::guard('admin')->user()){
+            if(Auth::user()){
+                if(($vehicle->status == 0 || $vehicle->status == 2) && $vehicle->user_id != Auth::user()->id){
+                    throw new Exception('not found');
+                }
+            }elseif($vehicle->status == 0 || $vehicle->status == 2){
+                throw new Exception('not found');
+            }
+            
         }
+
         $maxBidAmount = $vehicle->biddingHistory->max('bid_amount');
         $maxBid = BiddingHistory::with('vehicle')
             ->where('vehicle_id',$id)
             ->where('bid_amount',$maxBidAmount)->first();
 
-        return view(template().'auctionDetails',compact('vehicle','maxBid'));
+        return view(template().'auction.auctionDetails',compact('vehicle','maxBid'));
+        } catch (Exception $error) {
+            return view(template().'errors.404');
+        }
     }
 
-    public function UserBiddingHistory()
+    public function userBiddingHistory()
     {
         $user = Auth::user();
         $data['categories'] =  CarCategory::get();
@@ -38,13 +51,13 @@ class BidderController extends Controller
                         ->orderBy('created_at', 'DESC')
                         ->paginate(basicControl()->paginate);
 
-        return view(template().'biddingHistory',compact('biddingHistorys'),$data);
+        return view(template().'user.pages.biddingHistory',compact('biddingHistorys'),$data);
     }
 
     public  function payNow(Request $request)
     {
-        $vehicle = Vehicle::where('payment_status',0)->find($request->vehicle_id);
-        if ($vehicle){
+       try {
+        $vehicle = Vehicle::where('payment_status',0)->findOrFail($request->vehicle_id);
             $vehicle->payment_status = 1;
             $vehicle->update();
             $maxAmount = $vehicle->biddingHistory->max('bid_amount');
@@ -90,10 +103,11 @@ class BidderController extends Controller
                 $this->userFirebasePushNotification($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2, "#",);
                 $this->sendMailSms($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2);
             }
-        }else{
-            return back(404);
-        }
-        return back()->with('success','Your Payment Successfully Completed');
+      
+            return back()->with('success','Your Payment Successfully Completed');
+       } catch (Exception $error) {
+            return view(template().'errors.404');
+       }
     }
 
 }

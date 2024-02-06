@@ -177,7 +177,7 @@
                            <div class="row g-4">
                               <div class="input-box col-md-6">
                                  <label>Current Password</label>
-                                 <input type="password" name="current_password" class="form-control" placeholder="" />
+                                 <input type="password" name="current_password" class="form-control"  autocomplete="off" />
                                  @if($errors->has('current_password'))
                                     <div class="error text-danger">@lang($errors->first('current_password')) </div>
                                  @endif

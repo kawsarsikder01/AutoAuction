@@ -357,6 +357,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
        Route::get('plan/edit/{id}/{language}',[PlanController::class,'edit'])->name('plan.edit');
        Route::post('plan/update/{id}',[PlanController::class,'update'])->name('plan.update');
        Route::delete('plan/destroy/{id}',[PlanController::class,'destroy'])->name('plan.destroy');
+        Route::get('show/plan/purchase/history',[PlanController::class,'purchaseHistory'])->name('show.plan.purchase.history');
+       Route::get('get/plan/purchase/history',[PlanController::class,'getPurchaseHistory'])->name('get.plan.purchase.history');
 
         /* ======== Auction Management ======== */
 
