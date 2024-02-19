@@ -197,33 +197,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- End Item -->
-                                    <!-- Item -->
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h5 class="mb-0">Customer Support</h5>
-                                                        <p class="fs-5 text-body mb-0">Enable customer support for the seller to contact his customer.</p>
-                                                    </div>
-                                                    <div class="col-sm-auto d-flex align-items-center">
-                                                        <div class="form-check form-switch form-switch-google">
-                                                            <input type="hidden" name="customer_support" value="0">
-                                                            <input class="form-check-input" name="customer_support"
-                                                                   type="checkbox" id="customerSupport" value="1">
-                                                            <label class="form-check-label"
-                                                                   for="customerSupport"></label>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Item -->
-
-                                    <!-- Item -->
                                     <div class="list-group-item">
                                         <div class="d-flex">
                                             <div class="flex-grow-1 ms-3">
@@ -246,32 +219,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- End Item -->
-                                    <!-- Item -->
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h5 class="mb-0">Top Search Result</h5>
-                                                        <p class="fs-5 text-body mb-0">Enable top search result .</p>
-                                                    </div>
-                                                    <div class="col-sm-auto d-flex align-items-center">
-                                                        <div class="form-check form-switch form-switch-google">
-                                                            <input type="hidden" name="top_search_result" value="0">
-                                                            <input class="form-check-input" name="top_search_result"
-                                                                   type="checkbox" id="activeTopSearchResult" value="1">
-                                                            <label class="form-check-label"
-                                                                   for="activeTopSearchResult"></label>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Item -->
-                                    <!-- Item -->
                                     <div class="list-group-item">
                                         <div class="d-flex">
                                             <div class="flex-grow-1 ms-3">

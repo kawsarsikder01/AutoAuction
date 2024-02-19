@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Bidding History'))
+@section('title',trans('Reports'))
 @section('content')
 <div class="container-fluid">
     <div class="main row">

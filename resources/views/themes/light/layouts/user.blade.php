@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" type="image/x-icon" href="{{getFile(basicControl()->favicon_driver,basicControl()->favicon)}}"/>
-    <title>{{trans('Dashboard')}} | @lang(basicControl()->site_title)</title>
+    <title> @yield('title')</title>
     <!-- bootstrap 5 -->
     <link rel="stylesheet" href="{{asset($themeTrue.'css/bootstrap.min.css')}}"/>
     <!-- font awesome 6 -->
@@ -25,6 +25,13 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/quill.snow.min.css')}}"/>
     <link rel="stylesheet" href="{{asset($themeTrue.'css/addProduct.css')}}"/>
     <link rel="stylesheet" href="{{asset($themeTrue.'css/flatpickr.css')}}"/>
+    <style>
+        {{--:root {--}}
+        {{--    --primary:  {{ basicControl()->primary_color }};--}}
+        {{--    --secondary: {{ basicControl()->secondary_color }};--}}
+        {{--}--}}
+
+    </style>
     @stack('style')
     @stack("css-lib")
 
@@ -91,7 +98,7 @@
                           </span>
                             <ul class="user-dropdown">
                                 <li>
-                                    <a href="{{route('page')}}"> <i class="fal fa-user"></i>@lang('Switch to Home Page')
+                                    <a href="{{route('page')}}"><i class="fa-solid fa-house"></i></i></i>@lang('Switch to Home Page')
                                     </a>
                                 </li>
                                 <li>
@@ -140,7 +147,6 @@
 <!-- custom script -->
 <script src="{{asset($themeTrue.'js/script.js')}}"></script>
 <script src="{{asset($themeTrue.'js/quill.min.js')}}"></script>
-{{-- <script src="{{asset($themeTrue.'js/fileUpload.js')}}"></script>--}}
 <script src="{{asset($themeTrue.'js/flatpickr.js')}}"></script>
 
 
@@ -169,6 +175,7 @@
                 let app = this;
                 axios.get("{{ route('user.push.notification.show') }}")
                     .then(function (res) {
+                        console.log(res)
                         app.items = res.data;
                     })
             },

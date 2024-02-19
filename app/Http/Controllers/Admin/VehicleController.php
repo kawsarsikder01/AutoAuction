@@ -21,7 +21,7 @@ class VehicleController extends Controller
 
     public function pendingVehicleSearch(Request $request)
     {
-        $vehichle = Vehicle::where('status',0)->with('details','user')->get();
+        $vehichle = Vehicle::where('status',0)->with('details','user');
 
         return DataTables::of($vehichle)
             ->addColumn('no', function ($item) {
@@ -130,7 +130,7 @@ class VehicleController extends Controller
         $vehicle->update();
         return back()->with('success','Vehicle Approved Successfully');
        } catch (\Exception $exception) {
-        return view(template().'errors.404');
+        abort(404);
        }
     }
 
@@ -141,7 +141,7 @@ class VehicleController extends Controller
     }
     public function getApprovedVehicle()
     {
-        $vehichle = Vehicle::where('status',1)->with('details','user')->get();
+        $vehichle = Vehicle::where('status',1)->with('details','user');
 
         return DataTables::of($vehichle)
             ->addColumn('no', function ($item) {
@@ -218,13 +218,13 @@ class VehicleController extends Controller
          }
          return  back()->with('success','Vehicle Rejected Successfully');
       } catch (\Exception $exception) {
-          return view(template().'errors.404');
+        abort(404);
       }
     }
 
     public function getRejectedList()
     {
-        $vehichle = Vehicle::where('status',2)->with('details','user')->get();
+        $vehichle = Vehicle::where('status',2)->with('details','user');
 
         return DataTables::of($vehichle)
             ->addColumn('no', function ($item) {
@@ -257,7 +257,6 @@ class VehicleController extends Controller
                 return currencyPosition($item->details->price);
             })
             ->addColumn('action', function ($item) {
-                $editUrl = route('admin.user.edit', $item->id);
                 $viewUrl = route('auction.details',[slug($item->details->title)??'',$item->id]);
                 return "<div class='btn-group' role='group'>
                       <a href='$viewUrl' class='btn btn-white btn-sm edit_user_btn'>
@@ -332,27 +331,48 @@ class VehicleController extends Controller
             $bid->delete();
             return back()->with('success',"Bid Delete Successfully");
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
     public function destroy(Request $request)
     {
         try {
             $vehicle = Vehicle::findOrFail($request->id);
+            $vehicle->reports()->delete();
             if (!$vehicle->biddingHistory->first()) {
                 $vehicle->user->total_listed_car = $vehicle->user->total_listed_car - 1;
                 $vehicle->user->update();
             }
             $vehicle->biddingHistory()->delete();
 
+            if($request->reason){
+                $msg = [
+                    'name' => $vehicle->user->firstname.$vehicle->user->lastname,
+                    'vehicle_model' => $vehicle->details->title,
+                    'reason'  => $request->reason,
+
+                ];
+                $action = [
+                    "link" => route('user.listed.vehicle'),
+                    "icon" => "fas fa-money-bill-alt text-white"
+                ];
+                $this->userPushNotification($vehicle->user, 'DELETE_VEHICLE', $msg, $action);
+                $this->userFirebasePushNotification($vehicle->user,'DELETE_VEHICLE', $msg, $action);
+                $this->sendMailSms($vehicle->user, 'DELETE_VEHICLE',$msg);
+            }
+
             $vehicle->details->delete();
             foreach ($vehicle->path_name as $path){
                 $this->fileDelete($vehicle->driver,$path);
             }
+            foreach ( $vehicle->reports as $report){
+                $report->conversation()->delete();
+            }
+            $vehicle->reports()->delete();
             $vehicle->delete();
             return redirect()->route('auction')->with('success','Vehicle Delete Successfully');
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 }

@@ -13,12 +13,12 @@
             background-repeat: no-repeat;
            background-position: center;
            margin: 0;
-        
+
 
         }
     </style>
 </head>
-<body style="background-image: url({{asset($themeTrue.'img/img/404.jpg')}});">
+<body style="background-image: url({{asset($themeTrue.'img/img/20824298_6342464.jpg')}});">
 
 </body>
 </html>

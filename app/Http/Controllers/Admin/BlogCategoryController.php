@@ -60,7 +60,7 @@ class BlogCategoryController extends Controller
             $defaultLanguage = Language::where('default_status', true)->first();
             return view('admin.blog_management.blog_category.create' , compact('blogCategory','language','defaultLanguage'));
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 
@@ -80,7 +80,7 @@ class BlogCategoryController extends Controller
             $blogCategory->update();
             return redirect(route('admin.blogCategory'));
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 
@@ -91,10 +91,14 @@ class BlogCategoryController extends Controller
     {
         try{
             $blogCategory = BlogCategory::findOrFail($request->id);
+            foreach ($blogCategory->blogs as $blog){
+                $blog->details->delete();
+            }
+            $blogCategory->blogs()->delete();
             $blogCategory->delete();
-            return redirect(route('admin.blogCategory'));
+            return redirect(route('admin.blogCategory'))->with('success','Blog Category Delete Successfully');
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
 
     }

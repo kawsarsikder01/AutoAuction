@@ -154,14 +154,6 @@ return [
                 'total_raised_amount.*' => 'required ',
                 'image.*'               => 'nullable | max:5000 | image | mimes:jpg,jpeg,png,avif'
             ]
-        ],
-        'multiple' => [
-           'field_name' => [
-            'option' => 'text',
-           ],
-           'validation' => [
-               'option.*' => 'required|max:200'
-           ]
         ]
     ],
     'achievement' => [
@@ -264,7 +256,7 @@ return [
                 'text.*' => 'nullable | max:250',
                 'email.*' => 'required  | max:80',
                 'phone_no.*' => 'required',
-                'address.*' => 'required | max:150'
+                'address.*' => 'required | max:150',
             ]
         ],
         'multiple' => [

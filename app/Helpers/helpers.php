@@ -52,7 +52,6 @@ function template($asset = false)
 if (!function_exists('staticPagesAndRoutes')) {
     function staticPagesAndRoutes($name)
     {
-//        dd($name);
         return [
             'blog' => 'blog',
             'plan' => 'plan',
@@ -899,6 +898,31 @@ function code($length)
         $max = ($max * 10) + 9;
     }
     return random_int($min, $max);
+}
+
+
+function checkKycForm($validateForm)
+{
+    $is_pending = [];
+    $rejected = [];
+    foreach ($validateForm as $userKyc){
+        if ($userKyc->status == 1){
+            $is_pending = null;
+            $rejected = null;
+            break;
+        }elseif($userKyc->status == 0){
+            $is_pending =['is_pending' => $userKyc->kyc_type];
+        }elseif ($userKyc->status == 2){
+            $rejected = ['rejected' => $userKyc->kyc_type];
+        }
+    }
+    $returnForm =  null;
+    if ( $is_pending){
+        $returnForm =  $is_pending;
+    }elseif ($rejected){
+        $returnForm =  $rejected;
+    }
+    return $returnForm ;
 }
 
 

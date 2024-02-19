@@ -17,6 +17,7 @@ class Payment
 	 */
 	public static function prepareData($deposit, $gateway)
 	{
+
 		$basic = basicControl();
 		$val['pay_to_email'] = trim($gateway->parameters->pay_to_email);
 		$val['transaction_id'] = "$deposit->trx_id";

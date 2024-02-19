@@ -13,7 +13,6 @@ use App\Models\CarCategory;
 use App\Models\CarBrand;
 use App\Traits\Upload;
 use App\Models\Vehicle;
-use App\Models\VehicleDetails;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\noOfMaxImg;
 
@@ -32,7 +31,7 @@ class SellerController extends Controller
     public function maximumListingValidation()
     {
         $user = Auth::user();
-        $maximumListing = $user->plan->first()->noOfListing;
+        $maximumListing = $user->plan->noOfListing;
         $totalListed = $user->total_listed_car;
         if ($maximumListing > $totalListed) {
             return true;
@@ -44,7 +43,7 @@ class SellerController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $maximumListing = $user->plan->first()->noOfListing;
+        $maximumListing = $user->plan->noOfListing;
         $request->validate([
             'title' => 'required | string | max:100',
             'vehicle_type' => 'required | string | max:150',
@@ -91,7 +90,7 @@ class SellerController extends Controller
             $vehicle->user_id = $user->id;
             $vehicle->category_id = $request->category_id;
             $vehicle->brand_id = $request->brand_id;
-            $vehicle->plan_id = $user->plan->first()->plan_id;
+            $vehicle->plan_id = $user->plan->id;
             $vehicle->save();
             $vehicle->details()->create([
                 'title' => $request->title,
@@ -119,9 +118,10 @@ class SellerController extends Controller
 
     public function listedVehicle()
     {
+
         $user = Auth::user();
-        if (!$user->plan->first()) {
-            return view(template().'errors.404');
+        if (!$user->plan) {
+            abort(403);
         }
         $vehicles = Vehicle::with('details')->where('user_id', $user->id)->paginate(basicControl()->paginate);
         $data['categories'] = CarCategory::get();
@@ -134,7 +134,7 @@ class SellerController extends Controller
         try {
             $vehicle = Vehicle::with('details')->findOrFail($id);
         if ($vehicle->user_id != Auth::user()->id) {
-            throw new Exception('not found');
+            abort(403);
         }
         $images = [];
         if ($vehicle->path_name) {
@@ -147,7 +147,7 @@ class SellerController extends Controller
 
         return view('themes.light.user.sell_your_vehicle.edit', compact('vehicle', 'category', 'brand', 'images'));
         } catch (Exception $error ) {
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 
@@ -180,17 +180,17 @@ class SellerController extends Controller
             'category_id' => 'required',
             'images.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000', new noOfMaxImg($length)],
         ]);
-       
+
         try {
 
             $vehicle = Vehicle::with('details')->findOrFail($id);
             if ($vehicle->details->sold_status == 1) {
-                return view(template().'errors.404');
+                abort(403);
             } elseif ($request->price != $vehicle->details->price && $vehicle->biddingHistory) {
                 return back()->with('warning', "You Can Not Chage Price");
             }
             if ($vehicle->user_id != Auth::user()->id) {
-                return view(template().'errors.404');
+                abort(403);
             }
             $path = null;
             if ($request->photos) {
@@ -204,7 +204,7 @@ class SellerController extends Controller
             } else {
                 if ($vehicle->path_name) {
                     foreach ($vehicle->path_name as $key => $image) {
-    
+
                         $this->fileDelete($vehicle->driver, $image);
                     }
                 }
@@ -226,7 +226,7 @@ class SellerController extends Controller
             $vehicle->user_id = $user->id;
             $vehicle->category_id = $request->category_id;
             $vehicle->brand_id = $request->brand_id;
-            $vehicle->plan_id = $user->plan->first()->plan_id;
+            $vehicle->plan_id = $vehicle->plan_id;
             $vehicle->save();
             $vehicle->details()->update([
                 'title' => $request->title,
@@ -260,29 +260,30 @@ class SellerController extends Controller
                 return back()->with('warning', 'You Can not Delete This Vehicle');
             }
         }
+        if ($vehicle->user_id != Auth::user()->id) {
+           abort(403);
+        }
         if (!$vehicle->biddingHistory->first()) {
             $vehicle->user->total_listed_car = $vehicle->user->total_listed_car - 1;
             $vehicle->user->update();
         }
-        if ($vehicle->user_id != Auth::user()->id) {
-            throw new Exception('not found');
-        }
         $vehicle->biddingHistory()->delete();
-    
+
         $vehicle->details->delete();
         foreach ($vehicle->path_name as $path) {
             $this->fileDelete($vehicle->driver, $path);
         }
+            $vehicle->reports()->delete();
         $vehicle->delete();
         return redirect()->route('auction')->with('success', 'Vehicle Delete Successfully');
         } catch (Exception $error) {
-            return view(template().'errors.404');
+            abort(403);;
         }
     }
 
     public function releaseProperty(Request $request)
     {
-       
+
         try {
             $vehicle = Vehicle::where('release_status', 0)->findOrFail($request->vehicle_id);
             if (Auth::user()->id != $vehicle->user_id) {
@@ -305,15 +306,15 @@ class SellerController extends Controller
             ];
 
             $action = [
-                "link" => '#',
+                "link" => route('user.listed.vehicle'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
-            $this->userPushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE', $action);
-            $this->userFirebasePushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE', "#");
-            $this->sendMailSms($soldVehicle->bidder, 'RELEASED_VEHICLE', $msg);
+            $this->userPushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg, $action);
+            $this->userFirebasePushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg, $action);
+            $this->sendMailSms($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg, $msg);
             return back()->with('success', "Successfully Released Your Property");
         }catch (Exception $exception){
-            return view(template().'errors.404');
+            return back()->with('error', $exception->getMessage());
         }
     }
 
@@ -345,10 +346,10 @@ class SellerController extends Controller
             }
             return view(template() . 'user.pages.vehicleBiddingHistory', compact('historys', 'vehicleTitle', 'report'));
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 
-   
+
 
 }

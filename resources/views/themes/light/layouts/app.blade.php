@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="{{getFile(basicControl()->favicon_driver,basicControl()->favicon)}}" />
-    <title>{{basicControl()->site_title}} | @yield('title')</title>
+    <title>@yield('title')</title>
     <!-- bootstrap 5 -->
     <link rel="stylesheet" href="{{asset($themeTrue.'css/bootstrap.min.css')}}" />
     <!-- font awesome 6 -->
@@ -23,6 +23,13 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/fancybox.css')}}" />
     <!-- custom css -->
     <link rel="stylesheet" href="{{asset($themeTrue.'css/style.css')}}" />
+        <style>
+            {{--:root {--}}
+            {{--    --primary:  {{ basicControl()->primary_color }};--}}
+            {{--    --secondary: {{ basicControl()->secondary_color }};--}}
+            {{--}--}}
+
+        </style>
         @stack('style')
     </head>
 <body>

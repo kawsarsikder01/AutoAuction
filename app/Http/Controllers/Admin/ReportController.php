@@ -20,7 +20,7 @@ class ReportController extends Controller
     }
     public function getReports()
     {
-        $reports = Report::orderBy('created_at','desc')->get();
+        $reports = Report::orderBy('created_at','desc');
         return DataTables::of($reports)
             ->addColumn('no',function ($report){
                 static $counter = 0;
@@ -77,10 +77,11 @@ class ReportController extends Controller
     {
         try {
             $report  = Report::findOrFail($id);
+            $report->conversation()->delete();
             $report->delete();
             return back()->with('success','Report Deleted Successfully');
         }catch (Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
     public function viewReport($id)
@@ -96,7 +97,7 @@ class ReportController extends Controller
                 ->where('report_id',$report->id)->get();
             return view('admin.Reports.view',compact('report','conversations','bid'));
         }catch (Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
     public  function sendMessage(Request $request)
@@ -145,7 +146,7 @@ class ReportController extends Controller
                 'amount' => $report->Vehicle->biddingHistory->max('bid_amount')
             ];
             $action = [
-                "link" => '#',
+                "link" => route('user.listed.vehicle'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($report->Vehicle->user, 'RELEASE_PAYMENT_SELLER_SELLER', $msg, $action);
@@ -158,7 +159,7 @@ class ReportController extends Controller
                 'amount' => $report->Vehicle->biddingHistory->max('bid_amount')
             ];
             $action2 = [
-                "link" => '#',
+                "link" => route('user.bidding.history'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER', $msg2, $action2);
@@ -166,7 +167,7 @@ class ReportController extends Controller
             $this->sendMailSms($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER',$msg2);
             return back()->with('success','Seller Payment Release Successfully');
         }catch (Exception $error){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
     public function releaseBidderPayment($id)
@@ -195,7 +196,7 @@ class ReportController extends Controller
                 'amount' => $report->Vehicle->biddingHistory->max('bid_amount')
             ];
             $action = [
-                "link" => '#',
+                "link" =>  route('user.bidding.history'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($bid->bidder, 'RELEASE_HOLD_BALANCE', $msg, $action);
@@ -208,7 +209,7 @@ class ReportController extends Controller
 
             ];
             $action1 = [
-                "link" => '#',
+                "link" => route('user.listed.vehicle'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($report->Vehicle->user, 'CANCEL_AUCTION', $msg1, $action1);
@@ -216,7 +217,7 @@ class ReportController extends Controller
             $this->sendMailSms($report->Vehicle->user, 'CANCEL_AUCTION',$msg1);
             return back()->with('success','Release Bidder Payment Successfully');
         }catch (Exception $error){
-            return view(template().'errors.404');
+            abort(404);
         }
 
     }

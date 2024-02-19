@@ -26,12 +26,14 @@ class kycVerification
 //       foreach($kyc as $item){
 //          $validateForm =  UserKyc::where('user_id', $user->id)->where('kyc_type',$item->name)->get();
 //           if(!$validateForm->first()){
-//               return redirect()->route('user.profile')->with(['warning'=>'You are not submitted '.$item->name.' form']);
+//               return redirect()->route('user.profile')->with(['warning'=>'You are not submitted '.$item->name.' form','kycForm' => $item->name]);
 //           }else{
-//               if($validateForm->first()->status == 0){
-//                   return back()->with('warning',"Your ". $validateForm->first()->kyc_type." is pending");
-//               }elseif($validateForm->first()->status == 2){
-//                   return back()->with('warning',"Your ". $validateForm->first()->kyc_type." form has been rejected");
+//
+//               $check = checkKycForm($validateForm);
+//               if (isset($check['is_pending'])){
+//                   return back()->with('warning',"Your ". $check['is_pending']." is pending");
+//               }elseif (isset($check['rejected'])){
+//                   return back()->with('warning',"Your ". $check['rejected']." form has been rejected");
 //               }
 //           }
 //       }

@@ -14,13 +14,17 @@ class BlogController extends Controller
      */
     public function blogDetails($slug)
     {
-        
+
         $data['blogDetails'] = BlogDetails::with('blog')->where('slug', $slug)->first();
-        $blogCategories = BlogCategory::get();
-        $categoryId = $data['blogDetails']->blog->category_id;
-        $category = BlogCategory::findOrFail($categoryId);
-        $categoryBlogs = $category->blogs;
-        return view(template().'blog.blog_details',$data,compact('blogCategories','categoryBlogs'));
+        if (isset($data['blogDetails'])){
+            $blogCategories = BlogCategory::get();
+            $categoryId = $data['blogDetails']->blog->category_id;
+            $category = BlogCategory::findOrFail($categoryId);
+            $categoryBlogs = $category->blogs;
+            return view(template().'blog.blog_details',$data,compact('blogCategories','categoryBlogs'));
+        }else{
+            return view(template().'errors.404');
+        }
     }
 
 

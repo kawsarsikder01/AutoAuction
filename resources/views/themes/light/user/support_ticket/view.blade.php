@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('View Ticket'))
+@section('title',trans('Ticket Conversation'))
 @section('content')
 <div class="container-fluid">
     <div class="main row">
@@ -124,7 +124,7 @@
                                   />
                                </span>
                             </div>
-                            <input type="text" name="message" class="form-control" />
+                            <input type="text" name="message" class="form-control" placeholder="Enter Your Message" />
                             <button type="submit" name="replayTicket" value="1" class="submit-btn">
                                <i class="fal fa-paper-plane"></i>
                             </button>

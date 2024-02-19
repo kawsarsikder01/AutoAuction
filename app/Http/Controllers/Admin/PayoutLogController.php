@@ -84,8 +84,7 @@ class PayoutLogController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
         return DataTables::of($payout)
             ->addColumn('no', function ($item) {
@@ -325,7 +324,7 @@ class PayoutLogController extends Controller
             'transaction' => $payout->trx_id,
         ];
         $action = [
-            "link" => '#',
+            "link" => route('user.payout.index'),
             "icon" => "fas fa-money-bill-alt text-white"
         ];
         $fireBaseAction = "#";

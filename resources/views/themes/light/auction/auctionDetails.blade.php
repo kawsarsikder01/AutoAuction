@@ -42,17 +42,19 @@
 
                  <div class="col-lg-6">
                     <div class="auction-content-area">
-                       <div class="btn-group" id="React">
-                             <button class="react" id="heartReact" data-ip = {{request()->ip()}}></button>
+                       <div class="btn-group socialShareing" id="React">
+                             <button class="react" id="heartReact" data-ip = {{request()->ip()}}> <i class='fa-regular fa-heart'></i><span>${length}</span></button>
                           <div class="">
                                @if(Auth::guard('admin')->user())
-                                  <form action="{{route('admin.delete.vehicle')}}" method="POST">
-                                     @csrf
-                                     <input type="hidden" name="id" value="{{$vehicle->id}}">
-                                     <button type="submit" class="react"><i class="fa-regular fa-trash-can"></i>@lang('Delete')</button>
+                                     <button type="submit" class="react" data-bs-toggle="modal" data-bs-target="#RemoveVehicleModal"><i class="fa-regular fa-trash-can"></i>@lang('Delete')</button>
                                   </form>
                                @else
-                               <button class="react"><i class="fal fa-share-alt" aria-hidden="true"></i>@lang('Share')</button>
+                                  @if($vehicle->user->plan->share_other_platform == 1)
+                                      <button class="react share" >
+                                          <div id="shareBlock2"></div>
+                                          <i class="fal fa-share-alt" aria-hidden="true"></i>@lang('Share')
+                                      </button>
+                                  @endif
                                @if (Auth::user() && $vehicle->user_id != Auth::user()->id)
                                    @if(checkReport(null,$vehicle) ==  false)
                                           <button class="react" id="report"    data-bs-toggle="modal" data-bs-target="#ReportModal"><i class="fal fa-flag-alt" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report"></i><span data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Report">@lang('Report')</span></button>
@@ -89,7 +91,7 @@
                                                     <form action="{{route('user.bid',$vehicle->id)}}" method="POST">
                                                         @csrf
                                                         <div class="input-group">
-                                                            <input type="number" name="bid_amount" class="form-control" placeholder="Enter amount" />
+                                                            <input type="number" name="bid_amount" class="form-control" placeholder="Enter amount"  autocomplete="off" />
                                                             <button type="submit" class="btn-custom">@lang('bid now')</button>
                                                         </div>
                                                         @error("bid_amount")
@@ -442,6 +444,46 @@
        </div>
    </div>
 </div>
+
+
+<div class="modal fade"  id="RemoveVehicleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RemoveVehicleModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title text-black fs-5" id="RemoveVehicleModal">@lang('Remove Vehicle')</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('admin.delete.vehicle')}}"  method="POST">
+                @csrf
+                <input type="hidden" name="id" value="{{$vehicle->id}}">
+                <div class="modal-body">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-lg-12">
+                            <div class="form-wrapper">
+                                <div class="row g-4">
+                                    <div class="form-group mb-2">
+                                        <label>@lang('Reason')</label>
+                                        <textarea class="form-control ticket-box" name="reason" rows="5"
+                                                  placeholder="@lang('Enter Reason')">{{old('message')}}</textarea>
+                                    </div>
+                                    @error("reason")
+                                    <span class="invalid-feedback d-block" role="alert">
+                                       <strong>{{ $message }}</strong>
+                                   </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-custom btn-secondary" data-bs-dismiss="modal">@lang('Close')</button>
+                    <button type="submit" class="btn-custom">@lang('Confirm')</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -497,15 +539,18 @@
                         let icon = 0;
                         for(i = 0; i < length ; ++i){
                             if(data[i].ip_address === ip){
-                                $('#heartReact').empty();
-                                $('#heartReact').append(`<i class='fa-solid fa-heart' id='unsubmit'></i><span>${length}<span>`);
+                                $('#heartReact').children('i').removeClass('submit fa-regular fa-heart');
+                                $('#heartReact').children('i').addClass('unsubmit fa-solid fa-heart');
+                                $('#heartReact').children('span').text(length);
                                 icon = 1;
                                 break;
                             }
                         }
                         if(icon == 0){
-                            $('#heartReact').empty();
-                            $('#heartReact').prepend(`<i class='fa-regular fa-heart' id='submit'></i><span>${length}<span>`);
+                            $('#heartReact').children('i').removeClass('unsubmit fa-solid fa-heart');
+                            $('#heartReact').children('i').addClass('submit fa-regular fa-heart');
+                            $('#heartReact').children('span').text(length);
+
                         }
                         $('#countReact').text(length);
                     },
@@ -517,7 +562,7 @@
             }
             getReact();
             $('#heartReact').on('click',function (){
-                var icon = $('#heartReact').find('#submit');
+                var icon = $('#heartReact').find('.submit');
                    if(icon.length == 1){
                        $.ajax({
                            url: "{{ route('submit.react', ['id' => 'id']) }}".replace('id', id),
@@ -547,7 +592,40 @@
                        });
                    }
             })
+
+            $("#shareBlock2").socialSharingPlugin({
+                urlShare: window.location.href,
+                description: $("meta[name=description]").attr("content"),
+                title: $("title").text(),
+            });
         })
 
     </script>
+@endpush
+@push('style')
+    <style>
+
+        .unsubmit{
+            transition: .1s;
+            /*animation: unsubmit ease-in-out;*/
+            animation: unsubmit 1s ease;
+        }
+        @keyframes unsubmit {
+            0% {
+                transform: scale(1);
+            }
+            10%, 20% {
+                transform: scale(0.9) rotate(-3deg);
+            }
+            30%, 50%, 70%, 90% {
+                transform: scale(1.1) rotate(3deg);
+            }
+            40%, 60%, 80% {
+                transform: scale(1.1) rotate(-3deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+    </style>
 @endpush

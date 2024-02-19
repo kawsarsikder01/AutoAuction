@@ -47,8 +47,7 @@ class TransactionLogController extends Controller
             ->when(!empty($filterTransactionId), function ($query) use ($filterTransactionId) {
                 return $query->where('trx_id', $filterTransactionId);
             })
-            ->orderBy('id', 'DESC')
-            ->get();
+            ->orderBy('id', 'DESC');
 
         return DataTables::of($transaction)
             ->addColumn('no', function ($item) {

@@ -14,16 +14,15 @@ class BiddingController extends Controller
 
     public function bid(Request $request,$id)
     {
-
+        $request->validate([
+            'bid_amount' => ['required','numeric', new CheckBidAmount($id,$request->bid_amount),new CheckUserBalance($request->bid_amount,$id)]
+        ]);
 
       try {
           $vehicle = Vehicle::findOrFail($id);
-          $request->validate([
-              'bid_amount' => ['required','numeric', new CheckBidAmount($id,$request->bid_amount),new CheckUserBalance($request->bid_amount,$id)]
-          ]);
        $plan = Auth::user()->plan;
         if($vehicle->user_id == Auth::user()->id){
-            throw new \Exception('not found');
+            abort(403);
         }
         if($plan && $plan->access_auction == 0){
           return back()->with('error','You can not access bidding process');
@@ -35,7 +34,7 @@ class BiddingController extends Controller
           $bidding->save();
           return back()->with('success','Sucessfully update your bid');
       } catch (\Exception $exception) {
-        return view(template(),'errors.404');
+          abort(404);
       }
 
     }

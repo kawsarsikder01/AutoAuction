@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('page_title',__('Payout List'))
+@section('title',__('Payout List'))
 
 @section('content')
     <div class="container-fluid">

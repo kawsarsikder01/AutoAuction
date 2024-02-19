@@ -197,5 +197,8 @@ class User extends Authenticatable
         return $this->hasMany(Report::class,'reported_user_id');
     }
 
-
+    public function notifypermission()
+    {
+        return $this->morphOne(NotificationPermission::class, 'notifyable');
+    }
 }

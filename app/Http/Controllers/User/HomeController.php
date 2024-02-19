@@ -14,9 +14,7 @@ use App\Models\Payout;
 use App\Models\PlanPurchaseHistory;
 use App\Models\UserKyc;
 use App\Models\Vehicle;
-use App\Models\VehicleDetails;
 use App\Traits\Upload;
-use Carbon\Carbon;
 use hisorange\BrowserDetect\Parser as Browser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +22,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 
 class HomeController extends Controller
@@ -55,25 +52,46 @@ class HomeController extends Controller
 
     public function index()
     {
-        try {
+        $user = Auth::user();
+        $kycForm = [];
+        $not_submitedForm = [];
+        $is_pending = [];
+        $rejected = [];
+        $kyc = Kyc::get();
+        foreach($kyc as $item){
+            $validateForm =  UserKyc::where('user_id', $user->id)->where('kyc_type',$item->name)->get();
+            if(!$validateForm->first()){
+                $not_submitedForm[] = $item->name;
+            }else{
+                    $check = checkKycForm($validateForm);
+                if (isset($check['is_pending'])){
+                    $is_pending[] = $check['is_pending'];
+                }elseif (isset($check['rejected'])){
+                    $rejected[]  = $check['rejected'];
+                }
+
+            }
+        }
+            $kycForm['not_submitedForm'] =  $not_submitedForm;
+            $kycForm['is_pending'] =  $is_pending;
+            $kycForm['rejected'] =  $rejected;
+
+
             $data['user'] = Auth::user();
             $data['firebaseNotify'] = config('firebase');
-            $data['soldedVehicle'] = Vehicle::with('details')->whereHas('details',function ($query){
-                $query->where('sold_status',1);
-            })->where('user_id',Auth::user()->id)->get();
-            $data['cancelAuction'] = Vehicle::where('release_status',2)->where('user_id',Auth::user()->id)->get();
-            $data['totalWinAuction'] = Vehicle::with(['biddingHistory'=>function ($query) {
-                $query->where('wining_status',1)->where('user_id',Auth::user()->id);
-            },'details'=>function ($query) {
-                $query->where('sold_status',1);
-            }])
-                ->whereHas('details', function ($query) {
-                    $query->where('sold_status', 1);
-                })
-                ->whereHas('biddingHistory',function ($query){
-                    $query->where('wining_status',1)->where('user_id',Auth::user()->id);
-                })
-                ->get();
+        $countVehicle = Vehicle::select([
+            DB::raw('COUNT(DISTINCT CASE WHEN vehicle_details.sold_status = 1 AND vehicle.user_id = ' . Auth::user()->id . ' THEN vehicle.id END) as soldedVehicle'),
+            DB::raw('COUNT(DISTINCT CASE WHEN vehicle.release_status = 2 AND vehicle.user_id = ' . Auth::user()->id . ' THEN vehicle.id END) as cancelAuction'),
+            DB::raw('COUNT(DISTINCT CASE WHEN vehicle_details.sold_status = 1 AND bidding_history.wining_status = 1 AND bidding_history.user_id = ' . Auth::user()->id . ' THEN vehicle.id END) as totalWinAuction'),
+        ])
+            ->leftJoin('vehicle_details', 'vehicle.id', '=', 'vehicle_details.vehicle_id')
+            ->leftJoin('bidding_history', 'vehicle.id', '=', 'bidding_history.vehicle_id')
+            ->get();
+
+        $data['soldedVehicle'] = $countVehicle->pluck('soldedVehicle')->first();
+        $data['cancelAuction'] = $countVehicle->pluck('cancelAuction')->first();
+        $data['totalWinAuction'] = $countVehicle->pluck('totalWinAuction')->first();
+        $data['totalListedVehicle'] =  Vehicle::where('user_id',Auth::user()->id)->count();
             $userLoginsData = DB::table('user_logins')
                 ->whereDate('created_at', '>=', now()->subDays(30))
                 ->select('browser', 'os', 'get_device')
@@ -83,17 +101,19 @@ class HomeController extends Controller
             $data['userLoginsBrowserData'] = $userLoginsData->groupBy('browser')->map->count();
             $data['userLoginsOSData'] = $userLoginsData->groupBy('os')->map->count();
             $data['userLoginsDeviceData'] = $userLoginsData->groupBy('get_device')->map->count();
-            return view(template() . 'user.dashboard', $data);
-        }catch (\Exception $exception){
-            return view(template(),'errors.404');
-        }
+            return view(template() . 'user.dashboard', $data,compact('kycForm'));
+
     }
 
     public function kycShow($slug, $id)
     {
+       try {
         $data['kycs'] = Kyc::where('status', 1)->get();
         $data['kyc'] = Kyc::where('status', 1)->findOrFail($id);
         return view($this->theme . 'user.kyc.show', $data);
+       } catch (\Exception $exception) {
+        abort(404);
+       }
     }
 
     public function profile()
@@ -361,15 +381,16 @@ class HomeController extends Controller
     }
     public function getChartData()
     {
-        $purchasePlun = PlanPurchaseHistory::where('user_id',Auth::user()->id)
-        ->selectRaw('DAY(purchase_date) as day, SUM(price) as total')
+        $purchasePlun = PlanPurchaseHistory::selectRaw('DAY(purchase_date) as day, SUM(price) as total')
             ->whereMonth('purchase_date', now()->month)
             ->groupBy('day')
+            ->where('user_id',Auth::user()->id)
             ->get();
-        $depositData = Deposit::where('depositable_type','App\Models\Fund')->where('user_id',Auth::user()->id)
-        ->selectRaw('DAY(created_at) as day, SUM(payable_amount_in_base_currency) as total')
+        $depositData =Deposit::where('depositable_type', 'App\Models\Fund')
             ->whereMonth('created_at', now()->month)
+            ->selectRaw('DAY(created_at) as day, SUM(payable_amount_in_base_currency) as total')
             ->groupBy('day')
+            ->where('user_id', Auth::user()->id)
             ->get();
         $payoutData =  Payout::where('user_id',Auth::user()->id)
             ->where('status',2)
@@ -391,6 +412,7 @@ class HomeController extends Controller
             'payout' => $this->formatChartData($payoutData),
             'bidHistory'=>$this->formatChartData($bidHistory),
         ]);
+
     }
     private function getDayNumbers()
     {

@@ -6,9 +6,9 @@
             <!-- Logo -->
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}" aria-label="{{ $basicControl->site_title }}">
                 <img class="navbar-brand-logo navbar-brand-logo-auto"
-                src="{{ getFile(session()->get('themeMode') == 'auto'?$basicControl->admin_dark_mode_logo_driver : $basicControl->admin_logo_driver, session()->get('themeMode') == 'auto'?$basicControl->admin_dark_mode_logo:$basicControl->admin_logo, true) }}"
-                alt="{{ $basicControl->site_title }} Logo"
-                data-hs-theme-appearance="default">
+                     src="{{ getFile(session()->get('themeMode') == 'auto'?$basicControl->admin_dark_mode_logo_driver : $basicControl->admin_logo_driver, session()->get('themeMode') == 'auto'?$basicControl->admin_dark_mode_logo:$basicControl->admin_logo, true) }}"
+                     alt="{{ $basicControl->site_title }} Logo"
+                     data-hs-theme-appearance="default">
 
                 <img class="navbar-brand-logo"
                      src="{{ getFile($basicControl->admin_dark_mode_logo_driver, $basicControl->admin_dark_mode_logo, true) }}"
@@ -34,11 +34,11 @@
                    title="Collapse">
                 </i>
                 <i
-                    class="bi-arrow-bar-right navbar-toggler-full-align"
-                    data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="right"
-                    title="Expand"
+                        class="bi-arrow-bar-right navbar-toggler-full-align"
+                        data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Expand"
                 ></i>
             </button>
             <!-- End Navbar Vertical Toggle -->
@@ -70,29 +70,30 @@
                             <span class="nav-link-title">@lang('Plan Purchase History')</span>
                         </a>
                     </div>
-                      <div class="nav-item">
-                          <a class="nav-link dropdown-toggle {{ menuActive(['admin.car.category', 'admin.car.brand'], 2) }}"
-                             href="#navbarVerticalAuction"
-                             role="button"
-                             data-bs-toggle="collapse"
-                             data-bs-target="#navbarVerticalAuction"
-                             aria-expanded="false"
-                             aria-controls="navbarVerticalAuction">
-                              <i class="bi bi-calendar nav-icon"></i>
-                              <span class="nav-link-title">@lang('Auction Management')</span>
-                          </a>
-                          <div id="navbarVerticalAuction"
-                               class="nav-collapse collapse {{ menuActive(['admin.car.category', 'admin.car.brand'], 2) }}"
-                               data-bs-parent="#navbarVerticalAuction">
-                              <a class="nav-link {{ menuActive(['admin.car.category']) }}"
-                                 href="{{ route('admin.car.category') }}">@lang('Category')</a>
-
-                              <a class="nav-link  {{ menuActive(['admin.car.brand']) }}"
-                                 href="{{ route("admin.car.brand") }}">@lang('Brand')</a>
-                          </div>
-                      </div>
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{menuActive(['admin.vehicle.list'], 3)}}"
+                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.car.category', 'admin.car.brand'], 2) }}"
+                           href="#navbarVerticalAuction"
+                           role="button"
+                           data-bs-toggle="collapse"
+                           data-bs-target="#navbarVerticalAuction"
+                           aria-expanded="false"
+                           aria-controls="navbarVerticalAuction">
+                            <i class="bi bi-calendar nav-icon"></i>
+                            <span class="nav-link-title">@lang('Auction Management')</span>
+                        </a>
+                        <div id="navbarVerticalAuction"
+                             class="nav-collapse collapse {{ menuActive(['admin.car.category', 'admin.car.brand'], 2) }}"
+                             data-bs-parent="#navbarVerticalAuction">
+                            <a class="nav-link {{ menuActive(['admin.car.category']) }}"
+                               href="{{ route('admin.car.category') }}">@lang('Category')</a>
+
+                            <a class="nav-link  {{ menuActive(['admin.car.brand']) }}"
+                               href="{{ route("admin.car.brand") }}">@lang('Brand')</a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a class="nav-link dropdown-toggle {{menuActive(['admin.pending.vehicle','admin.approved.vehicle','admin.vehicle.rejected.list'], 2)}}"
                            href="#navbarVerticalVehicleRequest"
                            role="button"
                            data-bs-toggle="collapse"
@@ -103,14 +104,14 @@
                             <span class="nav-link-title">@lang('Vehicle Request')</span>
                         </a>
                         <div id="navbarVerticalVehicleRequest"
-                             class="nav-collapse collapse {{ menuActive(['admin.vehicle.list'], 3) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.pending.vehicle','admin.approved.vehicle','admin.vehicle.rejected.list'], 2) }}"
                              data-bs-parent="#navbarVerticalVehicleRequest">
-                            <a class="nav-link {{ Request::is('admin/pending/vehicle')?'active':''}}"
+                            <a class="nav-link {{ menuActive(['admin.pending.vehicle']) }}"
                                href="{{ route('admin.pending.vehicle') }}">@lang('Pending Vehicle')</a>
 
-                            <a class="nav-link  {{ Request::is('admin/approved/vehicle')?'active':''}}}}"
+                            <a class="nav-link  {{ menuActive(['admin.approved.vehicle']) }}"
                                href="{{ route("admin.approved.vehicle") }}">@lang('Approved Vehicle')</a>
-                            <a class="nav-link  {{ Request::is('admin/vehicle/rejected/list')?'active':''}}"
+                            <a class="nav-link  {{ menuActive(['admin.vehicle.rejected.list']) }}"
                                href="{{ route("admin.vehicle.rejected.list") }}">@lang('Rejected Vehicle')</a>
                         </div>
                     </div>
@@ -156,7 +157,7 @@
                     <span class="dropdown-header mt-4"> @lang("Ticket Panel")</span>
                     <small class="bi-three-dots nav-subtitle-replacer"></small>
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.ticket'], 3) }}"
+                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.ticket'], 2) }}"
                            href="#navbarVerticalTicketMenu"
                            role="button"
                            data-bs-toggle="collapse"
@@ -256,7 +257,7 @@
                     </div>
 
                     <div
-                        class="nav-item {{ menuActive(['admin.payment.methods', 'admin.deposit.manual.index'], 3) }}">
+                            class="nav-item {{ menuActive(['admin.payment.methods', 'admin.deposit.manual.index'], 3) }}">
                         <a class="nav-link dropdown-toggle"
                            href="#navbarVerticalGatewayMenu"
                            role="button"

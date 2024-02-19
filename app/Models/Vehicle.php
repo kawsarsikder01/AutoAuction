@@ -44,4 +44,8 @@ class Vehicle extends Model
     {
         return $this->belongsTo(CarBrand::class,'brand_id');
     }
+    public function plan()
+    {
+        return $this->belongsTo(PlanPurchaseHistory::class,'user_current_plan_id');
+    }
 }

@@ -27,7 +27,7 @@ class ReportController extends Controller
 
         try {
             if (Auth::user()->id != $repoter_id){
-                throw new \Exception('not found');
+                abort(403);
             }
             $request->validate([
                 'subject' => 'required | string | max:50',
@@ -46,7 +46,7 @@ class ReportController extends Controller
                 })->first();
 
             if ($report != null){
-                throw new Exception('not found');
+                abort(403);
             }
             $report = new Report();
             $report->repoter_id = $repoter_id;
@@ -83,7 +83,7 @@ class ReportController extends Controller
 
             return back()->with('success','Your Report send Successfully');
         }catch (Exception $error){
-            return view(template(),'errors.404');
+            abort(403);;
         }
     }
 
@@ -98,7 +98,7 @@ class ReportController extends Controller
             }
             return view(template().'user.pages.reportConversation',compact('report','conversations'));
         }catch (Exception $exception){
-            return view(template().'errors.404');
+           abort(404);
         }
 
     }
@@ -107,14 +107,19 @@ class ReportController extends Controller
         $request->validate([
             'message' => 'required | string'
         ]);
-        $conversation = new ReportConversation();
-        $conversation->sender_id = Auth::user()->id;
-        $conversation->reporter_id = $request->reporter_id;
-        $conversation->reported_id = $request->repotedUser_id;
-        $conversation->report_id = $request->report_id;
-        $conversation->admin_id = null;
-        $conversation->message = $request->message;
-        $conversation->save();
-        return back();
+        try {
+            $report = Report::findOrFail($request->report_id);
+            $conversation = new ReportConversation();
+            $conversation->sender_id = Auth::user()->id;
+            $conversation->reporter_id = $report->repoter_id;
+            $conversation->reported_id = $report->reported_user_id;
+            $conversation->report_id = $report->id;
+            $conversation->admin_id = null;
+            $conversation->message = $request->message;
+            $conversation->save();
+            return back();
+        } catch (\Exception $exception) {
+            abort(404);
+        }
     }
 }

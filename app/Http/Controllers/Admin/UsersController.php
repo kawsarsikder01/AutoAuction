@@ -87,8 +87,7 @@ class UsersController extends Controller
             })
             ->when(isset($filterTwoFaSecurity) && !empty($filterTwoFaSecurity), function ($query) use ($filterTwoFaSecurity) {
                 return $query->where('two_fa_verify', $filterTwoFaSecurity);
-            })
-            ->get();
+            });
 
         return DataTables::of($users)
             ->addColumn('checkbox', function ($item) {
@@ -620,8 +619,7 @@ class UsersController extends Controller
             ->when(!empty($filterTransactionId), function ($query) use ($filterTransactionId) {
                 return $query->where('trx_id', $filterTransactionId);
             })
-            ->orderBy('id', 'DESC')
-            ->get();
+            ->orderBy('id', 'DESC');
 
 
         return DataTables::of($transaction)
@@ -708,8 +706,7 @@ class UsersController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
 
         return DataTables::of($funds)
@@ -852,8 +849,7 @@ class UsersController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
 
         return DataTables::of($payout)
@@ -1002,8 +998,7 @@ class UsersController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
         return DataTables::of($transaction)
             ->addColumn('no', function () {

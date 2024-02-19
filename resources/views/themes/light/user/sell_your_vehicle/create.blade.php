@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Sell a Car'))
+@section('title',trans('Sell Your Vehicle'))
 @section('content')      <!-- main -->
    <div class="container-fluid">
       <div class="main row">
@@ -8,7 +8,7 @@
                <h4 class="mb-0">Add Your Vehicle</h4>
             </div>
             <section class="profile-setting">
-               <form action="{{route('user.sell-car.store')}}" enctype="multipart/form-data"  method="POST">
+               <form action="{{route('user.listing.vehicle')}}" enctype="multipart/form-data"  method="POST">
                   @csrf
                   <div class="row g-4 g-lg-5">
                      <div class="col-lg-8">
@@ -107,7 +107,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="Description">Description</label>
-                                  <textarea id="description" name="description"> {{ old('description') }}</textarea>
+                                  <textarea id="description" name="description">{{ old('description') }}</textarea>
                                   @error("description")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -141,10 +141,11 @@
                            <div class="row g-3">
                               <div class="input-box col-12">
                                  <div class="form-group">
-
-                                    <label for="InitialPrice" class="form-label  ">@lang("Bid Start")</label>
+                                    <label for="InitialPrice" class="form-label  ">@lang("Bid Start")
+                                        <i class="fa-solid fa-question text-body ms-1 fs-6" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Initial Price." data-bs-original-title="Initial Price."></i>
+                                    </label>
                                     <div class="input-group mb-3">
-                                        <input type="number" class="form-control" value="{{old('price')}}" name="price" placeholder="Initial Price" aria-label="Initial Price" aria-describedby="InitialPrice" autocomplete="off">
+                                        <input type="number" class="form-control" value="{{old('price')}}" name="price" placeholder="Bid Start" aria-label="Initial Price" aria-describedby="InitialPrice" autocomplete="off">
                                         <span class="input-group-text" id="InitialPrice">{{basicControl()->base_currency}}</span>
                                     </div>
                                      @error("price")

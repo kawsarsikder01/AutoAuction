@@ -17,6 +17,7 @@ use App\Models\Plan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Facades\App\Console\Commands\AuctionTimeCheck;
+use Illuminate\Support\Facades\DB;
 
 class FrontendController extends Controller
 {
@@ -24,6 +25,7 @@ class FrontendController extends Controller
 
     public function page($slug = '/')
     {
+       try{
         $selectedTheme = basicControl()->theme;
         $pageDetails = PageDetail::with('page')
             ->whereHas('page', function ($query) use ($slug, $selectedTheme) {
@@ -35,9 +37,10 @@ class FrontendController extends Controller
             'page_title' => optional($pageDetails->page)->page_title
         ];
         $sectionsData = $this->getSectionsData($pageDetails->sections, $pageDetails->content, $selectedTheme);
-
-
         return view("themes.{$selectedTheme}.page", compact('sectionsData', 'pageSeo', 'page', 'pageDetails'));
+       }catch(\Exception $exception){
+            abort(404);
+       }
     }
 
     public function plan()
@@ -52,24 +55,21 @@ class FrontendController extends Controller
         $pageSeo = Page::where('name', 'auction')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
         $todayDate = Carbon::now()->toDateString();
 
-        $vehicles = Vehicle::with('user', 'details')
+        $vehicles = Vehicle::with(['details', 'plan'])
             ->whereHas('details', function ($query) use ($todayDate) {
-                $query->whereDate('auction_ending_date', '> ', $todayDate)->where('sold_status', 0);
-            })
-            ->whereHas('user', function ($query) {
-                $query->with(['plan' => function ($query) {
-                    $query->orderBy('promoted_listing', 'DESC');
-                }]);
+                $query->whereDate('auction_ending_date', '>', $todayDate)->where('sold_status', 0);
             })
             ->where('status', 1)
+            ->inRandomOrder()
             ->paginate(basicControl()->paginate);
-        $data['maxAmount'] = VehicleDetails::get()->max('price');
-        $data['minAmount'] = VehicleDetails::get()->min('price');
+        $data['maxOrMin'] = VehicleDetails::select([
+            DB::raw('MAX(price) as maxAmount'),
+            DB::raw('MIN(price) as minAmount'),
+        ])->first();
         $data['carBrand'] = CarBrand::where('status', 1)->get();
         $data['CarCategory'] = CarCategory::where('status', 1)->get();
         return view(template().'auction.auction', compact('vehicles', 'pageSeo'), $data);
     }
-
     public function blogs()
     {
         $pageSeo = Page::where('name', 'blog')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->first();
@@ -87,3 +87,7 @@ class FrontendController extends Controller
         return view(template() . 'blog.blogs', compact('blogs', 'categorys', 'pageSeo'));
     }
 }
+
+
+
+

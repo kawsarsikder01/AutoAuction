@@ -14,9 +14,6 @@
                 </nav>
                 <h1 class="page-header-title">@lang("Plan")</h1>
             </div>
-            {{-- <div class="col-sm-auto">
-                <a class="btn btn-primary" href="./ecommerce-add-product.html">Page Seo</a>
-            </div> --}}
         </div>
     </div>
 
@@ -56,7 +53,7 @@
                             <td>{{$item->price == 0 ? 'Free':  currencyPosition($item->price)}}</td>
                             <td>{{$item->expiry_time ==0 ? 'Unlimited':$item->expiry_time. ' '. ucfirst($item->expiry_time_type)}}</td>
 
-                            <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
+                            <td ><span  class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
                             <td class="text-center">
                                 @if($item->type !== 2)
                                     @if($item->language_id)

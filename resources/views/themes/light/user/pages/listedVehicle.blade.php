@@ -73,11 +73,10 @@
                    <tr>
                       <th scope="col">@lang('Title')</th>
                       <th scope="col">@lang('Total Bid')</th>
-                      <th scope="col">@lang('Sold Status')</th>
                       <th scope="col">@lang('Initial Price')</th>
                       <th scope="col">@lang('Sold Price')</th>
                        <th scope="col">@lang('Status')</th>
-                       <th scope="col">@lang('Released Status')</th>
+                       <th scope="col">@lang('Payment Status')</th>
                       <th scope="col">@lang('Action')</th>
                    </tr>
                 </thead>
@@ -89,13 +88,6 @@
                         </td>
                         <td data-label="@lang('Total Bid')">
                             {{count($vehicle->biddingHistory)}}
-                        </td>
-                        <td data-label="@lang('Sold Status')">
-                            @if($vehicle->details->sold_status == 0)
-                                <span class="badge bg-primary">@lang('Unsold')</span>
-                            @else
-                                <span class="badge bg-success">@lang('Sold')</span>
-                            @endif
                         </td>
                         <td data-label="@lang('Initial Price')">
                             {{currencyPosition($vehicle->details->price)}}
@@ -117,15 +109,17 @@
                                 <span class="badge bg-primary">@lang('Rejected')</span>
                             @endif
                         </td>
-                        <td data-label="@lang('Released Status')">
-                            @if ($vehicle->release_status == 0 && $vehicle->details->sold_status == 1)
-                                <span class="badge bg-info">@lang('Unreleased')</span>
-                            @elseif($vehicle->details->sold_status == 0)
+                        <td data-label="@lang('Payment Status')">
+                            @if($vehicle->details->sold_status == 0)
                                 <span class="badge bg-primary">@lang('Unsold')</span>
-                            @elseif($vehicle->release_status == 1)
-                                <span class="badge bg-secondary">@lang('Released')</span>
-                            @elseif($vehicle->release_status == 2)
-                                <span class="badge bg-primary">@lang('Canceled')</span>
+                            @else
+                                @if($vehicle->payment_status == 0)
+                                    <span class="badge bg-info">@lang('Uncompleted')</span>
+                                @elseif($vehicle->payment_status == 1)
+                                    <span class="badge bg-success">@lang('Completed')</span>
+                                @elseif($vehicle->payment_status == 2)
+                                    <span class="badge bg-primary">@lang('Cancel Payment')</span>
+                                @endif
                             @endif
                         </td>
                         <td data-label="@lang('Action')">

@@ -28,18 +28,16 @@ trait Frontend
                 $todayDate = Carbon::now()->toDateString();
                 $data[$section] = [
                     'single' => $singleContent ? collect($singleContent->description ?? [])->merge($singleContent->content->only('media')) : [],
-                    'multiple' =>Vehicle::with('user','details','biddingHistory')
+                    'multiple' =>Vehicle::with('user','details','biddingHistory','plan')
                         ->whereHas('details', function ($query) use ($todayDate) {
                             $query->whereDate('auction_ending_date', '>', $todayDate)->where('sold_status',0);
                         })
-                        ->whereHas('user',function($query){
-                            $query->with(['plan'=>function($query){
-                                $query->orderBy('promoted_listing');
-                            }]);
+                        ->whereHas('plan',function($query){
+                            $query->where('promoted_listing',1);
                         })
                         ->where('status',1)
                         ->latest()
-                        ->limit(4)
+                        ->inRandomOrder()
                         ->get()
                 ];
             }else {

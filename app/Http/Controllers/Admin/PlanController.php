@@ -54,6 +54,7 @@ class PlanController extends Controller
         if($request->price < 0 || $request->expiry_time < 0){
             return back()->with('warning','the price and Expiry input must be an psitive number');
         }
+       try {
         Plan::create([
             'plan_name' => $request->plan_name,
             'price' => $request->price,
@@ -63,9 +64,7 @@ class PlanController extends Controller
             'number_of_images' => $request->number_of_images,
             'title' => $request->title,
             'access_auction' =>$request->access_auction,
-            'customer_support' =>$request->customer_support,
             'promoted_listing' =>$request->promoted_listing,
-            'top_search_result' =>$request->top_search_result,
             'share_other_platform' =>$request->share_other_platform,
             'expiry_time' => $request->expiry_time,
             'expiry_time_type' => $request->expiry_time_type ,
@@ -73,6 +72,9 @@ class PlanController extends Controller
             'language_id' => $request->language_id
         ]);
         return redirect(route('admin.plan.list'))->with('success','Plan Create Successfully');
+       } catch (\Exception $exception) {
+        return back()->with('error',$exception->getMessage());
+       }
 
     }
 
@@ -95,7 +97,7 @@ class PlanController extends Controller
             $defaultLanguage = Language::where('default_status', true)->first();
             return view('admin.plan.edit',compact('plan','defaultLanguage','language'));
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 
@@ -128,9 +130,7 @@ class PlanController extends Controller
                 'number_of_images' => $request->number_of_images,
                 'title' => $request->title,
                 'access_auction' =>$request->access_auction,
-                'customer_support' =>$request->customer_support,
                 'promoted_listing' =>$request->promoted_listing,
-                'top_search_result' =>$request->top_search_result,
                 'share_other_platform' =>$request->share_other_platform,
                 'expiry_time' => $request->expiry_time,
                 'expiry_time_type' => $request->expiry_time_type ,
@@ -139,7 +139,7 @@ class PlanController extends Controller
             ]);
             return redirect(route('admin.plan.list'))->with('success','Plan update Successfully');
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 
@@ -153,7 +153,7 @@ class PlanController extends Controller
             $plan->delete();
             return back()->with('success', 'Plan Delete Successfully');
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
     public  function purchaseHistory()
@@ -162,7 +162,7 @@ class PlanController extends Controller
     }
     public function getPurchaseHistory()
     {
-        $purchaseHistorys = PlanPurchaseHistory::get();
+        $purchaseHistorys = PlanPurchaseHistory::query();
 
         return DataTables::of($purchaseHistorys)
             ->addColumn('user',function ($item){

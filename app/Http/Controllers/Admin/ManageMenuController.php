@@ -15,8 +15,9 @@ class ManageMenuController extends Controller
         $defaultLanguage = Language::where('default_status', true)->first();
         $data['pages'] = Page::with(['details' => function ($query) use ($defaultLanguage) {
             $query->where('language_id', $defaultLanguage->id);
-        }])->get();
+        }])->where('type','!=',2)->get();
         $data['headerMenus'] = ManageMenu::where('menu_section', 'header')->firstOrFail();
+
         $data['footerMenus'] = ManageMenu::where('menu_section', 'footer')->firstOrFail();
         return view('admin.frontend_management.manage-menu', $data);
     }

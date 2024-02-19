@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('page_title',__('Payout'))
+@section('page_title',__('Payout Confirm'))
 
 @section('content')
 

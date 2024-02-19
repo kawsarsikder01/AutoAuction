@@ -82,23 +82,26 @@
                 <div class="card mb-3 mb-lg-5">
                     <div class="card-header card-header-content-between">
                         <h4 class="card-header-title">Report</h4>
-                        <!-- Dropdown -->
-                        @if($report->Vehicle->details->sold_status == 1)
-                            @if($bid->bidder->id == $report->repoter_id || $bid->bidder->id == $report->reported_user_id)
-                                @if($report->Vehicle->release_status==0 || $report->Vehicle->payment_status == 0)
-                                    <div class="dropdown card-header-dropdown">
-                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Release Payment
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="{{route('admin.release.seller.payment',$report->id)}}">Release To Seller</a>
-                                            <a class="dropdown-item" href="{{route('admin.release.bidder.payment',$report->id)}}">Release To Bidder</a>
+                        <div class="report-drop d-flex">
+                            @if($report->Vehicle->details->sold_status == 1)
+                                @if($bid->bidder->id == $report->repoter_id || $bid->bidder->id == $report->reported_user_id)
+                                    @if($report->Vehicle->release_status==0 || $report->Vehicle->payment_status == 0)
+                                        <div class="dropdown card-header-dropdown">
+                                            <button class="btn me-2 btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Release Payment
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{{route('admin.release.seller.payment',$report->id)}}">Release To Seller</a>
+                                                <a class="dropdown-item" href="{{route('admin.release.bidder.payment',$report->id)}}">Release To Bidder</a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 @endif
                             @endif
-                        @endif
-                        <!-- End Dropdown -->
+                            <button class="btn btn-info"type="button" data-bs-toggle="modal" data-bs-target="#RemoveVehicleModal">
+                                Remove Vehicle
+                            </button>
+                        </div>
                     </div>
                         <div class="card-body">
                             <h5>Subject</h5>
@@ -188,6 +191,45 @@
                         </div>
                      </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade"  id="RemoveVehicleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RemoveVehicleModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-black fs-5" id="RemoveVehicleModal">@lang('Remove Vehicle')</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('admin.delete.vehicle')}}"  method="POST">
+                    @csrf
+                    <input type="hidden" name="id" value="{{$report->vehicle_id}}">
+                    <div class="modal-body">
+                        <div class="row justify-content-center align-items-center">
+                            <div class="col-lg-12">
+                                <div class="form-wrapper">
+                                    <div class="row g-4">
+                                        <div class="form-group mb-2">
+                                            <label>@lang('Reason')</label>
+                                            <textarea class="form-control ticket-box" name="reason" rows="5"
+                                                      placeholder="@lang('Enter Reason')">{{old('message')}}</textarea>
+                                        </div>
+                                        @error("reason")
+                                        <span class="invalid-feedback d-block" role="alert">
+                                       <strong>{{ $message }}</strong>
+                                   </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-bs-dismiss="modal">@lang('Close')</button>
+                        <button type="submit" class="btn btn-primary">@lang('Confirm')</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

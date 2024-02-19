@@ -1,372 +1,99 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Profile'))
+@section('title',trans('Add Fund'))
 @section('content')
-    @push('style')
-        <style>
-            .checkout-section {
-                background: var(--white);
-                box-shadow: var(--shadow);
-                border-radius: 5px;
-                padding: 20px;
-            }
-
-            .checkout-section form .input-box label {
-                font-weight: 400;
-                font-size: 15px;
-                margin-bottom: 10px;
-                text-transform: capitalize;
-            }
-
-            .checkout-section form .input-box .form-select,
-            .checkout-section form .input-box .form-control {
-                height: 45px;
-                border-radius: 5px !important;
-                background-color: var(--bgLight);
-                border: 1px solid var(--bgLight);
-                padding: 10px;
-                padding-left: 15px;
-                font-weight: normal;
-                caret-color: var(--primary);
-                color: var(--fontColor);
-            }
-
-            .checkout-section form .input-box .form-select:focus,
-            .checkout-section form .input-box .form-control:focus {
-                color: var(--fontColor);
-                box-shadow: 0 0 0 0rem var(--white);
-                border: 1px solid var(--primary);
-            }
-
-            .checkout-section form .input-box .form-select::-moz-placeholder, .checkout-section form .input-box .form-control::-moz-placeholder {
-                color: var(--fontColor);
-            }
-
-            .checkout-section form .input-box .form-select::placeholder,
-            .checkout-section form .input-box .form-control::placeholder {
-                color: var(--fontColor);
-            }
-
-            /*.checkout-section form .input-box .form-select {*/
-            /*    background-image: url(../img/icon/downward-arrow.png);*/
-            /*}*/
-            .checkout-section form .input-box .form-select option {
-                background: var(--white);
-                color: var(--fontColor);
-            }
-
-            .checkout-section form .input-box textarea.form-control {
-                height: 150px;
-                border-radius: 5px;
-            }
-
-            .checkout-section form .select2 {
-                width: calc(100% - 0px) !important;
-                width: 100%;
-                margin-left: auto;
-            }
-
-            .checkout-section form .select2-container--default .select2-selection--single {
-                height: 45px;
-                background: var(--bgLight);
-                border: 1px solid var(--bgLight);
-            }
-
-            .checkout-section form .select2-container--default .select2-selection--single .select2-selection__rendered {
-                line-height: 45px;
-                padding-left: 10px;
-                padding-right: 10px;
-                color: var(--fontColor);
-            }
-
-            .checkout-section .payment-box .btn-check + .btn-primary {
-                background: var(--white);
-                border: 1px solid transparent !important;
-                border-radius: 5px;
-                padding: 5px;
-                color: #212529;
-                position: relative;
-                transition: 0.4s;
-            }
-
-            .checkout-section .payment-box .btn-check + .btn-primary .check {
-                position: absolute;
-                left: 10px;
-                top: 10px;
-                opacity: 0;
-                width: 18px;
-                color: #00cc15;
-            }
-
-            .checkout-section .payment-box .btn-check + .btn-primary::after {
-                position: absolute;
-                content: "";
-                width: 100%;
-                height: 100%;
-                top: 0;
-                left: 0;
-            }
-
-            .checkout-section .payment-box label img {
-                border-radius: 3px;
-                aspect-ratio: 5/3;
-                -o-object-fit: cover;
-                object-fit: cover;
-            }
-
-            .checkout-section .payment-box .btn-check:checked + .btn-primary {
-                background: var(--white) !important;
-                border: 1px solid var(--primary) !important;
-            }
-
-            .checkout-section .payment-box .btn-check:checked + .btn-primary .check {
-                opacity: 1;
-            }
-
-            .checkout-section .payment-box .btn-check:checked + .btn-primary::after {
-                background: none;
-            }
-
-            .checkout-section .payment-box .btn-check:focus + .btn-primary,
-            .checkout-section .payment-box .btn-primary:focus {
-                color: var(--white);
-                background-color: var(--white);
-                border-color: var(--primary);
-                box-shadow: 0 0 0 0rem rgba(49, 132, 253, 0.5);
-            }
-
-            .checkout-section .payment-box .payment-option-title {
-                background: var(--white);
-                display: inline-block;
-                margin: 0 15px 15px 15px;
-                padding: 0 10px;
-            }
-
-            .checkout-section .payment-box .payment-option-wrapper {
-                margin-top: -30px;
-                border: 1px solid var(--borderColor);
-                padding: 15px;
-                padding-top: 30px;
-                border-radius: 5px;
-            }
-
-            .checkout-section .payment-box .payment-options {
-                min-height: 380px;
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
-
-            .checkout-section .payment-box .payment-options::-webkit-scrollbar {
-                width: 2px;
-            }
-
-            .checkout-section .payment-box .payment-options::-webkit-scrollbar-track {
-                background: transparent;
-                border-radius: 100px;
-            }
-
-            .checkout-section .payment-box .payment-options::-webkit-scrollbar-thumb {
-                background: var(--borderColor);
-                border-radius: 6px;
-            }
-
-            .checkout-section .payment-box .payment-options::-webkit-scrollbar-thumb:hover {
-                background: var(--primary);
-            }
-
-            .checkout-section .side-bar .side-box {
-                background: var(--bgLight);
-                border-radius: 5px;
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-
-            .checkout-section .side-bar .side-box h4 {
-                text-transform: capitalize;
-                margin-bottom: 15px;
-                position: relative;
-            }
-
-            .checkout-section .side-bar .side-box ul {
-                margin-bottom: 0;
-                padding-left: 0;
-                list-style: none;
-            }
-
-            .checkout-section .side-bar .side-box ul li {
-                margin-bottom: 10px;
-                /*border-bottom: 1px solid var(--bgLight);*/
-                padding-bottom: 10px;
-            }
-
-            .list-group-item:first-child {
-                border-top-left-radius: 0 !important;
-                border-top-right-radius: 0 !important;
-            }
-
-
-            .checkout-section .side-bar .side-box ul li span {
-                float: right;
-            }
-
-            .checkout-section .side-bar .side-box ul li:last-child {
-                margin-bottom: 0;
-                border-bottom: none;
-            }
-
-            .checkout-section .side-bar .side-box .form-control {
-                height: 45px;
-                background-color: var(--white);
-                border: 1px solid var(--white) !important;
-                padding: 10px;
-                padding-left: 15px;
-                font-weight: normal;
-                caret-color: var(--primary);
-                color: var(--fontColor);
-            }
-
-
-            .checkout-section form .select2 {
-                width: calc(100% - 0px) !important;
-                width: 100%;
-                margin-left: auto;
-            }
-
-            .checkout-section .side-bar .side-box .select2-container--default .select2-selection--single {
-                height: 45px;
-                background-color: var(--white);
-                border: 1px solid var(--white);
-            }
-
-            .checkout-section .side-bar .side-box .select2-container--default .select2-selection--single .select2-selection__rendered {
-                line-height: 45px;
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-
-            .checkout-section .side-bar .side-box .input-group .form-control:focus {
-                color: var(--fontColor);
-                box-shadow: 0 0 0 0rem var(--white);
-                border: 1px solid var(--primary);
-            }
-
-            .checkout-section .side-bar .side-box .input-group .form-control::-moz-placeholder {
-                color: var(--fontColor);
-            }
-
-            .checkout-section .side-bar .side-box .input-group .form-control::placeholder {
-                color: var(--fontColor);
-            }
-
-            .rtl .checkout-section .side-bar .side-box ul li span {
-                float: left;
-            }
-
-            .rtl .checkout-section .payment-box .btn-check + .btn-primary .check {
-                position: absolute;
-                left: auto;
-                right: 15px;
-                top: 15px;
-            }
-        </style>
-    @endpush
 
     <div class="container-fluid">
-        <div class="main row">
-            <div class="col-12">
+        <div class="main row d-flex justify-content-center">
+            <div class="col-10 ">
                 <!-- checkout section -->
-                <div class="container px-0 px-lg-3">
                     <div class="checkout-section">
-                        <form action="{{ route('payment.request') }}" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <div class="row g-4 g-lg-5">
-                                <div class="col-md-6 col-lg-7">
+                        <div class="card p-4">
+                            <form action="{{ route('payment.request') }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="row g-4 g-lg-5">
+                                    <div class="col-md-6 col-lg-7">
 
-                                    <div class="row g-4">
-                                        <div class="col-md-12">
-                                            <div class="payment-box mb-4">
-                                                <h5 class="payment-option-title">Select Payment</h5>
-                                                <div class="payment-option-wrapper">
-                                                    <div class="payment-options">
-                                                        <div class="row g-2">
-                                                            @forelse($gateways as $method)
-                                                                <div
-                                                                    class="col-4 col-sm-3 col-md-3 col-xl-2">
-                                                                    <input type="radio" class="btn-check selectPayment"
-                                                                           name="gateway_id"
-                                                                           id="{{ $method->name }}"
-                                                                           value="{{ $method->id }}"
-                                                                           autocomplete="off"/>
-                                                                    <label class="btn btn-primary"
-                                                                           for="{{ $method->name }}">
-                                                                        <img
-                                                                            class="img-fluid"
-                                                                            src="{{ getFile($method->driver,$method->image ) }}"
-                                                                            alt=""/>
-                                                                        <i class="fas fa-check-circle check"></i>
-                                                                    </label>
-                                                                </div>
-                                                            @empty
-                                                            @endforelse
+                                        <div class="row g-4">
+                                            <div class="col-md-12">
+                                                <div class="payment-box mb-4">
+                                                    <h5 class="payment-option-title">@lang('Select Payment')</h5>
+                                                    <div class="payment-option-wrapper">
+                                                        <div class="payment-section">
+                                                            <ul class="payment-container-list">
+                                                                @forelse($gateways as $method)
+                                                                    <li class="item">
+                                                                        <input class="form-check-input selectPayment"
+                                                                               value="{{ $method->id }}" type="radio"
+                                                                               name="gateway_id"
+                                                                               id="{{ $method->name }}" >
+                                                                        <label class="form-check-label"
+                                                                               for="{{ $method->name }}">
+                                                                            <div class="image-area">
+                                                                                <img
+                                                                                    src="{{ getFile($method->driver,$method->image ) }}"
+                                                                                    alt="">
+                                                                            </div>
+                                                                            <div class="content-area">
+                                                                                <h5>{{$method->name}}</h5>
+                                                                                <span>{{$method->description}}</span>
+                                                                            </div>
+                                                                        </label>
+
+                                                                    </li>
+                                                                @empty
+                                                                @endforelse
+                                                            </ul>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                </div>
-                                <div class="col-md-6 col-lg-5">
-                                    <div class="side-bar">
-                                        <div class="side-box mt-2">
-                                            <div class="col-md-12 input-box">
-                                                <label for="">Enter Amount</label>
-                                                <div class="input-group">
-                                                    <input class="form-control @error('amount') is-invalid @enderror"
-                                                           name="amount"
-                                                           type="text" id="amount"
-                                                           placeholder="Enter Amount" autocomplete="off"/>
-                                                    <div class="invalid-feedback">
-                                                        @error('amount') @lang($message) @enderror
+                                    </div>
+                                    <div class="col-md-6 col-lg-5">
+                                        <div class="side-bar">
+                                            <div class="side-box mt-5">
+                                                <div class="col-md-12 input-box">
+                                                    <label for="">@lang('Enter Amount')</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control @error('amount') is-invalid @enderror"
+                                                               name="amount"
+                                                               type="text" id="amount"
+                                                               placeholder="Enter Amount" autocomplete="off"/>
+                                                        <div class="invalid-feedback">
+                                                            @error('amount') @lang($message) @enderror
+                                                        </div>
+                                                        <div class="valid-feedback"></div>
                                                     </div>
-                                                    <div class="valid-feedback"></div>
+                                                </div>
+
+                                                <div class="col-md-12 input-box mt-3">
+                                                    <label for="">@lang('Select Currency')</label>
+                                                    <select class="js-example-basic-single form-control"
+                                                            name="supported_currency"
+                                                            id="supported_currency">
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-12 input-box mt-3 add-select-field">
+
+                                                </div>
+
+                                            </div>
+                                            <div class="side-box">
+                                                <h5>@lang('Deposit Summery')</h5>
+                                                <div class="showCharge">
+
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-12 input-box mt-3">
-                                                <label for="">Select Currency</label>
-                                                <select class="js-example-basic-single form-control"
-                                                        name="supported_currency"
-                                                        id="supported_currency">
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-12 input-box mt-3 add-select-field">
-
-                                            </div>
-
+                                            <button type="submit" class="btn-custom w-100 check">@lang('Make Payment')</button>
                                         </div>
-                                        <div class="side-box">
-                                            <h5>Deposit Summery</h5>
-                                            <div class="showCharge">
-
-                                            </div>
-                                        </div>
-                                        <div class="input-box mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="tandc"/>
-                                                <label class="form-check-label" for="tandc">
-                                                    I agree to Terms & Conditions.
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn-custom w-100 check">Make Payment</button>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -437,7 +164,7 @@
                         let markup2 = '<option value="">Selected Crypto Currency</option>';
                         $('#supported_crypto_currency').append(markup2);
 
-                        if (response.currencyType === 0){
+                        if (response.currencyType === 0) {
                             let markup2 = `<label for="">Pay To Crypto Currency</label>
                                         <select class="js-example-basic-single form-control"
                                                 name="supported_crypto_currency"
@@ -464,7 +191,6 @@
                 let amount = amountField.val();
                 let selectedCurrency = $('#supported_currency').val();
                 let selectedCryptoCurrency = $('#supported_crypto_currency').val();
-                console.log(selectedCryptoCurrency)
                 let currency_type = 1;
 
                 if (!isNaN(amount) && amount > 0) {

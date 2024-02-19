@@ -60,8 +60,8 @@
                     <thead class="thead-light">
                     <tr>
                         <th>@lang('No.')</th>
-                        <th>@lang('Repoter')</th>
-                        <th>@lang('Repoted user')</th>
+                        <th>@lang('Reporter')</th>
+                        <th>@lang('Reported user')</th>
                         <th>@lang('Subject')</th>
                         <th>@lang('Action')</th>
                     </tr>

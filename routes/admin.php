@@ -343,7 +343,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('store/blog',[BlogController::class,'store'])->name('store.blog');
         Route::get('blog/edit/{id}/{language}',[BlogController::class,'edit'])->name('edit.blog');
         Route::post('blog/update/{id}',[BlogController::class,'update'])->name('update.blog');
-        Route::delete('destroy/blogs/{id}',[BlogController::class,'destroy'])->name('blogs.destroy');
+        Route::delete('delete/blogs/{id}',[BlogController::class,'destroy'])->name('blogs.destroy');
         Route::get('blogs/seo/{id}',[BlogController::class,'blogSeo'])->name('blogs.seo');
         Route::post('blog/seo/update/{id}',[BlogController::class,'seoUpdate'])->name('blog.seo.update');
         Route::get('get/blogs', [BlogController::class , 'getBlogs'])->name('get.blogs');

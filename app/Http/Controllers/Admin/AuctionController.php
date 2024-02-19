@@ -41,7 +41,7 @@ class AuctionController extends Controller
             $carCategory = CarCategory::findOrFail($id);
             return view('admin.auctionManagement.category.edit',compact('defaultLanguage','carCategory'));
         }catch (\Exception $exception){
-            return view(template().'errors.error');
+            abort(404);
         }
 
     }
@@ -59,7 +59,7 @@ class AuctionController extends Controller
             $category->update();
             return redirect()->route('admin.car.category')->with('success','Category Update Successfull');
         }catch (\Exception $exception){
-            return view(template().'errors.error');
+            abort(404);
         }
     }
     public function deleteCategory($id)
@@ -77,7 +77,7 @@ class AuctionController extends Controller
             $category->delete();
             return back()->with('success', 'Category deleted successfully.');
         }catch (\Exception $exception){
-            return view(template().'errors.error');
+            abort(404);
         }
     }
 
@@ -111,7 +111,7 @@ class AuctionController extends Controller
             $brand = CarBrand::findOrFail($id);
             return view('admin.auctionManagement.brand.edit',compact('defaultLanguage','brand'));
         }catch (\Exception $exception){
-            return view(template().'errors.error');
+            abort(404);
         }
 
 
@@ -129,7 +129,7 @@ class AuctionController extends Controller
             $brand->update();
             return redirect()->route('admin.car.brand')->with('success','Category Update Successfull');
         }catch (\Exception $exception){
-            return view(template().'errors.error');
+            abort(404);
         }
 
     }
@@ -148,7 +148,7 @@ class AuctionController extends Controller
             $brand->delete();
             return back()->with('success', 'Brand deleted successfully.');
         }catch (\Exception $exception){
-            return view(template().'errors.error');
+            abort(404);
         }
     }
 }

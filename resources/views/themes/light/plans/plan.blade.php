@@ -48,28 +48,16 @@
                               <span>@lang('Access to the auction platform and bidding process.')</span>
                            </li>
                            @endif
-                           @if($plan->customer_support == 1)
-                           <li>
-                              <i class="fa-light fa-check"></i>
-                              <span>@lang('Customer support via email or limited chat.')</span>
-                           </li>
-                           @endif
                            @if ($plan->promoted_listing ==1)
                            <li>
                               <i class="fa-light fa-check"></i>
                               <span>@lang('Promoted listings or featured spots for higher visibility.')</span>
                            </li>
                            @endif
-                           @if ($plan->top_search_result ==1)
-                           <li>
-                              <i class="fa-light fa-check"></i>
-                              <span>@lang('Premium placement on the platform (top of search results or featured sections).')</span>
-                           </li>
-                           @endif
                            @if ($plan->share_other_platform ==1)
                            <li>
                               <i class="fa-light fa-check"></i>
-                              <span>@lang('Additional promotional tools (highlighted listings, social media promotion, etc.).')</span>
+                              <span>@lang('Share other platform.')</span>
                            </li>
                         @endif
                     </ul>
@@ -80,7 +68,7 @@
                                 @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-price="{{currencyPosition($plan->price)}}"
                                             data-listing="{{$plan->number_of_listing}}"
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
@@ -89,7 +77,7 @@
                                 @elseif(Auth::user()->plan && $plan->price < Auth::user()->plan->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-price="{{currencyPosition($plan->price)}}"
                                             data-listing="{{$plan->number_of_listing}}"
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.purchase.plan',$plan->id)}}"
@@ -98,7 +86,7 @@
                                 @else
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-price="{{currencyPosition($plan->price)}}"
                                             data-listing="{{$plan->number_of_listing}}"
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.purchase.plan',$plan->id)}}"
@@ -109,7 +97,7 @@
                                 @if(Auth::user()->plan && $plan->id == Auth::user()->plan->plan_id)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-price="{{currencyPosition($plan->price)}}"
                                             data-listing="{{$plan->number_of_listing}}"
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
@@ -118,7 +106,7 @@
                                 @elseif(Auth::user()->plan && $plan->price > Auth::user()->plan->price)
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-price="{{currencyPosition($plan->price)}}"
                                             data-listing="{{$plan->number_of_listing}}"
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
@@ -127,7 +115,7 @@
                                 @else
                                     <a href="javascript:void(0);"><button
                                             data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                            data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                            data-price="{{currencyPosition($plan->price)}}"
                                             data-listing="{{$plan->number_of_listing}}"
                                             class="btn-custom purchasePlanOrUpgrade"
                                             data-route="{{route('user.upgrade.plan',$plan->id)}}"
@@ -138,7 +126,7 @@
                         @elseif(Auth::user() && !Auth::user()->plan)
                             <a href="javascript:void(0);"><button
                                     data-validity="{{$plan->expiry_time.' '.ucfirst($plan->expiry_time_type)}}"
-                                    data-price="{{$plan->price." ".basicControl()->currency_symbol}}"
+                                    data-price="{{currencyPosition($plan->price)}}"
                                     data-listing="{{$plan->number_of_listing}}"
                                     class="btn-custom purchasePlanOrUpgrade"
                                     data-route="{{route('user.purchase.plan',$plan->id)}}"
@@ -161,7 +149,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5 text-black" id="exampleModalLabel">Purchase Plan</h1>
+                <h1 class="modal-title fs-5 text-black" id="exampleModalLabel">@lang('Purchase Plan')</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="planModalForm" action="" method="get">

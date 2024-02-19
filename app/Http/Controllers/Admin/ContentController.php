@@ -83,7 +83,7 @@ class ContentController extends Controller
         }
 
         $field_name = array_diff_key(config('contents.' . $content . '.single.field_name'), config("contents.content_media"));
-        $description = Array();
+        $description = [];
         foreach ($field_name as $name => $type) {
             $description[$name] = $inputData[$name][$language];
         }

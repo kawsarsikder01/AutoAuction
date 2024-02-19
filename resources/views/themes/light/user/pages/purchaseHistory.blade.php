@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Bidding History'))
+@section('title',trans('Purchase History'))
 @section('content')
 <div class="container-fluid">
     <div class="main row">
@@ -17,7 +17,7 @@
                       <th scope="col">@lang('Price')</th>
                        <th scope="col">@lang('Transaction Id')</th>
                        <th scope="col">@lang('Payment Method')</th>
-                       <th scope="col">@lang('No fo Listing')</th>
+                       <th scope="col">@lang('Listing Limit')</th>
                       <th scope="col">@lang('Purchase Date')</th>
                       <th scope="col">@lang('Expire Date')</th>
                       <th scope="col">@lang('Validity')</th>
@@ -38,7 +38,7 @@
                         <td data-label="@lang('Payment Method')">
                             {{$purchaseHistory->payment_method}}
                         </td>
-                        <td data-label="@lang('No Of Listing')">
+                        <td data-label="@lang('Listing Limit')">
                             {{$purchaseHistory->noOfListing}}
                         </td>
 

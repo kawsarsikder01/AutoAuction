@@ -53,9 +53,9 @@ class BlogController extends Controller
             'category_id' => 'required|numeric|not_in:0|exists:blog_category,id',
             'title' => 'required|string|min:3|max:200',
             'slug' => 'required|string|min:3|max:200|alpha_dash|unique:blog_details,slug',
-            'description' => 'required|string|min:3|max:5000',
+            'description' => 'required|string|min:3|max:10000',
             'description_image' => 'required|mimes:png,jpg,jpeg|max:5000',
-            'short_description' => 'required | string | max:1500'
+            'short_description' => 'required | string | max:1000'
         ]);
 
         try {
@@ -132,9 +132,9 @@ class BlogController extends Controller
                 Rule::unique('blog_details', 'slug')->ignore($id),
                 Rule::notIn(['login', 'register', 'signin', 'signup', 'sign-in', 'sign-up'])
             ],
-            'description' => 'nullable|string|min:3',
+            'description' => 'nullable|string|min:3 | max:10000',
             'description_image' => 'nullable|mimes:png,jpg,jpeg|max:5000',
-            'short_description' => 'required | string | max:1500'
+            'short_description' => 'required | string | max:1000'
         ]);
 
         try {

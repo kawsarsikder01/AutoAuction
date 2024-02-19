@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Dashboard'))
+@section('title',trans('Add Fund List'))
 @section('content')
 
     <!-- main -->
@@ -22,7 +22,7 @@
                             <tr>
                                 <td data-label="@lang('Method')">{{ __(optional($value->gateway)->name) ?? __('N/A') }}</td>
                                 <td data-label="@lang('Transaction ID')">{{ __($value->trx_id) }}</td>
-                                <td data-label="@lang('Requested Amount')">{{ currencyPosition(getAmount($value->amount)) }}</td>
+                                <td data-label="@lang('Requested Amount')">{{ currencyPosition(getAmount($value->payable_amount_in_base_currency)) }}</td>
                                 <td data-label="@lang('Status')">
                                     @if($value->status == 0)
                                         <span class="badge bg-warning">@lang('Pending')</span>

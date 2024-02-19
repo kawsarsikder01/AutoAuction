@@ -2,7 +2,6 @@
 @section('page_title', __('Dashboard'))
 @section('content')
 
-
     <!-- Content -->
     <div class="bg-dark">
         <div class="content container-fluid dashboard-height">

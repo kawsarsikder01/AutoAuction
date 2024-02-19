@@ -86,8 +86,7 @@ class PaymentLogController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
 
         return DataTables::of($deposit)
@@ -249,8 +248,7 @@ class PaymentLogController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
         return DataTables::of($funds)
             ->addColumn('no', function ($item) {

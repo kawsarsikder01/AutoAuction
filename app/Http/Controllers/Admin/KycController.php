@@ -226,8 +226,7 @@ class KycController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->get();
+            });
 
 
         return DataTables::of($userKyc)
@@ -331,7 +330,7 @@ class KycController extends Controller
             $templateKey = 'KYC_REJECTED';
         }
         $action = [
-            "link" => "#",
+            "link" => route('profile'),
             "icon" => "fa-light fa-address-book"
         ];
         $this->sendMailSms($user, $templateKey);

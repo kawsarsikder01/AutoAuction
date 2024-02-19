@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Sell a Car'))
+@section('title',trans('Sell Your Vehicle'))
 @section('content')      <!-- main -->
    <div class="container-fluid">
       <div class="main row">
@@ -25,7 +25,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="VehicleType">Vehicle Type</label>
-                                 <input type="text" name="vehicle_type" value="{{ old('vehicle_type',optional($vehicle->details)->vehicle_type) }}" class="form-control" placeholder="Vehicle Type" />
+                                 <input type="text" name="vehicle_type" value="{{ old('vehicle_type',optional($vehicle->details)->vehicle_type) }}" class="form-control" placeholder="e.g : front-engine, rear-wheel-drive, 4-passenger coupe" />
                                   @error("vehicle_type")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -34,7 +34,7 @@
                               </div>
                               <div class="input-box col-md-12">
                                  <label for="EngineType">Engine Type</label>
-                                 <input type="text" name="engine_type" value="{{ old('engine_type',optional($vehicle->details)->engine_type) }}" class="form-control" placeholder="Engine Type" />
+                                 <input type="text" name="engine_type" value="{{ old('engine_type',optional($vehicle->details)->engine_type) }}" class="form-control" placeholder="e.g : V-8, water-cooled, cast iron block and heads" />
                                   @error("engine_type")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -43,7 +43,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="power">Power</label>
-                                 <input type="text" name="power" value="{{ old('power',optional($vehicle->details)->power) }}" class="form-control" placeholder="Power" />
+                                 <input type="text" name="power" value="{{ old('power',optional($vehicle->details)->power) }}" class="form-control" placeholder="e.g : 335 hp @ 5200 rpm" />
                                   @error("power")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -52,7 +52,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="torque">Torque</label>
-                                 <input type="text" name="torque" value="{{ old('torque',optional($vehicle->details)->torque) }}" class="form-control" placeholder="Torque" />
+                                 <input type="text" name="torque" value="{{ old('torque',optional($vehicle->details)->torque) }}" class="form-control" placeholder="e.g : 440 lb-ft @ 3400 rpm" />
                                   @error("torque")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -61,7 +61,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="displacement">Displacement</label>
-                                 <input type="text" name="displacement" value="{{ old('displacement',optional($vehicle->details)->displacement) }}" class="form-control" placeholder="Displacement" />
+                                 <input type="text" name="displacement" value="{{ old('displacement',optional($vehicle->details)->displacement) }}" class="form-control" placeholder="e.g : 428 in3, 7002 cm3" />
                                   @error("displacement")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -70,7 +70,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label for="transmission">Transmission</label>
-                                 <input type="text" name="transmission" value="{{ old('transmission',optional($vehicle->details)->transmission) }}" class="form-control" placeholder="Transmission" />
+                                 <input type="text" name="transmission" value="{{ old('transmission',optional($vehicle->details)->transmission) }}" class="form-control" placeholder="e.g : 3-speed automatic" />
                                   @error("transmission")
                                   <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -116,11 +116,8 @@
                               </div>
                            </div>
                         </div>
-                        @php
-                            $appUrl = request()->root()
-                        @endphp
                         <div class="card-box mt-4">
-                            <div class="input-box col-md-12" id="inputImage" data-id="{{$vehicle->id}}" data-app-url="{{$appUrl}}">
+                            <div class="input-box col-md-12" id="inputImage" data-id="{{$vehicle->id}}">
                                 <div class="input-field">
                                     <label class="active mb-2" for="carImage" >Car Images</label>
                                     <div class="input-images-1" id="carImage" name="images[]" ></div>
@@ -145,9 +142,11 @@
                                  <div class="input-box col-12">
                                      <div class="form-group">
 
-                                         <label for="InitialPrice" class="form-label  ">@lang("Initial Price")</label>
+                                         <label for="InitialPrice" class="form-label  ">@lang("Bid Start")
+                                             <i class="fa-solid fa-question text-body ms-1 fs-6" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Initial Price." data-bs-original-title="Initial Price."></i>
+                                         </label>
                                          <div class="input-group mb-3">
-                                             <input type="number" class="form-control" value="{{old('price',optional($vehicle->details)->price)}}" name="price" placeholder="Initial Price" aria-label="Initial Price" aria-describedby="InitialPrice">
+                                             <input type="number" class="form-control" value="{{old('price',optional($vehicle->details)->price)}}" name="price" placeholder="Bid Start" aria-label="Initial Price" aria-describedby="InitialPrice">
                                              <span class="input-group-text" id="InitialPrice">{{basicControl()->base_currency}}</span>
                                          </div>
                                          @error("price")
@@ -240,7 +239,12 @@
          });
          // $("#fileUpload").fileUpload();
          $('#testResult').summernote({
-             placeholder: 'C/D Test Results.',
+             placeholder:   `e.g :
+                         Zero to 60 mph: 5.7 sec ,
+                         Zero to 100 mph: 14.3 sec ,
+                         Standing ¼-mile: 14.3 sec @ 100 mph ,
+                         Top speed (est): 115 mph ,
+                         Braking, 80-0 mph: 256 ft `,
              height: 160,
              callbacks: {
                  onBlurCodeview: function () {
@@ -250,7 +254,14 @@
              },
          });
          $('#dimensions').summernote({
-             placeholder: 'Dimensions',
+             placeholder: `
+                            e.g :
+                            Wheelbase: 108.0 in ,
+                            Length: 187.4 in ,
+                            Width: 71.3 in ,
+                            Height: 51.2 in ,
+                            Curb weight: 3607 lb
+                            `,
              height: 160,
              callbacks: {
                  onBlurCodeview: function () {

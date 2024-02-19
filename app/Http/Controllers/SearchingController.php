@@ -12,6 +12,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SearchingController extends Controller
 {
@@ -20,7 +21,7 @@ class SearchingController extends Controller
         $pageSeo = Page::where('name', 'auction')->select('page_title','breadcrumb_image','breadcrumb_image_driver')->first();
         $search = $request->all();
         $vehiclePriceRange = isset($search['my_range'])?explode(";", $search['my_range']):'';
-        $vehicles = Vehicle::with('details')
+        $vehicles = Vehicle::with('details','plan')
             ->when(!empty($search['name']), function ($q) use($search,$request){
                 return $q->whereHas('details', function ($q2) use($search,$request){
                     return $q2->where('title','LIKE', "%$request->name%");
@@ -51,8 +52,10 @@ class SearchingController extends Controller
 
             })
             ->paginate(basicControl()->paginate) ;
-        $data['maxAmount'] =  VehicleDetails::get()->max('price');
-        $data['minAmount'] =  VehicleDetails::get()->min('price');
+        $data['maxOrMin'] = VehicleDetails::select([
+            DB::raw('MAX(price) as maxAmount'),
+            DB::raw('MIN(price) as minAmount'),
+        ])->first();
         $data['carBrand']  = CarBrand::where('status',1)->get();
         $data['CarCategory'] = CarCategory::where('status',1)->get();
         return view(template().'auction.auction', compact('vehicles','pageSeo'),$data);

@@ -29,14 +29,14 @@
                            </div>
                            <div class="text">
                               <h5 class="name">{{Auth::user()->firstname. ' ' .Auth::user()->lastname}}</h5>
-                              <span>@Kalla.ban</span>
+                              <span>{{'@'.Auth::user()->username}}</span>
                            </div>
                            <button type="submit" class="btn-custom">@lang('Update')</button>
                         </div>
                      </form>
                      <div class="profile-navigator nav" id="nav-tab" role="tablist">
                         <button
-                           class="tab {{$errors->all()?$errors->has('profile') || $errors->has('profileImage') ?'active':'':'active'}}"
+                           class="tab {{$errors->all() || session('kycForm')?$errors->has('profile') || $errors->has('profileImage') ?'active':'':'active'}}"
                            id="profile-info-tab"
                            data-bs-toggle="tab"
                            data-bs-target="#profile-info"
@@ -64,7 +64,7 @@
                          @foreach($kyc as $key => $value)
 
                              <button
-                                 class="tab {{$errors->has($value->name)? 'active':''}} {{session($value->name)?'active':''}} "
+                                 class="tab {{$errors->has($value->name) || session('kycForm') ==$value->name? 'active':''}} {{session($value->name)?'active':''}} "
                                  id="{{'#tab-'.$key.'-tab'}}"
                                  data-bs-toggle="tab"
                                  data-bs-target="{{'#tab-'.$key}}"
@@ -83,7 +83,7 @@
                <div class="col-xl-8">
                   <div class="tab-content content" id="nav-tabContent">
                           <div
-                              class="tab-pane fade {{$errors->all()?$errors->has('profile')|| $errors->has('profileImage')?'show active':'':'show active'}}"
+                              class="tab-pane fade {{$errors->all() || session('kycForm')?$errors->has('profile')|| $errors->has('profileImage')?'show active':'':'show active'}}"
                               id="profile-info"
                               role="tabpanel"
                               aria-labelledby="profile-info-tab"
@@ -101,7 +101,7 @@
                               </div>
                               <div class="input-box col-md-6">
                                  <label>last name</label>
-                                 <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->lastname) }}" autocomplete="off" />
+                                 <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->lastname) }}" placeholder="Doe" autocomplete="off" />
                                  @if($errors->has('last_name'))
                                     <div class="error text-danger">@lang($errors->first('last_name')) </div>
                                  @endif
@@ -203,7 +203,8 @@
                         </form>
                      </div>
                      @forelse($kyc as $kyc_key => $item)
-                              <div class="tab-pane fade {{$errors->has($item->name)?'show active':''}} "
+
+                              <div class="tab-pane fade {{$errors->has($item->name) || session('kycForm') ==$item->name ?'show active':''}} "
                                    id="tab-{{$kyc_key}}"
                                    role="tabpanel"
                                    aria-labelledby="tab-{{$kyc_key}}-tab" >

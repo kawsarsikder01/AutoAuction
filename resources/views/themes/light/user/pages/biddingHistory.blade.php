@@ -71,6 +71,7 @@
                       <th scope="col">@lang('Sold Status')</th>
                       <th scope="col">@lang('Your Bid Amount')</th>
                       <th scope="col">@lang('Bidding Status')</th>
+                       <th scope="col">@lang('Release Status')</th>
                       <th scope="col">@lang('Action')</th>
                    </tr>
                 </thead>
@@ -95,6 +96,21 @@
                                 <span class="badge bg-secondary">@lang('Win')</span>
                             @else
                                 {{currencyPosition($biddingHistory->vehicle->biddingHistory->max('bid_amount'))}}
+                            @endif
+                        </td>
+                        <td data-label="@lang('Release Status')">
+                            @if($biddingHistory->wining_status == 1 && $biddingHistory->user_id == Auth::user()->id)
+                                @if ($biddingHistory->vehicle->release_status == 0 && $biddingHistory->vehicle->details->sold_status == 1)
+                                    <span class="badge bg-info">@lang('Unreleased')</span>
+                                @elseif($biddingHistory->vehicle->details->sold_status == 0)
+                                    <span class="badge bg-primary">@lang('Unsold')</span>
+                                @elseif($biddingHistory->vehicle->release_status == 1)
+                                    <span class="badge bg-secondary">@lang('Released')</span>
+                                @elseif($biddingHistory->vehicle->release_status == 2)
+                                    <span class="badge bg-primary">@lang('Canceled')</span>
+                                @endif
+                            @else
+                                <span class="badge bg-warning">@lang('Unavailable')</span>
                             @endif
                         </td>
                         <td data-label="@lang('Action')">

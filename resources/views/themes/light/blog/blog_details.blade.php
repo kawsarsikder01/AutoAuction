@@ -75,3 +75,14 @@
  </section>
 @include($theme . 'sections.footer')
 @endsection
+
+
+@push('script')
+    <script>
+        $("#shareBlock").socialSharingPlugin({
+            urlShare: window.location.href,
+            description: $("meta[name=description]").attr("content"),
+            title: $("title").text(),
+        });
+    </script>
+@endpush

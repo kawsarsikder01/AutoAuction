@@ -19,7 +19,7 @@
 
     <div class="card">
         <div class="card-header card-header-content-md-between">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">@lang('Create Brand')</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBrandModal">@lang('Create Brand')</button>
         </div>
 
         <div class="table-responsive">
@@ -49,7 +49,7 @@
                             <td>{{++$sl}}</td>
                             <td>{{$item->name}}</td>
 
-                            <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
+                            <td ><span  class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
                             <td class="text-center">
                                 @if($item->type !== 2)
                                     @if($item->language_id)
@@ -70,7 +70,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a class="btn btn-white btn-sm" href="{{route('admin.edit.car.brand',[$item->id,$item->language_id])}}">
+                                    <a class="btn btn-white btn-sm editBrandBtn"href="javascript:void(0)" data-name="{{$item->name}}" data-status="{{$item->status}}" data-route="{{route("admin.update.car.brand",$item->id)}}" data-bs-toggle="modal" data-bs-target="#editBrandModal">
                                         <i class="bi-pencil-fill me-1"></i> Edit</a>
 
                                         <div class="btn-group">
@@ -94,7 +94,7 @@
     </div>
 </div>
 <!-- Modal -->
-<div id="addCategoryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div id="createBrandModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -139,7 +139,51 @@
   </div>
   <!-- End Modal -->
 
-
+<!-- Modal -->
+<div id="editBrandModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Edit Brand</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" id="updateBrandRoute" method="post">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="language_id" value="{{$defaultLanguage->id}}" >
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="name">@lang('Name')</label>
+                                <input type="text" id="editBrandName" value=""  class="form-control" name="name" placeholder="Name">
+                            </div>
+                            @error("name")
+                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="row form-check form-switch" for="unlimitedstatus">
+                        <span class="col-8 col-sm-9 ms-0">
+                          <span class="text-dark">@lang("Brand Status")</span>
+                        </span>
+                                <span class="col-4 col-sm-3 text-end">
+                            <input type="checkbox" name="status" class="form-check-input is-valid" id="editBrandStatus"  >
+                        </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
 data-bs-backdrop="static"
@@ -174,6 +218,13 @@ aria-hidden="true">
             $('.deleteBtn').on('click', function () {
                 let route = $(this).data('route');
                 $('.setRoute').attr('action', route);
+            })
+            $('.editBrandBtn').on('click',function (){
+                $('#updateBrandRoute').attr('action',$(this).data('route'))
+                $('#editBrandName').attr('value',$(this).data('name'))
+                if($(this).data('status') == 1){
+                    $('#editBrandStatus').prop('checked',true);
+                }
             })
         })
     </script>

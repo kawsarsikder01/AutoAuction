@@ -65,7 +65,7 @@
                                                             <input type="@lang($type)" id="@lang($name)"
                                                                    name="{{ $name }}[{{ $language->id }}]"
                                                                    class="form-control @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                   value="{{ old(@$name.'.'.$language->id, isset($singleContentData[$language->id]) ? @$singleContentData[$language->id][0]->description->{$name} : '') }}"
+                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? @$singleContentData[$language->id][0]->description->{$name} : '') }}"
                                                                    placeholder="@lang(stringToTitle($name))">
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -80,7 +80,7 @@
                                                             <input type="text"
                                                                    class="js-flatpickr form-control flatpickr-custom @error($name.'.'.$language->id) is-invalid @enderror"
                                                                    name="{{ $name }}[{{ $language->id }}]"
-                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? $singleContentData[$language->id][0]->content->media->{$name} : '') }}"
+                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? $singleContentData[$language->id][0]->content->{$name} : '') }}"
                                                                    placeholder="Select dates"
                                                                    data-hs-flatpickr-options='{
                                                                      "dateFormat": "d/m/Y",

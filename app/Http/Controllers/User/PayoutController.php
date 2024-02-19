@@ -593,10 +593,10 @@ class PayoutController extends Controller
             'transaction' => $payout->trx_id,
         ];
         $action = [
-            "link" => "#",
+            "link" => route('user.payout.index'),
             "icon" => "fa fa-money-bill-alt text-white"
         ];
-        $firebaseAction = "#";
+        $firebaseAction = route('user.payout.index');
         $this->sendMailSms($user, 'PAYOUT_REQUEST_FROM', $params);
         $this->userPushNotification($user, 'PAYOUT_REQUEST_FROM', $params, $action);
         $this->userFirebasePushNotification($user, 'PAYOUT_REQUEST_FROM', $params, $firebaseAction);

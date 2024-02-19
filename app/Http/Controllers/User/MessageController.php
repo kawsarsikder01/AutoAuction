@@ -13,16 +13,17 @@ class MessageController extends Controller
 {
     public function index($id,$bid_id)
     {
+    
 
         try {
             $bid = BiddingHistory::where('wining_status',1)->findOrFail($bid_id);
             if ($bid->vehicle->user_id != Auth::user()->id){
-                throw new \Exception('not found');
+                abort(404);
             }
             $vehicleMaxBid = BiddingHistory::where('vehicle_id',$bid->vehicle_id)
             ->where('wining_status',1)->first();
             if ($vehicleMaxBid->user_id != $id){
-                throw new \Exception('not found');
+               abort(404);
             }
             $user = User::findOrFail($id);
             $messages = Message::where(function ($query) use ($id) {
@@ -34,22 +35,23 @@ class MessageController extends Controller
             })->get();
 
             if ($messages->first() && ($messages->first()->sender_id !=  Auth::user()->id && $messages->first()->receiver_id != Auth::user()->id)){
-                throw new \Exception('not found');
+                abort(404);
             }
             return view(template().'user.pages.message',compact('messages','user'));
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            return abort(404);
         }
     }
     public function showMessagesForBidder($id,$bid_id)
     {
         try {
             $bid = BiddingHistory::where('wining_status',1)->findOrFail($bid_id);
+            
             if ($bid->user_id != Auth::user()->id){
-                throw new \Exception('not found');
+                abort(404);
             }
             if ($bid->vehicle->user_id != $id){
-                throw new \Exception('not found');
+                abort(404);
             }
             $user = User::findOrFail($id);
             $messages = Message::where(function ($query) use ($id) {
@@ -61,11 +63,11 @@ class MessageController extends Controller
             })->get();
 
             if ($messages->first() && ($messages->first()->sender_id !=  Auth::user()->id && $messages->first()->receiver_id != Auth::user()->id)){
-                throw new \Exception('not found');
+                abort(404);
             }
             return view(template().'user.pages.message',compact('messages','user'));
         }catch (\Exception $exception){
-            return view(template().'errors.404');
+            abort(404);
         }
     }
 

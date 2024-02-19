@@ -19,35 +19,28 @@
             transform: translate(-50%, -50%);
         }
     </style>
+    <div class="container-fluid">
+        <div class="main row">
+            <div class="col-8">
+                <div class="dashboard-heading">
+                    <h4 class="mb-0">@yield('title')</h4>
+                </div>
+                <div class="card-box ">
+                    <div class="card-body d-flex flex-wrap">
+                        <div>
+                            <img
+                                src="{{ getFile(optional($deposit->gateway)->driver, optional($deposit->gateway)->image) }}"
+                                class="w-50">
+                        </div>
+                        <div>
+                            <h5 class="my-3">@lang('Please Pay') {{getAmount($deposit->payable_amount)}} {{$deposit->payment_method_currency}}</h5>
+                            <h5 class="">@lang('To Get') {{getAmount($deposit->amount)}}  {{ $deposit->payment_method_currency }}</h5>
 
-    <div class="container">
-        <div class="row my-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body ">
-                        <div class="row justify-content-center">
-                            <div class="col-md-3">
-                                <div class="card">
-                                    <img
-                                        src="{{getFile(optional($deposit->gateway)->driver, optional($deposit->gateway)->image)}}"
-                                        class="card-img-top gateway-img" alt="..">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-
-                                <h4 class="my-3">@lang('Please Pay') {{getAmount($deposit->payable_amount)}} {{$deposit->payment_method_currency}}</h4>
-                                <h4 class="">@lang('To Get') {{getAmount($deposit->amount)}}  {{ $deposit->payment_method_currency }}</h4>
-
-                                <br><br>
-                                <div class="sdk">
-                                    <button class="btn btn-rounded btn-primary btn-block text-start"
-                                            onclick="checkout()">@lang('Pay Now')</button>
-                                </div>
-                            </div>
+                            <button class="btn btn-rounded btn-primary btn-block text-start"
+                                    onclick="checkout()">@lang('Pay Now')</button>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

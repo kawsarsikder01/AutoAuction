@@ -1,23 +1,75 @@
 @extends($theme.'layouts.user')
 @section('title',trans('Dashboard'))
 @section('content')
-<div class="container-fluid content">
+<div class="container-fluid content" id="firebase-app">
     <div class="main row">
        <div class="col-12">
           <div class="row g-4">
             <div class="col-12">
-               <div class="card-box p-0" id="alert">
-                 <div class="alertContent " id="alertContent">
-                     <div class="icon content"><i class="fa-solid fa-circle-info"></i></div>
-                     <div class="text content">Do not miss any single important notification allow your browser to get instant push notification</div>
-                     <div class="button content"><button class="btn-custom" >allow me</button></div>
-                 </div>
-                 <div class="crossbtn">
-                  <i class="fa-solid fa-xmark"></i>
-               </div>
-               </div>
-            </div>
+                <div class="card-box p-0 m-0" v-if="user_foreground == '1' || user_background == '1'">
+                    <div v-if="notificationPermission == 'default' && !is_notification_skipped" v-cloak>
+                        <div class="d-flex align-items-center justify-content-between alert content alert-warn">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center alert-content">
+                                <i class="fa-solid fa-circle-info me-3"></i>
+                                <p class="me-3 mt-3">
+                                    @lang('Do not miss any single important notification! Allow your
+                                                                        browser to get instant push notification')
+                                </p>
+                                <button class="btn-custom" id="allow-notification">@lang('Allow me')</button>
+                            </div>
+                            <button class="close-btn me-3"  @click.prevent="skipNotification"><i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-box" v-if="notificationPermission == 'denied' && !is_notification_skipped" v-cloak>
+                    <div class="media align-items-center d-flex justify-content-between alert alert-warn mb-4">
+                        <div><i
+                                class="fas fa-exclamation-triangle"></i> @lang('Please allow your browser to get instant push notification.
+                        Allow it from
+                        notification setting.')
+                        </div>
+                        <button class="close-btn pt-1" @click.prevent="skipNotification"><i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+              @if(($kycForm['not_submitedForm'] || $kycForm['is_pending']) || $kycForm['rejected'] )
+                  <div class="col-12">
+                      <div class="card-box p-0 kycAlert" id="alert">
+                          <div class="alertContent " id="alertContent">
+                              <div class="icon content"><i class="fa-solid fa-circle-info me-3"></i></div>
+                              <div class="text content">
+                                    @if($kycForm['not_submitedForm'])
+                                        @lang('You are not submitted')
+                                        @foreach($kycForm['not_submitedForm'] as $key => $item)
+                                            {{$key == 0 ? $item :', '.$item}}
+                                        @endforeach
+                                        .
+                                  @endif
+                                    @if($kycForm['is_pending'])
+                                      @lang('Your')
+                                      @foreach($kycForm['is_pending'] as $key => $item)
+                                          {{$key == 0 ? $item :','.$item}}
+                                      @endforeach
+                                        @lang($kycForm['rejected']?'is Pending and':'is Pending.')
+                                      @endif
+                                    @if($kycForm['rejected'])
+                                      @lang('Your')
+                                      @foreach($kycForm['rejected'] as $key => $item)
+                                          {{$key == 0 ? $item :','.$item}}
+                                      @endforeach
+                                      @lang('is rejected.')
+                                    @endif
+                              </div>
+                          </div>
+                          <div class="crossbtn me-2" id="hideKycAlert">
+                              <i class="fa-solid fa-xmark"></i>
+                          </div>
+                      </div>
+                  </div>
+              @endif
              <!-- quick links -->
+            </div>
              <div class="col-12 d-lg-none">
                 <div class="quick-links">
                    <div class="row g-2 g-lg-4">
@@ -25,7 +77,7 @@
                          <div class="link-item">
                             <a href="{{route('user.add.fund')}}">
                                <i class="fal fa-chart-bar"></i>
-                               <span>Deposit</span>
+                               <span>@lang('Deposit')</span>
                             </a>
                          </div>
                       </div>
@@ -33,7 +85,7 @@
                          <div class="link-item">
                             <a href="{{route('user.payout')}}">
                                <i class="fal fa-chart-pie-alt"></i>
-                               <span>Withdraw</span>
+                               <span>@lang('Withdraw')</span>
                             </a>
                          </div>
                       </div>
@@ -41,7 +93,7 @@
                          <div class="link-item">
                             <a href="{{route('user.profile')}}">
                                <i class="fal fa-user-cog"></i>
-                               <span>Settings</span>
+                               <span>@lang('Settings')</span>
                             </a>
                          </div>
                       </div>
@@ -49,7 +101,7 @@
                          <div class="link-item">
                             <a href="{{route('page','contact')}}">
                                <i class="fal fa-user-headset"></i>
-                               <span>Support</span>
+                               <span>@lang('Support')</span>
                             </a>
                          </div>
                       </div>
@@ -57,7 +109,7 @@
                          <div class="link-item">
                             <a href="{{route('user.twostep.security')}}">
                                <i class="fal fa-badge-check"></i>
-                               <span>2fa</span>
+                               <span>@lang('2fa')</span>
                             </a>
                          </div>
                       </div>
@@ -74,7 +126,7 @@
                             <h4>{{number_format(Auth::user()->balance, 2, '.', ',')??0 }} {{" ".basicControl()->currency_symbol}}</h4>
                              <i class="fa-solid fa-wallet"></i>
                          </div>
-                         <p class="mb-0">Current Balance</p>
+                         <p class="mb-0">@lang('Current Balance')</p>
                       </div>
                    </div>
                    <div class="col-xl-3 col-lg-4 col-md-12">
@@ -83,43 +135,43 @@
                             <h4>{{number_format(Auth::user()->hold_balance, 2, '.', ',')?? 0}} {{" ".basicControl()->currency_symbol}}</h4>
                              <i class="fa-light fa-chart-pie-simple"></i>
                          </div>
-                         <p class="mb-0">Hold Balance</p>
+                         <p class="mb-0">@lang('Hold Balance')</p>
                       </div>
                    </div>
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{count(Auth::user()->vehicle)}}</h4>
+                            <h4>{{$totalListedVehicle}}</h4>
                             <i class="fa-light fa-chart-network"></i>
                          </div>
-                         <p class="mb-0">Total Listed Vehicle</p>
+                         <p class="mb-0">@lang('Total Listed Vehicle')</p>
                       </div>
                    </div>
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{count($cancelAuction)}}</h4>
+                            <h4>{{$cancelAuction}}</h4>
                              <i class="fa-solid fa-rectangle-xmark"></i>
                          </div>
-                         <p class="mb-0">Total Canceled Auction</p>
+                         <p class="mb-0">@lang('Total Canceled Auction')</p>
                       </div>
                    </div>
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{count($soldedVehicle) - count($cancelAuction)}}</h4>
+                            <h4>{{$soldedVehicle - $cancelAuction}}</h4>
                              <i class="fa-solid fa-truck-monster"></i>
                          </div>
-                         <p class="mb-0">Total Sold Vehicle</p>
+                         <p class="mb-0">@lang('Total Sold Vehicle')</p>
                       </div>
                    </div>
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{count($totalWinAuction)}}</h4>
+                            <h4>{{$totalWinAuction}}</h4>
                              <i class="fa-light fa-chart-mixed"></i>
                          </div>
-                         <p class="mb-0">Total Win Auction</p>
+                         <p class="mb-0">@lang('Total Win Auction')</p>
                       </div>
                    </div>
                         <div class="col-xl-3 col-lg-4 col-md-12">
@@ -137,7 +189,7 @@
                                 <h4>{{count(Auth::user()->supportTickets)}}</h4>
                                 <i class="fa-regular fa-paper-plane"></i>
                             </div>
-                            <p class="mb-0">Total Support Ticket</p>
+                            <p class="mb-0">@lang('Total Support Ticket')</p>
                         </div>
                     </div>
                 </div>
@@ -151,42 +203,42 @@
                          <h4>{{number_format(Auth::user()->balance, 2, '.', ',')??0 }} {{" ".basicControl()->currency_symbol}}</h4>
                          <i class="fa-light fa-chart-pie-simple"></i>
                       </div>
-                      <p class="mb-0">Current Balance</p>
+                      <p class="mb-0">@lang('Current Balance')</p>
                    </div>
                    <div class="card-box">
                       <div class="d-flex justify-content-between">
                          <h4>{{number_format(Auth::user()->hold_balance, 2, '.', ',')?? 0}} {{" ".basicControl()->currency_symbol}}</h4>
                          <i class="fa-light fa-file-chart-pie"></i>
                       </div>
-                      <p class="mb-0">Hold Balance</p>
+                      <p class="mb-0">@lang('Hold Balance')</p>
                    </div>
                    <div class="card-box">
                       <div class="d-flex justify-content-between">
                          <h4>{{count(Auth::user()->vehicle)}}</h4>
                          <i class="fa-light fa-chart-network"></i>
                       </div>
-                      <p class="mb-0">Total Listed Vehicle</p>
+                      <p class="mb-0">@lang('Total Listed Vehicle')</p>
                    </div>
                    <div class="card-box">
                       <div class="d-flex justify-content-between">
-                         <h4>{{count($cancelAuction)}}</h4>
+                         <h4>{{$cancelAuction}}</h4>
                          <i class="fa-light fa-chart-mixed"></i>
                       </div>
-                      <p class="mb-0">Total Canceled Auction</p>
+                      <p class="mb-0">@lang('Total Canceled Auction')</p>
                    </div>
                    <div class="card-box">
                       <div class="d-flex justify-content-between">
-                         <h4>{{count($soldedVehicle)}}</h4>
+                         <h4>{{$soldedVehicle}}</h4>
                          <i class="fa-light fa-chart-pie-simple"></i>
                       </div>
-                      <p class="mb-0">Total Sold Vehicle</p>
+                      <p class="mb-0">@lang('Total Sold Vehicle')</p>
                    </div>
                    <div class="card-box">
                       <div class="d-flex justify-content-between">
-                         <h4>{{count($totalWinAuction)}}</h4>
+                         <h4>{{$totalWinAuction}}</h4>
                          <i class="fa-light fa-file-chart-pie"></i>
                       </div>
-                      <p class="mb-0">Total Win Auction</p>
+                      <p class="mb-0">@lang('Total Win Auction')</p>
                    </div>
                 </div>
              </div>
@@ -195,7 +247,7 @@
                       <div class="col-xl-6 col-lg-12">
                           <div class="card rounded-4">
                               <h3 class="card-title d-block m-auto pt-3     ">
-                                  Transaction Summary
+                                 @lang('Transaction Summary')
                               </h3>
                               <div class="card-box">
                                   <canvas  id="myChart"></canvas>
@@ -205,7 +257,7 @@
                       <div class="col-xl-6 col-lg-12 mt-xl-0 mt-lg-4 mt-sm-4">
                           <div class="card rounded-4">
                               <h3 class="card-title d-block m-auto pt-3">
-                                  Bid History
+                                 @lang('Bid History')
                               </h3>
                               <div class="card-box">
                                   <canvas  id="BidHistory"></canvas>
@@ -220,7 +272,7 @@
                         <div class="card custom-chart">
                             <div class="card-header bg-white">
                                 <h4 class="card-header-title d-block m-auto p-1">
-                                    Device History
+                                    @lang('Device History')
                                 </h4>
                             </div>
                             <div class="card-body  " >
@@ -235,7 +287,7 @@
                         <div class="card custom-chart">
                             <div class="card-header bg-white ">
                                 <h4 class="card-header-title d-block m-auto p-1">
-                                    Browser History
+                                    @lang('Browser History')
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -251,7 +303,7 @@
                         <div class="card  custom-chart">
                             <div class="card-header bg-white">
                                 <h4 class="card-header-title d-block m-auto p-1">
-                                    Operating System History
+                                    @lang('Operating System History')
                                 </h4>
                             </div>
                             <div class="card-body ">
@@ -270,9 +322,6 @@
     </div>
  </div>
 
-
-
-
 @endsection
 @push('js-lib')
     <script src="{{ asset('assets/admin/js/Chart.min.js') }}"></script>
@@ -283,11 +332,7 @@
         <script type="module">
 
             import {initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-            import {
-                getMessaging,
-                getToken,
-                onMessage
-            } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js";
+            import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js";
 
             const firebaseConfig = {
                 apiKey: "{{$firebaseNotify['apiKey']}}",
@@ -412,25 +457,25 @@
                     });
                 }
 
-function bidHistory(data){
-    const xValues = data.xValues;
-    const yValues = data.bidHistory;
-    const barColors = ["red", "green","blue","orange","brown","#561C24","#000000","#030637","#720455","#11009E","#7D0A0A","#B80000","#A7D397","#D6D46D","#FBECB2","#FC6736","#0C2D57","#12372A","#0072C6","#FF9500","#FF5733","#4285F4", "#0078D4", "#FF1B2D", "#006699", "#002558", "#003399", "#3E74A0", "#5EAA51","#999999"];
-    new Chart("BidHistory", {
-        type: "bar",
-        data: {
-            labels: xValues,
-            datasets: [{
-                label:'Bid History',
-                backgroundColor: barColors,
-                data: yValues
-            }]
-        },
-        options: {
-            legend: {display: true},
-        }
-    });
-}
+                function bidHistory(data){
+                    const xValues = data.xValues;
+                    const yValues = data.bidHistory;
+                    const barColors = ["#0a3d62","#e67e22","#1abc9c","#079992","#18dcff","#0984e3","#e55039","#079992","#b71540","#f1c40f","#ff3838","#2ecc71","#7F27FF","#2c3e50","#f6e58d"];
+                    new Chart("BidHistory", {
+                        type: "bar",
+                        data: {
+                            labels: xValues,
+                            datasets: [{
+                                label:'Bid History',
+                                backgroundColor: barColors,
+                                data: yValues
+                            }]
+                        },
+                        options: {
+                            legend: {display: true},
+                        }
+                    });
+                }
 
                 new Chart("GetDeviceHistory", {
                     type: "doughnut",
@@ -513,6 +558,10 @@ function bidHistory(data){
                         }
                     }
                 });
+
+                $('#hideKycAlert').on('click',function (){
+                    $('.kycAlert').hide();
+                })
             })
 
         </script>
@@ -559,9 +608,9 @@ function bidHistory(data){
          /* flex-wrap: wrap; */
          align-items: center;
       }
-      #alertContent .content{
-         margin-left: 25px;
-      }
+      /*#alertContent .content{*/
+      /*   margin-left: 25px;*/
+      /*}*/
       #alert .crossbtn i{
          margin-right: 25px !important;
           cursor: pointer;
@@ -581,15 +630,22 @@ function bidHistory(data){
          }
       }
       @media (max-width: 877px){
-         #alert{
-            position: relative;
-         }
-         #alert .crossbtn i{
-            position: absolute;
-            top: 5px;
-            right: 5px;
+         .close-btn{
+             position: absolute;
+             top: 5px;
+             right: 5px
          }
       }
+       @media (max-width: 1213px){
+           .close-btn{
+               position: absolute;
+               top: 5px;
+               right: 5px;
+           }
+           #allow-notification{
+               display: block;
+           }
+       }
    </style>
 @endpush
 

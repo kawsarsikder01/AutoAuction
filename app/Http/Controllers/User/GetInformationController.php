@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
+use hisorange\BrowserDetect\Exceptions\Exception;
 use Illuminate\Http\Request;
 use App\Traits\Notify;
 use Illuminate\Support\Facades\Auth;
@@ -13,16 +14,16 @@ class GetInformationController extends Controller
     use Notify;
     public function getInfo(Request $request)
     {
+        $request->validate([
+            'fullname' => 'required | string',
+            'email' => 'required | email',
+            'subject' => 'required | string',
+            'comment' => 'required | max:400'
+        ]);
         try {
-            $request->validate([
-                'fullname' => 'required | string',
-                'email' => 'required | email',
-                'subject' => 'required | string',
-                'comment' => 'required | max:400'
-            ]);
             $vehicle = Vehicle::findOrFail($request->vehicle_id);
             if (Auth::user()->id == $vehicle->user->id){
-                return back()->with('warning',"You Can Not Send Request");
+                throw new Exception('You Can Not Send Request');
             }
             $msg = [
                 "fullname" => $request->fullname,
@@ -40,7 +41,7 @@ class GetInformationController extends Controller
 
             return back()->with('success',"Your Request Send Successfully");
         } catch (\Exception $exception) {
-            return view(template().'errors.404');
+            return back()->with('error',$exception->getMessage());
         }
     }
 }

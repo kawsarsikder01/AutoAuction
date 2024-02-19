@@ -27,7 +27,7 @@ class BidderController extends Controller
             }elseif($vehicle->status == 0 || $vehicle->status == 2){
                 throw new Exception('not found');
             }
-            
+
         }
 
         $maxBidAmount = $vehicle->biddingHistory->max('bid_amount');
@@ -90,12 +90,15 @@ class BidderController extends Controller
                     'current_balance' => $soldVehicle->bidder->balance,
                 ];
 
-                $action = [
-                    "link" => '#',
+                $action1 = [
+                    "link" => route('user.listed.vehicle'),
+                    "icon" => "fas fa-money-bill-alt text-white"
+                ]; $action = [
+                    "link" => route('user.bidding.history'),
                     "icon" => "fas fa-money-bill-alt text-white"
                 ];
                 //seller notify
-                $this->userPushNotification($vehicle->user, 'SELLER_PAYMENT_CONFIRMATION',$msg1, $action);
+                $this->userPushNotification($vehicle->user, 'SELLER_PAYMENT_CONFIRMATION',$msg1, $action1);
                 $this->userFirebasePushNotification($vehicle->user,'SELLER_PAYMENT_CONFIRMATION',$msg1, "#",);
                 $this->sendMailSms($vehicle->user,'SELLER_PAYMENT_CONFIRMATION',$msg1);
                 //bidder notify
@@ -103,7 +106,7 @@ class BidderController extends Controller
                 $this->userFirebasePushNotification($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2, "#",);
                 $this->sendMailSms($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2);
             }
-      
+
             return back()->with('success','Your Payment Successfully Completed');
        } catch (Exception $error) {
             return view(template().'errors.404');

@@ -49,7 +49,7 @@
                             <td>{{++$sl}}</td>
                             <td>{{$item->name}}</td>
 
-                            <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
+                            <td ><span  class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
                             <td class="text-center">
                                 @if($item->type !== 2)
                                     @if($item->language_id)
@@ -70,7 +70,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a class="btn btn-white btn-sm" href="{{route('admin.edit.car.category',[$item->id,$item->language_id])}}">
+                                    <a href="javascript:void(0)" class="btn btn-white btn-sm editButton" data-route="{{route("admin.update.car.category",$item->id)}}" data-name="{{$item->name}}" data-status="{{$item->status}}" data-bs-toggle="modal" data-bs-target="#editCategoryModal">
                                         <i class="bi-pencil-fill me-1"></i> Edit</a>
 
                                         <div class="btn-group">
@@ -139,7 +139,51 @@
   </div>
   <!-- End Modal -->
 
-
+<!-- Modal -->
+<div id="editCategoryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" id="editform" method="post">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="language_id" value="{{$defaultLanguage->id}}" >
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="name">@lang('Name')</label>
+                                <input type="text" id="editName"  value="" class="form-control" name="name" placeholder="Name">
+                            </div>
+                            @error("name")
+                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="row form-check form-switch" for="unlimitedstatus">
+                        <span class="col-8 col-sm-9 ms-0">
+                          <span class="text-dark">@lang("Category Status")</span>
+                        </span>
+                                <span class="col-4 col-sm-3 text-end">
+                            <input type="checkbox" name="status" class="form-check-input is-valid" id="editStatus"  >
+                        </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
 data-bs-backdrop="static"
@@ -175,32 +219,20 @@ aria-hidden="true">
                 let route = $(this).data('route');
                 $('.setRoute').attr('action', route);
             })
+            $('.editButton').on('click',function (){
+                let route = $(this).data('route');
+                let status = $(this).data('status');
+                let name = $(this).data('name');
+                $('#editform').attr('action',route);
+                $('#editName').attr('value',name);
+                if(status == 1){
+                    $('#editStatus').prop('checked',true);
+                }else{
+                    $('#editStatus').prop('checked',false);
+                }
+                console.log(status);
+            })
         })
     </script>
 @endpush
 
-
-
-
-{{--<!-- Modal -->--}}
-{{--<div class='modal fade bd-example-modal-sm' tabindex='-1' role='dialog' aria-labelledby='mySmallModalLabel' aria-hidden='true'>--}}
-{{--    <div class='modal-dialog modal-sm' role='document'>--}}
-{{--      <div class='modal-content'>--}}
-{{--        <div class='modal-header'>--}}
-{{--          <h5 class='modal-title h4' id='mySmallModalLabel'>Small modal</h5>--}}
-{{--          <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>--}}
-{{--        </div>--}}
-{{--        <form action=''>--}}
-{{--            <div class='modal-body'>--}}
-{{--                <p class='message'>Do you want to approved this Vehicle?</p>--}}
-{{--                   <input type='hidden' name='status' id='status' value=''>--}}
-{{--              </div>--}}
-{{--              <div class='modal-footer'>--}}
-{{--                <button type='button' class='btn btn-white' data-bs-dismiss='modal'>@lang('Close')</button>--}}
-{{--                <button type='submit' class='btn btn-primary'>@lang('Confirm')</button>--}}
-{{--            </div>--}}
-{{--        </form>--}}
-{{--      </div>--}}
-{{--    </div>--}}
-{{--  </div>--}}
-{{--  <!-- End Modal -->--}}

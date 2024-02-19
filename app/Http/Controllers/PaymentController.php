@@ -47,6 +47,10 @@ class PaymentController extends Controller
             $data = $gatewayObj::prepareData($deposit, $gateway);
             $data = json_decode($data);
 
+            if ($data == null){
+                throw new Exception('Something went wrong');
+            }
+
         } catch (Exception $exception) {
             session()->flash('warning', 'Something went wrong. Please try again.');
             return back()->with('error', $exception->getMessage());
@@ -59,7 +63,6 @@ class PaymentController extends Controller
         if (isset($data->redirect)) {
             return redirect($data->redirect_url);
         }
-
         $page_title = 'Payment Confirm';
         return view($this->theme . $data->view, compact('data', 'page_title', 'deposit','type'));
 

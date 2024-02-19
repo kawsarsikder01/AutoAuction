@@ -8,7 +8,6 @@ use App\Models\Plan;
 use App\Models\PlanPurchaseHistory;
 use App\Models\Transaction;
 use App\Traits\Notify;
-use GPBMetadata\Google\Api\Auth;
 use Illuminate\Support\Carbon;
 
 class BasicService
@@ -46,8 +45,8 @@ class BasicService
             $transaction->trx_type = '+';
             $transaction->trx_id = $deposit->trx_id;
             $transaction->remarks = 'Deposit Via ' . optional($deposit->gateway)->name;
+            $transaction->transactional_type = 'App\Models\Plan';
             $deposit->transactional()->save($transaction);
-            $deposit->save();
 
             $params = [
                 'amount' => currencyPosition($deposit->payable_amount_in_base_currency),
@@ -55,10 +54,10 @@ class BasicService
             ];
 
             $action = [
-                "link" => "#",
+                "link" => route('user.fund.index'),
                 "icon" => "fa fa-money-bill-alt text-white"
             ];
-            $firebaseAction = '#';
+            $firebaseAction = route('user.fund.index');
             $this->sendMailSms($deposit->user, 'ADD_FUND_USER_USER', $params);
             $this->userPushNotification($deposit->user, 'ADD_FUND_USER_USER', $params, $action);
             $this->userFirebasePushNotification($deposit->user, 'ADD_FUND_USER_USER', $params, $firebaseAction);
@@ -72,19 +71,34 @@ class BasicService
             $actionAdmin = [
                 "name" => optional($deposit->user)->firstname . ' ' . optional($deposit->user)->lastname,
                 "image" => getFile(optional($deposit->user)->image_driver, optional($deposit->user)->image),
-                "link" => "#",
+                "link" => route('admin.transaction'),
                 "icon" => "fas fa-ticket-alt text-white"
             ];
 
-            $firebaseAction = "#";
+            $firebaseAction = route('admin.transaction');
             $this->adminMail('ADD_FUND_USER_ADMIN', $params, $action);
             $this->adminPushNotification('ADD_FUND_USER_ADMIN', $params, $actionAdmin);
             $this->adminFirebasePushNotification('ADD_FUND_USER_ADMIN', $params, $firebaseAction);
         }elseif ($deposit->depositable_type == Plan::class && $deposit->depositable_id){
             $user = $deposit->user;
             if(!$user->plan){
-                $plan = Plan::find($deposit->depositable_id);
+                $plan = Plan::findOrFail($deposit->depositable_id);
                 if ($plan){
+
+
+                    $transaction = new Transaction();
+                    $transaction->user_id = $deposit->user_id;
+                    $transaction->amount = $deposit->payable_amount_in_base_currency;
+                    $transaction->charge = getAmount($deposit->base_currency_charge);
+                    $transaction->balance = getAmount($user->balance);
+                    $transaction->trx_type = '-';
+                    $transaction->trx_id = $deposit->trx_id;
+                    $transaction->remarks = 'Deposit Via ' . optional($deposit->gateway)->name;
+                    $transaction->transactional_type = 'App\Models\Plan';
+                    $deposit->transactional()->save($transaction);
+                    $deposit->save();
+
+
                     $planPurchaseHistory = new PlanPurchaseHistory();
                     $planPurchaseHistory->plan_name = $plan->plan_name;
                     $planPurchaseHistory->plan_id = $plan->id;
@@ -124,17 +138,30 @@ class BasicService
                 $actionAdmin = [
                     "name" => optional($deposit->user)->firstname . ' ' . optional($deposit->user)->lastname,
                     "image" => getFile(optional($deposit->user)->image_driver, optional($deposit->user)->image),
-                    "link" => "#",
+                    "link" => route('admin.transaction'),
                     "icon" => "fas fa-ticket-alt text-white"
                 ];
 
-                $firebaseAction = "#";
+                $firebaseAction = route('admin.transaction');
                 $this->adminMail('PLAN_PURCHASE_USER_ADMIN', $params);
                 $this->adminPushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $firebaseAction);
             }elseif($user->plan){
-                $plan = Plan::find($deposit->depositable_id);
+                $plan = Plan::findOrFail($deposit->depositable_id);
                 if ($plan){
+
+                    $transaction = new Transaction();
+                    $transaction->user_id = $deposit->user_id;
+                    $transaction->amount = $deposit->payable_amount_in_base_currency;
+                    $transaction->charge = getAmount($deposit->base_currency_charge);
+                    $transaction->balance = getAmount($user->balance);
+                    $transaction->trx_type = '-';
+                    $transaction->trx_id = $deposit->trx_id;
+                    $transaction->remarks = 'Deposit Via ' . optional($deposit->gateway)->name;
+                    $transaction->transactional_type = 'App\Models\Plan';
+                    $deposit->transactional()->save($transaction);
+                    $deposit->save();
+
                     $oldPurchasedPlun = $user->plan;
                     $oldPurchasedPlun->status = 0;
                     $oldPurchasedPlun->update();
@@ -177,11 +204,11 @@ class BasicService
                 $actionAdmin = [
                     "name" => optional($deposit->user)->firstname . ' ' . optional($deposit->user)->lastname,
                     "image" => getFile(optional($deposit->user)->image_driver, optional($deposit->user)->image),
-                    "link" => "#",
+                    "link" => route('admin.transaction'),
                     "icon" => "fas fa-ticket-alt text-white"
                 ];
 
-                $firebaseAction = "#";
+                $firebaseAction = route('admin.transaction');
                 $this->adminMail('PLAN_UPGRADE_USER_ADMIN', $params);
                 $this->adminPushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $firebaseAction);

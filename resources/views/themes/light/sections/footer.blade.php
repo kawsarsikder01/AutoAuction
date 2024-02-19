@@ -88,7 +88,7 @@
           </div>
           <div class="d-flex copyright justify-content-between align-items-center">
              <div>
-                <span> @lang('All rights reserved © 2022 by')<a href="{{route('page')}}"> {{basicControl()->site_title}} </a> </span>
+                <span> @lang('All rights reserved © '.date('Y').' by')<a href="{{route('page')}}"> {{basicControl()->site_title}} </a> </span>
              </div>
              <div class="language-dropdown-items">
                  @foreach($languages as $language)
