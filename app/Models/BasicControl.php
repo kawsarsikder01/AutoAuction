@@ -19,7 +19,9 @@ class BasicControl extends Model
         'reCaptcha_status_login', 'reCaptcha_status_registration', 'measurement_id', 'analytic_status', 'error_log', 'is_active_cron_notification',
         'logo', 'logo_driver', 'favicon', 'favicon_driver', 'admin_logo', 'admin_logo_driver', 'admin_dark_mode_logo', 'admin_dark_mode_logo_driver',
         'currency_layer_access_key', 'currency_layer_auto_update_at', 'currency_layer_auto_update', 'coin_market_cap_app_key', 'coin_market_cap_auto_update_at',
-        'coin_market_cap_auto_update', 'automatic_payout_permission', 'date_time_format'
+        'coin_market_cap_auto_update', 'automatic_payout_permission', 'date_time_format','google_user_registration_recaptcha_status',
+        'google_admin_login_recaptcha_status','google_user_login_recaptcha_status','cookie_title',
+        'cookie_button_name','cookie_button_url','cookie_short_text','cookie_image','cookie_driver','cookie_status'
     ];
 
     protected function metaKeywords(): Attribute

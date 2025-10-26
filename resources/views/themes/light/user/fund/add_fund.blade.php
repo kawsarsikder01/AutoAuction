@@ -189,6 +189,7 @@
             $(document).on('change, input', "#amount, #supported_currency, .selectPayment, #supported_crypto_currency", function (e) {
 
                 let amount = amountField.val();
+                console.log(amount);
                 let selectedCurrency = $('#supported_currency').val();
                 let selectedCryptoCurrency = $('#supported_crypto_currency').val();
                 let currency_type = 1;
@@ -205,9 +206,6 @@
 
                     checkAmount(amount, selectedCurrency, selectedGateway, selectedCryptoCurrency)
 
-                    if (selectedCurrency != null) {
-
-                    }
                 } else {
                     clearMessage(amountField)
                     $('.showCharge').html('')

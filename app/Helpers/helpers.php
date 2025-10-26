@@ -2,214 +2,28 @@
 
 use App\Models\BasicControl;
 use App\Models\ManageMenu;
-use App\Models\PageDetail;
+use App\Models\Page;
 use App\Models\User;
+use App\Models\UserKyc;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Models\Language;
-
-
+use App\Models\PageDetail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
-function checkReport($biddingHistory,$vehicle = null){
-
-       if ($vehicle == null){
-           foreach($biddingHistory->vehicle->reports as $report){
-
-               if (($report->repoter_id == Auth::user()->id && $report->reported_user_id == $biddingHistory->vehicle->user_id) || ($report->repoter_id == $biddingHistory->vehicle->user_id && $report->reported_user_id == Auth::user()->id)){
-                   if ($report->vehicle_id == $biddingHistory->vehicle->id){
-                       return true;
-                   }
-               }
-           }
-       }elseif ($biddingHistory == null){
-           foreach ($vehicle->reports as $report){
-               if (($report->repoter_id == Auth::user()->id && $report->reported_user_id == $vehicle->user_id) || ($report->repoter_id == $vehicle->user_id && $report->reported_user_id == Auth::user()->id)){
-                   if ($report->vehicle_id == $vehicle->id){
-                       return true;
-                   }
-               }
-           }
-       }
-        return false;
-}
-
-
-
-
-
-
-
-function template($asset = false)
-{
-    $activeTheme = basicControl()->theme;
-    if ($asset) return 'assets/themes/' . $activeTheme . '/';
-    return 'themes.' . $activeTheme . '.';
-}
-
-if (!function_exists('staticPagesAndRoutes')) {
-    function staticPagesAndRoutes($name)
+if (!function_exists('template')) {
+    function template($asset = false)
     {
-        return [
-            'blog' => 'blog',
-            'plan' => 'plan',
-            'auction' => 'auction',
-            'login' => 'login',
-            'registation' => 'registation',
-            'payment option'  => 'payment option',
-            'forget-password' => 'forget-password',
-            'email-verification' => 'email-verification',
-            'sms-verification' => 'sms-verification',
-            '2FA-verification' => '2FA-verification'
-        ][$name];
+        $activeTheme = basicControl()->theme;
+        if ($asset) return 'assets/themes/' . $activeTheme . '/';
+        return 'themes.' . $activeTheme . '.';
     }
 }
 
 
-if (!function_exists('getHeaderMenuData')) {
-    function getHeaderMenuData()
-    {
-        $menu = ManageMenu::where('menu_section', 'header')->first();
-        $menuData = [];
-
-        foreach ($menu->menu_items as $key => $menuItem) {
-            if (is_numeric($key)) {
-                $pageDetails = getPageDetails($menuItem);
-                $menuIDetails = [
-                    'name' => $pageDetails->name ?? $menuItem,
-                    'route' => isset($pageDetails->page->slug) ? route('page', $pageDetails->page->slug) : route(staticPagesAndRoutes($menuItem)),
-                ];
-            } elseif (is_array($menuItem)) {
-                $pageDetails = getPageDetails($key);
-                $child = getHeaderChildMenu($menuItem);
-                $menuIDetails = [
-                    'name' => $pageDetails->name,
-                    'route' => isset($pageDetails->page->slug) ? route('page', $pageDetails->page->slug) : route(staticPagesAndRoutes($key)),
-                    'child' => $child
-                ];
-            }
-            $menuData[] = $menuIDetails;
-        }
-
-        return $menuData;
-    }
-}
-
-
-if (!function_exists('getHeaderChildMenu')) {
-    function getHeaderChildMenu($menuItem, $menuData = [])
-    {
-        foreach ($menuItem as $key => $item) {
-            if (is_numeric($key)) {
-                $pageDetails = getPageDetails($item);
-                $menuData[] = [
-                    'name' => $pageDetails->name ?? $item,
-                    'route' => isset($pageDetails->page->slug) ? route('page', $pageDetails->page->slug) : route(staticPagesAndRoutes($item)),
-                ];
-            } elseif (is_array($item)) {
-                $pageDetails = getPageDetails($key);
-                $child = getHeaderChildMenu($item);
-                $menuData[] = [
-                    'name' => $pageDetails->name ?? $key,
-                    'route' => isset($pageDetails->page->slug) ? route('page', $pageDetails->page->slug) : route(staticPagesAndRoutes($key)),
-                    'child' => $child
-                ];
-            } else {
-                $pageDetails = getPageDetails($key);
-                $child = getHeaderChildMenu([$item]);
-                $menuData[] = [
-                    'name' => $pageDetails->name ?? $key,
-                    'route' => isset($pageDetails->page->slug) ? route('page', $pageDetails->page->slug) : route(staticPagesAndRoutes($key)),
-                    'child' => $child
-                ];
-            }
-        }
-
-        return $menuData;
-    }
-}
-
-
-if (!function_exists('getPageDetails')) {
-    function getPageDetails($name)
-    {
-        return PageDetail::select('id', 'page_id', 'name')
-            ->with('page:id,name,slug')
-            ->whereHas('page', function ($query) use ($name) {
-                $query->where('name', $name);
-            })
-            ->first();
-    }
-}
-
-if (!function_exists('renderHeaderMenu')) {
-    function renderHeaderMenu($menuItems)
-    {
-
-        foreach ($menuItems as $key => $menuItem) {
-            if (isset($menuItem['child'])) {
-                echo '<li class="dropdown text-capitalize">';
-                echo '<a href="javascript:void(0)"><span>' . $menuItem['name'] . '</span> <i class="bi bi-chevron-down"></i></a>';
-                renderHeaderMenu($menuItem['child']);
-            } else {
-                if(Auth::user()&& $menuItem['name'] == 'login'){
-                    continue;
-                }
-                if ($key == 0){
-                    echo "<li class='nav-item'>
-                          <a class='nav-link active' href=".$menuItem['route'].">".$menuItem['name']."</a>
-                      </li>";
-                }else{
-                    echo "<li class='nav-item'>
-                          <a class='nav-link' href=".$menuItem['route'].">".$menuItem['name']."</a>
-                      </li>";
-                }
-
-
-            }
-        }
-
-    }
-}
-
-
-if (!function_exists('getFooterMenuData')) {
-    function getFooterMenuData($type)
-    {
-        $menu = ManageMenu::where('menu_section', 'footer')->first();
-        $menuData = [];
-
-        if (isset($menu->menu_items[$type])) {
-            foreach ($menu->menu_items[$type] as $key => $menuItem) {
-                $pageDetails = getPageDetails($menuItem);
-                $menuIDetails = [
-                    'name' => $pageDetails->name ?? $menuItem,
-                    'route' => isset($pageDetails->page->slug) ? route('page', $pageDetails->page->slug) : route(staticPagesAndRoutes($menuItem)),
-                ];
-                $menuData[] = $menuIDetails;
-            }
-            foreach ($menuData as $item) {
-                $che = '<li><i class="bi bi-chevron-right"></i><a class="text-capitalize" href="' . $item['route'] . '">' . $item['name'] . '</a></li>';
-                $flattenedMenuData[] = $che;
-            }
-            return $flattenedMenuData;
-        }
-    }
-}
-
-function getPageName($name){
-    $defaultLanguage = Language::where('default_status', true)->first();
-    $pageDetails = PageDetail::select('id', 'page_id', 'name')
-        ->with('page:id,name,slug')
-        ->where('language_id', $defaultLanguage->id)
-        ->whereHas('page', function ($query) use ($name) {
-            $query->where('name', $name);
-        })
-        ->first();
-    return $pageDetails->name ?? $pageDetails->page->name ?? $name;
-}
 if (!function_exists('getThemesNames')) {
     function getThemesNames()
     {
@@ -241,79 +55,111 @@ if (!function_exists('getRoute')) {
 }
 
 
-function getPageSections()
-{
-    $sectionsPath = resource_path('views/') . str_replace('.', '/', template()) . 'sections';
-    $pattern = $sectionsPath . '/*';
-    $files = glob($pattern);
+if (!function_exists('getPageSections')) {
+    function getPageSections()
+    {
+        $sectionsPath = resource_path('views/') . str_replace('.', '/', template()) . 'sections';
+        $pattern = $sectionsPath . '/*';
+        $files = glob($pattern);
 
-    $fileBaseNames = [];
+        $fileBaseNames = [];
 
-    foreach ($files as $file) {
-        if (is_file($file)) {
-            $basename = basename($file);
-            $basenameWithoutExtension = str_replace('.blade.php', '', $basename);
-            $fileBaseNames[$basenameWithoutExtension] = $basenameWithoutExtension;
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                $basename = basename($file);
+                $basenameWithoutExtension = str_replace('.blade.php', '', $basename);
+                $fileBaseNames[$basenameWithoutExtension] = $basenameWithoutExtension;
+            }
         }
-    }
 
-    return $fileBaseNames;
+        return $fileBaseNames;
+    }
 }
 
 
-function hex2rgba($color, $opacity = false)
-{
-    $default = 'rgb(0,0,0)';
+if (!function_exists('hex2rgba')) {
+    function hex2rgba($color, $opacity = false)
+    {
+        $default = 'rgb(0,0,0)';
 
-    if (empty($color))
-        return $default;
+        if (empty($color))
+            return $default;
 
-    if ($color[0] == '#') {
-        $color = substr($color, 1);
+        if ($color[0] == '#') {
+            $color = substr($color, 1);
+        }
+
+        if (strlen($color) == 6) {
+            $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+        } elseif (strlen($color) == 3) {
+            $hex = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+        } else {
+            return $default;
+        }
+
+        $rgb = array_map('hexdec', $hex);
+
+        if ($opacity) {
+            if (abs($opacity) > 1)
+                $opacity = 1.0;
+            $output = 'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
+        } else {
+            $output = 'rgb(' . implode(",", $rgb) . ')';
+        }
+        return $output;
     }
-
-    if (strlen($color) == 6) {
-        $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-    } elseif (strlen($color) == 3) {
-        $hex = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-    } else {
-        return $default;
-    }
-
-    $rgb = array_map('hexdec', $hex);
-
-    if ($opacity) {
-        if (abs($opacity) > 1)
-            $opacity = 1.0;
-        $output = 'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
-    } else {
-        $output = 'rgb(' . implode(",", $rgb) . ')';
-    }
-    return $output;
 }
 
 
 if (!function_exists('basicControl')) {
     function basicControl()
     {
-        $configure = \Cache::get('ConfigureSetting');
-        if (!$configure) {
-            $configure = BasicControl::firstOrCreate();
-            \Cache::put('ConfigureSetting', $configure);
-        }
-        if(session()->get('themeMode') == null){
+        if (session()->get('themeMode') == null) {
             session()->put('themeMode', 'auto');
         }
-        return $configure;
+
+        try {
+            DB::connection()->getPdo();
+            $configure = \Cache::get('ConfigureSetting');
+            if (!$configure) {
+                $configure = BasicControl::firstOrCreate();
+                \Cache::put('ConfigureSetting', $configure);
+            }
+
+            return $configure;
+        } catch (\Exception $e) {
+            die("Unable to establish a connection to the database. Please check your connection settings and try again later");
+        }
+
     }
 }
 
-function checkTo($currencies, $selectedCurrency = 'USD')
-{
-    foreach ($currencies as $key => $currency) {
-        if (property_exists($currency, strtoupper($selectedCurrency))) {
-            return $key;
+if (!function_exists('checkTo')) {
+    function checkTo($currencies, $selectedCurrency = 'USD')
+    {
+        foreach ($currencies as $key => $currency) {
+            if (property_exists($currency, strtoupper($selectedCurrency))) {
+                return $key;
+            }
         }
+    }
+}
+
+
+if (!function_exists('controlPanelRoutes')) {
+    function controlPanelRoutes()
+    {
+        $listRoutes = collect([]);
+        $listRoutes->push(config('generalsettings.settings'));
+        $listRoutes->push(config('generalsettings.plugin'));
+        $listRoutes->push(config('generalsettings.in-app-notification'));
+        $listRoutes->push(config('generalsettings.push-notification'));
+        $listRoutes->push(config('generalsettings.email'));
+        $listRoutes->push(config('generalsettings.sms'));
+        $list=  $listRoutes->collapse()->map(function ($item) {
+            return $item['route'];
+        })->values()->push('admin.settings')->unique();
+        return $list;
     }
 }
 
@@ -339,7 +185,6 @@ if (!function_exists('menuActive')) {
         }
     }
 }
-
 
 if (!function_exists('isMenuActive')) {
     function isMenuActive($routes, $type = 0)
@@ -369,29 +214,26 @@ if (!function_exists('isMenuActive')) {
 }
 
 
-function strRandom($length = 12)
-{
-    $characters = 'ABCDEFGHJKMNOPQRSTUVWXYZ123456789';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
+if (!function_exists('strRandom')) {
+    function strRandom($length = 12)
+    {
+        $characters = 'ABCDEFGHJKMNOPQRSTUVWXYZ123456789';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
-    return $randomString;
 }
 
 
 if (!function_exists('getFile')) {
-
-
     function getFile($disk = 'local', $image = '', $upload = false)
     {
-        $root = storage_path('framework/testing/disks/'.$disk);
-
         $default = ($upload == true) ? asset(config('filelocation.default2')) : asset(config('filelocation.default'));
         try {
             if ($disk == 'local') {
-
                 $localImage = asset('/assets/upload') . '/' . $image;
                 return !empty($image) && Storage::disk($disk)->exists($image) ? $localImage : $default;
             } else {
@@ -419,74 +261,89 @@ if (!function_exists('getFileForEdit')) {
     }
 }
 
-function options($string)
-{
-    return $options = explode(",",$string);
+if (!function_exists('title2snake')) {
+    function title2snake($string)
+    {
+        return Str::title(str_replace(' ', '_', $string));
+    }
 }
 
-function title2snake($string)
-{
-    return Str::title(str_replace(' ', '_', $string));
+if (!function_exists('snake2Title')) {
+    function snake2Title($string)
+    {
+        return Str::title(str_replace('_', ' ', $string));
+    }
 }
 
-function snake2Title($string)
-{
-    return Str::title(str_replace('_', ' ', $string));
+if (!function_exists('kebab2Title')) {
+    function kebab2Title($string)
+    {
+        return Str::title(str_replace('-', ' ', $string));
+    }
 }
 
-function kebab2Title($string)
-{
-    return Str::title(str_replace('-', ' ', $string));
-}
-
-function getMethodCurrency($gateway)
-{
-    foreach ($gateway->currencies as $key => $currency) {
-        if (property_exists($currency, $gateway->currency)) {
-            if ($key == 0) {
-                return $gateway->currency;
-            } else {
-                return 'USD';
+if (!function_exists('getMethodCurrency')) {
+    function getMethodCurrency($gateway)
+    {
+        foreach ($gateway->currencies as $key => $currency) {
+            if (property_exists($currency, $gateway->currency)) {
+                if ($key == 0) {
+                    return $gateway->currency;
+                } else {
+                    return 'USD';
+                }
             }
         }
     }
 }
 
-function twoStepPrevious($deposit)
-{
-    if ($deposit->depositable_type == \App\Models\Fund::class) {
-        return route('fund.initialize');
+if (!function_exists('twoStepPrevious')) {
+    function twoStepPrevious($deposit)
+    {
+        if ($deposit->depositable_type == \App\Models\Fund::class) {
+            return route('fund.initialize');
+        }
     }
 }
 
 
-function slug($title)
-{
-    return Str::slug($title);
+if (!function_exists('slug')) {
+    function slug($title)
+    {
+        return Str::slug($title);
+    }
 }
 
-function clean($string)
-{
-    $string = str_replace(' ', '_', $string); // Replaces all spaces with hyphens.
-    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+if (!function_exists('clean')) {
+    function clean($string)
+    {
+        $string = str_replace(' ', '_', $string); // Replaces all spaces with hyphens.
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+    }
 }
 
-function diffForHumans($date)
-{
-    $lang = session()->get('lang');
-    \Carbon\Carbon::setlocale($lang);
-    return \Carbon\Carbon::parse($date)->diffForHumans();
+if (!function_exists('diffForHumans')) {
+    function diffForHumans($date)
+    {
+        $lang = session()->get('lang');
+        \Carbon\Carbon::setlocale($lang);
+        return \Carbon\Carbon::parse($date)->diffForHumans();
+    }
 }
 
-function loopIndex($object)
-{
-    return ($object->currentPage() - 1) * $object->perPage() + 1;
+if (!function_exists('loopIndex')) {
+    function loopIndex($object)
+    {
+        return ($object->currentPage() - 1) * $object->perPage() + 1;
+    }
 }
 
-function dateTime($date, $format = 'd/m/Y H:i')
-{
-    $format = basicControl()->date_time_format;
-    return date($format, strtotime($date));
+if (!function_exists('dateTime')) {
+    function dateTime($date, $format = 'd/m/Y H:i')
+    {
+        $format = basicControl()->date_time_format;
+        return date($format, strtotime($date));
+    }
 }
 
 
@@ -512,13 +369,29 @@ if (!function_exists('removeHyphenInString')) {
 }
 
 
+function updateWallet($user_id, $currency_id, $amount, $action = 0)
+{
+    $wallet = Wallet::firstOrCreate(['user_id' => $user_id, 'currency_id' => $currency_id]);
+    $balance = 0;
+
+    if ($action == 1) { //add money
+        $balance = $wallet->balance + $amount;
+        $wallet->balance = $balance;
+    } elseif ($action == 0) { //deduct money
+        $balance = $wallet->balance - $amount;
+        $wallet->balance = $balance;
+    }
+
+    $wallet->save();
+    return $balance;
+}
 
 function updateBalance($user_id, $amount, $action = 0)
 {
     $user = User::where('id', $user_id)->firstOr(function () {
         throw new \Exception('User not found!');
     });
-    if ($amount > $user->balance) {
+    if ($amount > $user->balance && $action == 0) {
         return back()->with('error', 'Insufficient Balance to deducted.');
     }
     if ($action == 1) { //add money
@@ -562,11 +435,14 @@ if (!function_exists('currencyPosition')) {
 if (!function_exists('fractionNumber')) {
     function fractionNumber($amount, $afterComma = true)
     {
+
+
         $basic = basicControl();
         if ($afterComma == false) {
             return number_format($amount);
         }
-        return number_format($amount, $basic->fraction_number ?? 2);
+//        is_numeric($amount)
+        return number_format(is_numeric($amount)?$amount:0, $basic->fraction_number ?? 2);
     }
 }
 
@@ -581,16 +457,11 @@ function hextorgb($hexstring)
 
 function renderCaptCha($rand)
 {
-//    session_start();
-//You can customize your captcha settings here
-
     $captcha_code = '';
     $captcha_image_height = 50;
     $captcha_image_width = 130;
     $total_characters_on_image = 6;
 
-//The characters that can be used in the CAPTCHA code.
-//avoid all confusing characters and numbers (For example: l, 1 and i)
     $possible_captcha_letters = 'bcdfghjkmnpqrstvwxyz23456789';
     $captcha_font = 'assets/monofont.ttf';
 
@@ -684,12 +555,9 @@ function renderCaptCha($rand)
         $captcha_code
     );
 
-    /* Show captcha image in the html page */
-// defining the image type to be shown in browser widow
     header('Content-Type: image/jpeg');
     imagejpeg($captcha_image); //showing the image
     imagedestroy($captcha_image); //destroying the image instance
-//    $_SESSION['captcha'] = $captcha_code;
 
     session()->put('captcha', $captcha_code);
 }
@@ -785,19 +653,24 @@ function getIpInfo()
 }
 
 
-function convertRate($currencyCode, $payout)
-{
-
-    $convertRate = 0;
-    $rate = optional($payout->method)->convert_rate;
-
-    if ($rate) {
-        $convertRate = $rate->$currencyCode;
+if (!function_exists('convertRate')) {
+    function convertRate($currencyCode, $payout)
+    {
+        $convertRate = 0;
+        $rate = optional($payout->method)->convert_rate;
+        if ($rate) {
+            $convertRate = $rate->$currencyCode;
+        }
+        return (float)$convertRate;
     }
-
-    return (float)$convertRate;
 }
-
+if (!function_exists('stringToRouteName')) {
+    function stringToRouteName($string)
+    {
+        $result = preg_replace('/[^a-zA-Z0-9]+/', '.', $string);
+        return empty($result) || $result == '.' ? 'home' : $result;
+    }
+}
 function browserIcon($string)
 {
     $list = [
@@ -877,30 +750,231 @@ if (!function_exists('timeAgo')) {
     }
 }
 
-
-
-function getLinksObj($item, $menu_section = 'header')
-{
-    $headerMenu = ManageMenu::where('menu_section', $menu_section)->first();
-    if ($headerMenu) {
-        $result = $headerMenu->scopeLinksRouteList()->where('name', $item)->first();
-        return $result ?? [];
+if (!function_exists('code')) {
+    function code($length)
+    {
+        if ($length == 0) return 0;
+        $min = pow(10, $length - 1);
+        $max = 0;
+        while ($length > 0 && $length--) {
+            $max = ($max * 10) + 9;
+        }
+        return random_int($min, $max);
     }
-    return '';
-}
-
-function code($length)
-{
-    if ($length == 0) return 0;
-    $min = pow(10, $length - 1);
-    $max = 0;
-    while ($length > 0 && $length--) {
-        $max = ($max * 10) + 9;
-    }
-    return random_int($min, $max);
 }
 
 
+if (!function_exists('recursive_array_replace')) {
+    function recursive_array_replace($find, $replace, $array)
+    {
+        if (!is_array($array)) {
+            return str_ireplace($find, $replace, $array);
+        }
+        $newArray = [];
+        foreach ($array as $key => $value) {
+            $newArray[$key] = recursive_array_replace($find, $replace, $value);
+        }
+        return $newArray;
+    }
+}
+
+if (!function_exists('getHeaderMenuData')) {
+    function getHeaderMenuData()
+    {
+        $menu = ManageMenu::where('menu_section', 'header')->first();
+        $menuData = [];
+
+        foreach ($menu->menu_items as $key => $menuItem) {
+            if (is_numeric($key)) {
+                $pageDetails = getPageDetails($menuItem);
+                if (Auth::user() && $pageDetails->slug == 'login' || $pageDetails->slug == 'register')
+                    continue;
+                $menuIDetails = [
+                    'name' => $pageDetails->page_name ?? $pageDetails->name ?? $menuItem,
+                    'route' => isset($pageDetails->slug) ? route('page', $pageDetails->slug) : ($pageDetails->custom_link ?? staticPagesAndRoutes($menuItem)),
+                ];
+            } elseif (is_array($menuItem)) {
+                $pageDetails = getPageDetails($key);
+                $child = getHeaderChildMenu($menuItem);
+                $menuIDetails = [
+                    'name' => $pageDetails->page_name ?? $pageDetails->name,
+                    'route' => isset($pageDetails->slug) ? route('page', $pageDetails->slug) : ($pageDetails->custom_link ?? staticPagesAndRoutes($key)),
+                    'child' => $child
+                ];
+            }
+            $menuData[] = $menuIDetails;
+        }
+        return $menuData;
+    }
+}
+
+if (!function_exists('staticPagesAndRoutes')) {
+    function staticPagesAndRoutes($name)
+    {
+        return [
+            'blog' => 'blog',
+        ][$name] ?? $name;
+    }
+}
+
+
+if (!function_exists('getHeaderChildMenu')) {
+    function getHeaderChildMenu($menuItem, $menuData = [])
+    {
+        foreach ($menuItem as $key => $item) {
+            if (is_numeric($key)) {
+                $pageDetails = getPageDetails($item);
+                $menuData[] = [
+                    'name' => $pageDetails->page_name ?? $pageDetails->name ?? $item,
+                    'route' => isset($pageDetails->slug) ? route('page', $pageDetails->slug) : ($pageDetails->custom_link ?? staticPagesAndRoutes($item)),
+                ];
+            } elseif (is_array($item)) {
+                $pageDetails = getPageDetails($key);
+                $child = getHeaderChildMenu($item);
+                $menuData[] = [
+                    'name' => $pageDetails->page_name ?? $pageDetails->name ?? $key,
+                    'route' => isset($pageDetails->slug) ? route('page', $pageDetails->slug) : ($pageDetails->custom_link ?? staticPagesAndRoutes($key)),
+                    'child' => $child
+                ];
+            } else {
+                $pageDetails = getPageDetails($key);
+                $child = getHeaderChildMenu([$item]);
+                $menuData[] = [
+                    'name' => $pageDetails->page_name ?? $pageDetails->name ?? $key,
+                    'route' => isset($pageDetails->slug) ? route('page', $pageDetails->slug) : ($pageDetails->custom_link ?? staticPagesAndRoutes($key)),
+                    'child' => $child
+                ];
+            }
+        }
+
+        return $menuData;
+    }
+}
+
+
+if (!function_exists('getPageDetails')) {
+    function getPageDetails($name)
+    {
+        try {
+            DB::connection()->getPdo();
+            $lang = session('lang');
+            return Page::select('id', 'name', 'slug', 'custom_link')
+                ->where('name', $name)
+                ->addSelect([
+                    'page_name' => PageDetail::with('language')
+                        ->select('name')
+                        ->whereHas('language', function ($query) use ($lang) {
+                            $query->where('short_name', $lang);
+                        })
+                        ->whereColumn('page_id', 'pages.id')
+                        ->limit(1)
+                ])
+                ->first();
+
+        } catch (\Exception $e) {
+
+        }
+    }
+}
+
+if (!function_exists('renderHeaderMenu')) {
+    function renderHeaderMenu($menuItems)
+    {
+        echo '<ul class="navbar-nav">';
+        foreach ($menuItems as $menuItem) {
+            if (isset($menuItem['child'])) {
+                echo '<li class="dropdown text-capitalize">';
+                echo '<a href="javascript:void(0)"><span>' . $menuItem['name'] . '</span> <i class="bi bi-chevron-down"></i></a>';
+                renderHeaderMenu($menuItem['child']);
+            } else {
+                echo "<li class='nav-item'>
+                     <a class='nav-link' href='".$menuItem['route']."'>".$menuItem['name']."</a>
+                  </li>";
+
+            }
+        }
+        echo '</ul>';
+    }
+}
+
+
+if (!function_exists('getFooterMenuData')) {
+    function getFooterMenuData($type)
+    {
+        $menu = ManageMenu::where('menu_section', 'footer')->first();
+        $menuData = [];
+
+        if (isset($menu->menu_items[$type])) {
+            foreach ($menu->menu_items[$type] as $key => $menuItem) {
+                $pageDetails = getPageDetails($menuItem);
+                $menuIDetails = [
+                    'name' => $pageDetails->page_name ?? $pageDetails->name ?? $menuItem,
+                    'route' => isset($pageDetails->slug) ? route('page', $pageDetails->slug) : ($pageDetails->custom_link ?? staticPagesAndRoutes($menuItem)),
+                ];
+                $menuData[] = $menuIDetails;
+            }
+            foreach ($menuData as $item) {
+                $che = '<li><i class="bi bi-chevron-right"></i><a class="text-capitalize" href="' . $item['route'] . '">' . $item['name'] . '</a></li>';
+                $flattenedMenuData[] = $che;
+            }
+            return $flattenedMenuData;
+        }
+    }
+}
+
+function getPageName($name)
+{
+    try {
+        DB::connection()->getPdo();
+        $defaultLanguage = Language::where('default_status', true)->first();
+        $pageDetails = PageDetail::select('id', 'page_id', 'name')
+            ->with('page:id,name,slug')
+            ->where('language_id', $defaultLanguage->id)
+            ->whereHas('page', function ($query) use ($name) {
+                $query->where('name', $name);
+            })
+            ->first();
+        return $pageDetails->name ?? $pageDetails->page->name ?? $name;
+    } catch (\Exception $e) {
+
+    }
+}
+
+
+function filterCustomLinkRecursive($collection, $lookingKey = '')
+{
+
+    $filterCustomLinkRecursive = function ($array) use (&$filterCustomLinkRecursive, $lookingKey) {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $filterCustomLinkRecursive($value);
+            } elseif ($value === $lookingKey || $key === $lookingKey) {
+                unset($array[$key]);
+            }
+        }
+        return $array;
+    };
+    $filteredCollection = $filterCustomLinkRecursive($collection);
+
+    return $filteredCollection;
+}
+
+function filterCustomLinkRecursiveUpdate($collection, $lookingKey = '', $newValue = null)
+{
+    $filterCustomLinkRecursive = function ($array) use (&$filterCustomLinkRecursive, $lookingKey, $newValue) {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $filterCustomLinkRecursive($value);
+            } elseif ($value === $lookingKey || $key === $lookingKey) {
+                $array[$key] = $newValue;
+            }
+        }
+        return $array;
+    };
+    $filteredCollection = $filterCustomLinkRecursive($collection);
+
+    return $filteredCollection;
+}
 function checkKycForm($validateForm)
 {
     $is_pending = [];
@@ -926,3 +1000,43 @@ function checkKycForm($validateForm)
 }
 
 
+
+
+function checkReport($biddingHistory,$vehicle = null){
+
+    if ($vehicle == null){
+        foreach($biddingHistory->vehicle->reports as $report){
+
+            if (($report->repoter_id == Auth::user()->id && $report->reported_user_id == $biddingHistory->vehicle->user_id) || ($report->repoter_id == $biddingHistory->vehicle->user_id && $report->reported_user_id == Auth::user()->id)){
+                if ($report->vehicle_id == $biddingHistory->vehicle->id){
+                    return true;
+                }
+            }
+        }
+    }elseif ($biddingHistory == null){
+        foreach ($vehicle->reports as $report){
+            if (($report->repoter_id == Auth::user()->id && $report->reported_user_id == $vehicle->user_id) || ($report->repoter_id == $vehicle->user_id && $report->reported_user_id == Auth::user()->id)){
+                if ($report->vehicle_id == $vehicle->id){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+function checkUserKyc($id)
+{
+    $userKycs =  UserKyc::where('user_id',Auth::user()->id)->get();
+
+    foreach ($userKycs as $item){
+        if ($item->kyc_id == $id){
+            if ($item->status == 0){
+                return 'pending';
+            }elseif($item->status == 1){
+                return 'verified';
+            }
+        }
+    }
+    return false;
+}

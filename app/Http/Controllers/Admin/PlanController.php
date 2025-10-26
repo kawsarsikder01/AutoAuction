@@ -160,16 +160,31 @@ class PlanController extends Controller
     {
         return  view('admin.plan.planPurchaseHistory');
     }
-    public function getPurchaseHistory()
+    public function getPurchaseHistory(Request $request)
     {
-        $purchaseHistorys = PlanPurchaseHistory::query();
+        $purchaseHistorys = PlanPurchaseHistory::query()
+            ->with(['planPurchasedUser'])
+            ->when(!empty($request->search['value']),function ($query)use($request){
+                $query->whereHas('planPurchasedUser',function ($query)use($request){
+                    $query->where('firstname','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                })
+                ->orWhere('plan_name','LIKE','%'.$request->search['value'].'%')
+                ->orWhere('price',$request->search['value'])
+                ->orWhere('trx_id','LIKE','%'.$request->search['value'].'%')
+                ->orWhere('payment_method','%'.$request->search['value'].'%')
+                ->orWhere('expiry_date','%'.$request->search['value'].'%')
+                ->orWhere('purchase_date','%'.$request->search['value'].'%');
+            })
+        ->orderBy('created_at','desc');
 
         return DataTables::of($purchaseHistorys)
             ->addColumn('user',function ($item){
                 $user = User::findOrFail($item->user_id);
                 return '<a class="d-flex align-items-center me-2" href="'.route('admin.user.view.profile',$item->user_id ).'">
                 <div class="flex-shrink-0">
-                    '.$user->profilePicture().'
+                    '.$item->planPurchasedUser->profilePicture().'
                 </div>
                 <div class="flex-grow-1 ms-3">
                   <h5 class="text-hover-primary mb-0">' . $user->firstname . ' ' . $user->lastname . '</h5>

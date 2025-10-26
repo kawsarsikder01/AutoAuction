@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Deposit;
 use App\Models\Fund;
 use App\Models\Gateway;
+use App\Models\Plan;
 use App\Traits\Notify;
 use App\Traits\PaymentValidationCheck;
 use App\Traits\Upload;
@@ -27,7 +28,6 @@ class PaymentController extends Controller
 
     public function depositConfirm($trx_id,$type)
     {
-
         try {
             $deposit = Deposit::with('user', 'depositable')->where(['trx_id' => $trx_id, 'status' => 0])->first();
             if (!$deposit) {
@@ -39,7 +39,11 @@ class PaymentController extends Controller
             }
 
             if (999 < $gateway->id) {
-                return view(template() . 'user.payment.manual', compact('deposit'));
+                $depositType = 'You have requested to deposit';
+                if ($deposit->depositable_type == Plan::class) {
+                    $depositType = 'You have requested to purchase Plan';
+                }
+                return view(template() . 'user.payment.manual', compact('deposit','depositType'));
             }
 
             $gatewayObj = 'App\\Services\\Gateway\\' . $gateway->code . '\\Payment';
@@ -53,7 +57,7 @@ class PaymentController extends Controller
 
         } catch (Exception $exception) {
             session()->flash('warning', 'Something went wrong. Please try again.');
-            return back()->with('error', $exception->getMessage());
+            return back();
         }
 
         if (isset($data->error)) {
@@ -96,7 +100,7 @@ class PaymentController extends Controller
             return redirect()->route('success');
         }
 
-//        try {
+        try {
             $gateway = Gateway::where('code', $code)->first();
             if (!$gateway) {
                 throw new Exception('Invalid Payment Gateway.');
@@ -113,9 +117,9 @@ class PaymentController extends Controller
                 return redirect($data['redirect'])->with($data['status'], $data['msg']);
             }
 
-//        } catch (\Exception $exception) {
-//            return back()->with('error', $exception->getMessage());
-//        }
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
 
     }
 
@@ -163,7 +167,7 @@ class PaymentController extends Controller
                     if ($k == $inKey) {
                         if ($inVal->type == 'file' && $request->hasFile($inKey)) {
                             try {
-                                $file = $this->fileUpload($request[$inKey], config('filelocation.deposit.path'), null, null,'avif', 60);
+                                $file = $this->fileUpload($request[$inKey], config('filelocation.deposit.path'), null, null,'webp', 60);
                                 $reqField[$inKey] = [
                                     'field_name' => $inVal->field_name,
                                     'field_value' => $file['path'],
@@ -196,7 +200,7 @@ class PaymentController extends Controller
 
         $msg = [
             'username' => optional($data->user)->username,
-            'amount' => currencyPosition($data->amount),
+            'amount' => currencyPosition($data->payable_amount_in_base_currency),
             'gateway' => optional($data->gateway)->name,
             'currency' => basicControl()->currency_symbol
         ];
@@ -206,12 +210,21 @@ class PaymentController extends Controller
             "link" => route('admin.user.payment', $data->user_id),
             "icon" => "fa fa-money-bill-alt text-white"
         ];
+        if ($data->depositable_type == Plan::class){
+            $this->adminPushNotification('PAYMENT_REQUEST_PLAN', $msg, $action);
+            $this->adminFirebasePushNotification('PAYMENT_REQUEST_PLAN', $msg, route('admin.user.payment', $data->user_id));
+            $this->adminMail('PAYMENT_REQUEST_PLAN', $msg);
+        }else{
+            $this->adminPushNotification('PAYMENT_REQUEST', $msg, $action);
+            $this->adminFirebasePushNotification('PAYMENT_REQUEST', $msg, route('admin.user.payment', $data->user_id));
+            $this->adminMail('PAYMENT_REQUEST', $msg);
+        }
 
-        $this->adminPushNotification('PAYMENT_REQUEST', $msg, $action);
-        $this->adminFirebasePushNotification('PAYMENT_REQUEST', $msg, $action);
-        $this->adminMail('PAYMENT_REQUEST', $msg);
 
-        session()->flash('success', 'You request has been taken.');
+        session()->flash('success', 'Your request has been taken.');
+        if ($data->depositable_type == Plan::class){
+            return redirect()->route('user.dashboard');
+        }
         return redirect()->route('user.fund.index');
 
     }

@@ -137,6 +137,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.approved.vehicle.get") }}",
                 },
@@ -160,17 +161,6 @@
                     processing: `<div><div></div><div></div><div></div><div></div></div>`
                 },
             });
-
-            // document.getElementById("filter_button").addEventListener("click", function () {
-            //     let filterTransactionId = $('#transaction_id_filter_input').val();
-            //     let filterDate = $('#filter_date_range').val();
-            //     const datatable = HSCore.components.HSDatatables.getItem(0);
-            //     datatable.ajax.url("{{ route('admin.search.pending.vehicle') }}" + "?filterTransactionID=" + filterTransactionId +
-            //         "&filterDate=" + filterDate).load();
-            // });
-            $.fn.dataTable.ext.errMode = 'throw';
-            var dataRoute = $('#vehicleStatusUpdate').data('route');
-            console.log(dataRoute)
 
         });
 

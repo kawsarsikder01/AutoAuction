@@ -9,7 +9,7 @@
                         <ol class="breadcrumb breadcrumb-no-gutter">
                             <li class="breadcrumb-item">
                                 <a class="breadcrumb-link"
-                                                           href="javascript:void(0)">@lang('Dashboard')</a>
+                                   href="javascript:void(0)">@lang('Dashboard')</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">@lang('Withdraw Settings')</li>
                             <li class="breadcrumb-item active" aria-current="page">@lang('Withdrawal Days Setup')</li>

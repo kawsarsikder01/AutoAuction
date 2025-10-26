@@ -106,7 +106,6 @@
 
         </div>
     </div>
-
 @endsection
 
 
@@ -134,6 +133,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.get.reports") }}",
                 },
@@ -156,16 +156,8 @@
                 },
             });
 
-            // document.getElementById("filter_button").addEventListener("click", function () {
-            //     let filterTransactionId = $('#transaction_id_filter_input').val();
-            //     let filterDate = $('#filter_date_range').val();
-            //     const datatable = HSCore.components.HSDatatables.getItem(0);
-            //     datatable.ajax.url("" + "?filterTransactionID=" + filterTransactionId +
-            //         "&filterDate=" + filterDate).load();
-            // });
-            $.fn.dataTable.ext.errMode = 'throw';
-            // var dataRoute = $('#vehicleStatusUpdate').data('route');
 
+            $.fn.dataTable.ext.errMode = 'throw';
         });
 
     </script>

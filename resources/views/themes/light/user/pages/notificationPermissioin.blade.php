@@ -17,10 +17,10 @@
                                        <table class="table">
                                            <thead>
                                            <tr>
-                                               <th  style="width: 45%;" scope="col">Type</th>
-                                               <th  scope="col">✉️ Email</th>
-                                               <th  scope="col">✉️ SMS</th>
-                                               <th  scope="col">🖥 Push</th>
+                                               <th  style="width: 45%;" scope="col">@lang('Type')</th>
+                                               <th  scope="col">✉️ @lang('Email')</th>
+                                               <th  scope="col">✉️ @lang('SMS')</th>
+                                               <th  scope="col">🖥 @lang('Push')</th>
                                                <th  class="text-start" scope="col">@lang('👩🏻‍💻 In App')</th>
                                            </tr>
                                            </thead>
@@ -89,7 +89,7 @@
                            </div>
                        </div>
                        <div class="card-footer text-end bg-white">
-                           <button type="submit" class="btn-custom">Save Changes</button>
+                           <button type="submit" class="btn-custom">@lang('Save Changes')</button>
                        </div>
                    </div>
              </form>
@@ -97,6 +97,5 @@
         </div>
     </div>
 @endsection
-@push('style')
-@endpush
+
 

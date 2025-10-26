@@ -59,7 +59,7 @@ class SupportTicketController extends Controller
             for ($i = 0; $i < $numberOfAttachments; $i++) {
                 if ($request->hasFile('images.' . $i)) {
                     $file = $request->file('images.' . $i);
-                    $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), null,null, 'avif',60);
+                    $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), null,null, 'webp',60);
                     if (empty($supportFile['path'])) {
                         throw new \Exception('File could not be uploaded.');
                     }
@@ -93,7 +93,6 @@ class SupportTicketController extends Controller
 
     public function reply(Request $request, $id)
     {
-        // dd($request->all());
         $ticket = SupportTicket::findOrFail($id);
         $message = new SupportTicketMessage();
 
@@ -134,7 +133,7 @@ class SupportTicketController extends Controller
                 for ($i = 0; $i < $numberOfAttachments; $i++) {
                     if ($request->hasFile('attachments.' . $i)) {
                         $file = $request->file('attachments.' . $i);
-                        $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), config('filesystems.default'));
+                        $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), null,null,'webp',60);
                         if (empty($supportFile['path'])) {
                             throw new \Exception('File could not be uploaded.');
                         }

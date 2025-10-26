@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Page;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
@@ -31,7 +32,8 @@ class ResetPasswordController extends Controller
 
     public function showResetForm(Request $request, $token = null)
     {
-        return view(template().'auth.passwords.reset')->with(
+        $pageSeo = Page::where('slug', 'reset-password')->select('page_title', 'breadcrumb_image', 'breadcrumb_image_driver')->firstOrFail();
+        return view(template().'auth.passwords.reset',compact('pageSeo'))->with(
             ['token' => $token, 'email' => $request->email]
         );
     }

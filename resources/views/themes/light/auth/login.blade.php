@@ -27,13 +27,13 @@
                                        name="username"
                                        class="form-control"
                                        id="floatingInput1"
-                                       placeholder="Username Or Email Address"
+                                       placeholder="@lang('Enter Your Username')"
                                        autocomplete="off"
                                     />
-                                    <label for="floatingInput">@lang('Email address')</label>
+                                    <label for="floatingInput">@lang('Username')</label>
                                     @error('username')
                                     <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
+                                            {{ $message }}
                                         </span>
                                     @enderror
                                  </div>
@@ -43,18 +43,54 @@
                                        name="password"
                                        class="form-control"
                                        id="floatingInput2"
-                                       placeholder="Password"
+                                       placeholder="@lang('Password')"
                                        autocomplete="off"
                                     />
                                     <label for="floatingInput">@lang('Password')</label>
                                      <i class="fa-regular fa-eye-slash" id="togglePassword"></i>
-                                    @error('password')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                 </div>
+                                  @error('password')
+                                  <span class="invalid-feedback d-block" role="alert">
+                                        {{ $message }}
                                     </span>
                                   @enderror
-                                 </div>
 
+                                  @if($basicControl->manual_recaptcha === 1 && $basicControl->reCaptcha_status_login === 1)
+                                      <div class="form-floating">
+
+                                          <input type="text"       tabindex="2"
+                                                 class="form-control form-control-lg @error('captcha') is-invalid @enderror"
+                                                 name="captcha" id="captcha" autocomplete="off"
+                                                 placeholder="@lang('Enter Captcha')" >
+                                          <label for="floatingInput">@lang('Captcha')</label>
+
+                                          @error('captcha')
+                                          <span class="invalid-feedback">{{ $message }}</span>
+                                          @enderror
+                                      </div>
+
+                                      <div class="mt-4">
+                                          <div class="input-group captcha-group input-group-merge manualRecaptchaImage" data-hs-validation-validate-class>
+                                              <img src="{{route('captcha').'?rand='. rand()}}" id='captcha_image' >
+                                              <a class="input-group-append input-group-text manualRecaptchaIcon"
+                                                 href='javascript: refreshCaptcha();'>
+                                                  <i class="fa-solid fa-rotate-right"></i>
+                                              </a>
+                                          </div>
+                                      </div>
+                                  @endif
+
+                                  @if(basicControl()->google_user_login_recaptcha_status && basicControl()->google_recaptcha)
+                                      <div class="row mt-4">
+                                          <div class="g-recaptcha @error('g-recaptcha-response') is-invalid @enderror"
+                                               data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
+                                          @error('g-recaptcha-response')
+                                             <span class="invalid-feedback d-block text-danger" role="alert">
+                                                {{ $message }}
+                                            </span>
+                                          @enderror
+                                      </div>
+                                  @endif
                                  <div class="col-12">
                                     <div class="links">
                                        <div class="form-check">
@@ -79,12 +115,20 @@
          </section>
 @include($theme . 'sections.footer')
 @endsection
-
 @push('js-lib')
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 @endpush
 @push('script')
     <script>
+        'use strict';
+        function refreshCaptcha(){
+            let img = document.images['captcha_image'];
+            img.src = img.src.substring(
+                0,img.src.lastIndexOf("?")
+            )+"?rand="+Math.random()*1000;
+        }
+
+
         $(document).ready(function (){
             $('#togglePassword').on('click',function (){
                 let currentType =  $('#floatingInput2').attr('type');

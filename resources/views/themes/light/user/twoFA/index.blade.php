@@ -10,12 +10,13 @@
                     @if(auth()->user()->two_fa)
                     <div class="col-lg-6 col-md-6 mb-3">
                         <div class="card text-center search-bar">
-                            <div class="card-header bg-white">
-                                <h5>@lang('Two Factor Authenticator')</h5>
+                            <div class="card-header bg-white d-flex justify-content-between">
+                                <h5 class="card-header-title mt-2">@lang('Two Factor Authenticator')</h5>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#regenerateModal" class="btn-custom">@lang("Regenerate")</button>
                             </div>
                             <div class="card-body">
                                 <div class="input-group mb-3">
-                                    <input type="text" value="{{$previousCode}}"
+                                    <input type="text" value="{{$secret}}"
                                            class="form-control" id="referralURL"
                                            readonly>
                                     <span class="input-group-text" id="copyBoard" onclick="copyFunction()"><i
@@ -23,11 +24,12 @@
                                 </div>
 
                                 <div class="form-group mx-auto text-center">
-                                    <img class="w-40 mx-auto" src="{{$previousQR}}">
+                                    <img class="w-40 mx-auto qrCodeImage"
+                                         src="https://quickchart.io/chart?cht=qr&chs=150x150&chl={{$qrCodeUrl}}">
                                 </div>
 
                                 <div class="form-group mx-auto text-center mt-3">
-                                    <a href="javascript:void(0)" class="w-100 cmn_btn"
+                                    <a href="javascript:void(0)" class="w-100 btn-custom"
                                        data-bs-toggle="modal"
                                        data-bs-target="#disableModal">@lang('Disable Two Factor Authenticator')</a>
                                 </div>
@@ -38,8 +40,9 @@
                     @else
                         <div class="col-lg-6 mb-3" >
                             <div class="card search-bar text-center br-4">
-                                <div class="card-header bg-white">
-                                    <h5>@lang('Two Factor Authenticator')</h5>
+                                <div class="card-header bg-white d-flex justify-content-between">
+                                    <h5 class="card-header-title mt-2">@lang('Two Factor Authenticator')</h5>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#regenerateModal" class="btn-custom">@lang("Regenerate")</button>
                                 </div>
                                 <div class="card-body">
                                     <div class="input-group mb-3">
@@ -51,7 +54,8 @@
                                     </div>
 
                                     <div class="form-group mx-auto text-center">
-                                        <img class="w-40" class="mx-auto" src="{{$qrCodeUrl}}">
+                                        <img class="w-40 mx-auto qrCodeImage"
+                                             src="https://quickchart.io/chart?cht=qr&chs=150x150&chl={{$qrCodeUrl}}">
                                     </div>
 
                                     <div class="form-group mx-auto text-center mt-3">
@@ -103,8 +107,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="cmn_btn2" data-bs-dismiss="modal">@lang('Close')</button>
-                        <button type="submit" class="cmn_btn">@lang('Verify')</button>
+                        <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">@lang('Close')</button>
+                        <button type="submit" class="btn-custom">@lang('Verify')</button>
                     </div>
                 </form>
             </div>
@@ -124,19 +128,40 @@
                     @csrf
                     <div class="modal-body">
                         <div class="input-box col-md-12">
-                            <input type="text" class="form-control" name="code"
-                                   placeholder="@lang('Enter Google Authenticator Code')" autocomplete="off">
+                            <input type="password" class="form-control" name="password"
+                                   placeholder="@lang('Enter Your Password')" autocomplete="off">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="cmn_btn2" data-bs-dismiss="modal">@lang('Close')</button>
-                        <button type="submit" class="cmn_btn">@lang('Verify')</button>
+                        <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">@lang('Close')</button>
+                        <button type="submit" class="btn-custom">@lang('Verify')</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
+    <!-- Regenerate Modal -->
+    <div class="modal fade" id="regenerateModal" tabindex="-1" aria-labelledby="regenerateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="regenerateModalLabel">@lang('Re-generate Confirmation')</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <form action="{{route('user.twoStepRegenerate')}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        @lang("Are you want to Re-generate Authenticator ?")
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">@lang('No')</button>
+                        <button class="btn-custom" type="submit">@lang('Yes')</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('style')
     <style>

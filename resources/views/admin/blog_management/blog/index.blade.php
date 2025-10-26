@@ -118,22 +118,14 @@
                             <td>{{optional($item->details)->title}}</td>
                             <td ><span style="font-size: 12px;" class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
                             <td class="text-center">
-                                @if($item->type !== 2)
-                                    @if(optional($item->details)->language_id)
-                                        <a href='{{route('admin.edit.blog',[$item->id,optional($item->details)->language_id])}}'
-                                           class='btn btn-white btn-icon btn-sm flag-btn'> <i
-                                                class='bi bi-check2'></i></a>
-                                    @endif
-                                    @foreach($languages as $language)
-                                        @if(optional($item->details)->language_id !== $language->id)
-                                            <a href='{{route('admin.edit.blog',[$item->id,$language->id])}}'
-                                               class='btn btn-white btn-icon btn-sm flag-btn'
-                                               target='_blank'> <i class='bi-pencil'></i></a>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    N/A
-                                @endif
+                                @foreach($languages as $language)
+                                    <a href="{{route('admin.edit.blog',[$item->id,$language->id])}}"
+                                       class="btn btn-white btn-icon btn-sm flag-btn"
+                                       target="_blank">
+                                        <i class="bi {{ $item->getLanguageEditClass($item->id, $language->id) }}"></i>
+                                    </a>
+                                @endforeach
+
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
@@ -163,6 +155,13 @@
                     </tbody>
                 </table>
             </div>
+            @if(count($blogs??[]) <= 0)
+                <div class="text-center p-4">
+                    <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error.svg') }}" alt="Image Description" data-hs-theme-appearance="default">
+                    <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error-light.svg') }}" alt="Image Description" data-hs-theme-appearance="dark">
+                    <p class="mb-0">@lang('No data to show')</p>
+                </div>
+            @endif
         </div>
         <div class="card-footer">
             <!-- Pagination -->

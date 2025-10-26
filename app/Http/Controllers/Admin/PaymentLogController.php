@@ -48,11 +48,24 @@ class PaymentLogController extends Controller
         $startDate = $filterDate[0];
         $endDate = isset($filterDate[1]) ? trim($filterDate[1]) : null;
 
-        $deposit = Deposit::with('user', 'gateway')->orderBy('id', 'desc')
+        $deposit = Deposit::query()->with(['user', 'gateway'])
+            ->when(empty($search) && empty($filterTransactionId) && empty($request->filterDate) && !isset($filterMethod) && empty($filterStatus),function ($query){
+                $query->whereHas('user', function ($query) {
+                    $query->select('id', 'username', 'firstname', 'lastname','image','image_driver');
+                })
+                    ->whereHas('gateway', function ($query) {
+                        $query->select('id', 'name','image','driver');
+                    })
+                    ->orWhere(function ($query) {
+                        $query->whereDoesntHave('user')
+                            ->orWhereDoesntHave('gateway');
+                    });
+            })
+            ->orderBy('id', 'desc')
             ->where('status', '!=', 0)
             ->when(!empty($search), function ($query) use ($search) {
                 return $query->where(function ($subquery) use ($search) {
-                    $subquery->where('transaction', 'LIKE', "%$search%")
+                    $subquery->where('trx_id', 'LIKE', "%$search%")
                         ->orWhereHas('user', function ($q) use ($search) {
                             $q->where('firstname', 'LIKE', "%$search%")
                                 ->orWhere('lastname', 'LIKE', "%{$search}%")
@@ -60,33 +73,31 @@ class PaymentLogController extends Controller
                         });
                 });
             })
+            ->when(isset($filterStatus) && $filterStatus != 'all', function ($query) use ($filterStatus) {
+                if ($filterStatus != 0) {
+                    $query->where('status', $filterStatus)
+                        ->orWhere('status', 2);
+                }else{
+                    $query->where('status', $filterStatus);
+                }
+            })
             ->when(!empty($filterTransactionId), function ($query) use ($filterTransactionId) {
                 return $query->where('trx_id', $filterTransactionId);
             })
-            ->when(isset($filterStatus), function ($query) use ($filterStatus) {
-                if ($filterStatus == "all") {
-                    return $query->where('status', '!=', null);
-                }
-                return $query->where('status', $filterStatus);
-            })
-            ->when(isset($filterMethod), function ($query) use ($filterMethod) {
-                return $query->whereHas('gateway', function ($subQuery) use ($filterMethod) {
-                    if ($filterMethod == "all") {
-                        $subQuery->where('id', '!=', null);
-                    } else {
-                        $subQuery->where('id', $filterMethod);
-                    }
-                });
-            })
+
             ->when(!empty($request->filterDate) && $endDate == null, function ($query) use ($startDate) {
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $query->whereDate('created_at', $startDate);
+            })
+            ->when(isset($filterMethod) && $filterMethod != 'all' , function ($query) use ($filterMethod) {
+                return $query->where('payment_method_id',$filterMethod);
             })
             ->when(!empty($request->filterDate) && $endDate != null, function ($query) use ($startDate, $endDate) {
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
             });
+
 
 
         return DataTables::of($deposit)
@@ -103,7 +114,7 @@ class PaymentLogController extends Controller
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                   <h5 class="text-hover-primary mb-0">' . optional($item->user)->firstname . ' ' . optional($item->user)->lastname . '</h5>
-                                  <span class="fs-6 text-body">' . optional($item->user)->username . '</span>
+                                  <span class="fs-6 text-body">@' . optional($item->user)->username . '</span>
                                 </div>
                               </a>';
             })
@@ -130,7 +141,7 @@ class PaymentLogController extends Controller
                 return "<span class='text-danger'>". fractionNumber(getAmount($item->percentage_charge) +  getAmount($item->fixed_charge)) . ' ' . $item->payment_method_currency."</span>";
             })
             ->addColumn('payable', function ($item) {
-                return "<h6>".currencyPosition($item->payable_amount_in_base_currency)."</h6>";
+                return "<h6 class='mb-0'>" . fractionNumber(getAmount($item->payable_amount)) .' ' . $item->payment_method_currency . "</h6>";
             })
             ->addColumn('status', function ($item) {
                 if ($item->status == 0) {
@@ -174,7 +185,7 @@ class PaymentLogController extends Controller
                 data-detailsinfo='" . json_encode($details) . "'
                 data-id='$item->id'
                 data-feedback='$item->note'
-                data-amount='" . currencyPosition(getAmount($item->amount)) . "'
+                data-amount='" . fractionNumber(getAmount($item->amount)) .' ' . $item->payment_method_currency  . "'
                 data-method='" . optional($item->gateway)->name . "'
                 data-gatewayimage='" . getFile(optional($item->gateway)->driver, optional($item->gateway)->image) . "'
                 data-datepaid='" . dateTime($item->created_at) . "'
@@ -214,7 +225,7 @@ class PaymentLogController extends Controller
             ->where('status', 2)->where('payment_method_id', '>', 999)->orderBy('id', 'DESC')
             ->when(!empty($search), function ($query) use ($search) {
                 return $query->where(function ($subquery) use ($search) {
-                    $subquery->where('transaction', 'LIKE', "%$search%")
+                    $subquery->where('trx_id',$search)
                         ->orWhereHas('user', function ($q) use ($search) {
                             $q->where('firstname', 'LIKE', "%$search%")
                                 ->orWhere('lastname', 'LIKE', "%{$search}%")
@@ -250,6 +261,7 @@ class PaymentLogController extends Controller
                 $query->whereBetween('created_at', [$startDate, $endDate]);
             });
 
+
         return DataTables::of($funds)
             ->addColumn('no', function ($item) {
                 static $counter = 0;
@@ -283,13 +295,13 @@ class PaymentLogController extends Controller
             })
             ->addColumn('amount', function ($item) {
                 $statusClass = $item->getStatusClass();
-                return "<h6 class='mb-0 $statusClass '>" . fractionNumber(getAmount($item->amount)) . ' ' . $item->payment_method_currency . "</h6>";
+                return "<h6 class='mb-0 $statusClass '>" . fractionNumber(getAmount($item->amount)) .' ' . $item->payment_method_currency . "</h6>";
             })
             ->addColumn('charge', function ($item) {
                 return "<span class='text-danger'>". fractionNumber(getAmount($item->percentage_charge) +  getAmount($item->fixed_charge)) . ' ' . $item->payment_method_currency."</span>";
             })
             ->addColumn('payable', function ($item) {
-                return "<h6>".currencyPosition($item->payable_amount_in_base_currency)."</h6>";
+                return "<h6 class='mb-0'>" . fractionNumber(getAmount($item->payable_amount)) .' ' . $item->payment_method_currency . "</h6>";
             })
             ->addColumn('status', function ($item) {
                 if ($item->status == 2) {
@@ -325,7 +337,7 @@ class PaymentLogController extends Controller
                 data-detailsinfo='" . json_encode($details) . "'
                 data-id='$item->id'
                 data-feedback='$item->note'
-                data-amount='" . currencyPosition($item->amount) . "'
+                data-amount='" . fractionNumber(getAmount($item->amount)) .' ' . $item->payment_method_currency  . "'
                 data-method='" . optional($item->gateway)->name . "'
                 data-gatewayimage='" . getFile(optional($item->gateway)->driver, optional($item->gateway)->image) . "'
                 data-datepaid='" . dateTime($item->created_at) . "'
@@ -345,10 +357,11 @@ class PaymentLogController extends Controller
         $this->validate($request, [
             'id' => 'required',
             'status' => ['required', Rule::in(['1', '3'])],
-            // 'feedback' => 'required|string|min:3|max:300'
+            'feedback' => 'required|string|min:3|max:300'
         ]);
 
         $data = Deposit::where('id', $id)->whereIn('status', [2])->with('user', 'gateway')->firstOrFail();
+
         if ($request->status == '1') {
 
             $data->update([
@@ -364,22 +377,23 @@ class PaymentLogController extends Controller
                 'gateway' => optional($data->gateway)->name,
             ];
             $action = [
-                "link" => '#',
+                "link" => route('user.fund.index'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
-            $fireBaseAction = "#";
+            $fireBaseAction =route('user.fund.index');
             $this->userPushNotification($data->user, 'PAYMENT_APPROVED', $msg, $action);
             $this->userFirebasePushNotification('PAYMENT_APPROVED', $msg, $fireBaseAction);
             $this->sendMailSms($data->user, 'PAYMENT_APPROVED', [
-                'gateway' => optional($data->gateway)->name,
+                'gateway_name' => optional($data->gateway)->name,
                 'amount' => currencyPosition($data->amount),
                 'charge' => currencyPosition($data->charge),
                 'transaction' => $data->trx_id,
                 'feedback' => $data->note,
             ]);
-            session()->flash('success', 'Payment approved successfully.');
 
+            session()->flash('success', 'Payment approved successfully.');
             return back();
+
         } elseif ($request->status == '3') {
 
             $data->update([
@@ -388,19 +402,17 @@ class PaymentLogController extends Controller
             ]);
 
             $msg = [
-                'amount' => currencyPosition($data->amount),
                 'username' => optional($data->user)->username,
+                'amount' => currencyPosition($data->amount),
                 'gateway' => optional($data->gateway)->name,
             ];
             $action = [
-                "link" => '#',
+                "link" => route('user.fund.index'),
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
-            $firebaseAction = "#";
+            $firebaseAction = route('user.fund.index');
             $this->userPushNotification($data->user, 'PAYMENT_REJECTED', $msg, $action);
-
             $this->userFirebasePushNotification('PAYMENT_REJECTED', $msg, $action, $firebaseAction);
-
             $this->sendMailSms($data->user, 'PAYMENT_REJECTED', [
                 'gateway_name' => optional($data->gateway)->name,
                 'amount' => currencyPosition($data->amount),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\sendTestMail;
+use App\Models\NotificationTemplate;
 use Facades\App\Services\BasicService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -33,7 +34,6 @@ class EmailConfigController extends Controller
 
     public function emailConfigUpdate(Request $request, $method)
     {
-
         $rules = [
             'sender_email' => 'required|email:rfc,dns',
             'email_method' => 'required|string',
@@ -78,7 +78,14 @@ class EmailConfigController extends Controller
             $basicControl->update([
                 "email_notification" => $request->email_notification,
                 "email_verification" => $request->email_verification,
+                "sender_email" => $request->sender_email,
             ]);
+
+            NotificationTemplate::get()->map(function ($item) use ($request){
+                $item->email_from = $request->sender_email;
+                $item->save();
+
+            });
 
             return back()->with('success', 'Email Configuration has been updated successfully.');
 

@@ -117,8 +117,7 @@
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                     data-bs-target="#blockModal">@lang("Insert Section")</button>
                                         </div>
-                                        <textarea class="form-control" name="page_content" id="summernote"
-                                                  rows="20">{!! optional($page->details)->content !!}</textarea>
+                                        <textarea class="form-control" name="page_content" id="summernote" rows="20">{!! optional($page->details)->content !!}</textarea>
                                         @error("page_content")
                                         <span class="invalid-feedback d-block">{{ $message }}</span>
                                         @enderror
@@ -260,7 +259,7 @@
                                     "hideSearch": true
                                   }'>
                             @forelse($sections as $item)
-                            <option value="[[{{ $item }}]]">@lang(ucwords(snake2Title($item)))</option>
+                                <option value="[[{{ $item }}]]">@lang(stringToTitle($item))</option>
                             @empty
                             @endforelse
                         </select>

@@ -56,19 +56,17 @@
                                     <div class="card card-lg mb-3 mb-lg-5">
                                         <div class="card-body">
                                             @foreach($multipleContent['field_name'] as $name => $type)
-                                            
                                                 <div class="row">
                                                     @if($type == "text")
                                                         <div class="col-md-12 mb-3">
-                                                            <label class="form-label" for="@lang($name)">@lang(stringToTitle($name))</label>
+                                                            <label class="form-label"
+                                                                   for="@lang($name)">@lang(stringToTitle($name))
+                                                            </label>
                                                             <input type="@lang($type)" id="@lang($name)"
-                                                                name="{{ $name }}[{{ $language->id }}]"
-                                                                class="form-control @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                value="{{ $name == 'icon'
-                                                                        ? ($multipleContentData[$language->id][0]->content->media->{$name} ?? '')
-                                                                        : old($name.'.'.$language->id, @$multipleContentData[$language->id][0]->description->{$name} ?? '')
-                                                                    }}"
-                                                                placeholder="@lang(stringToTitle($name))">
+                                                                   name="{{ $name }}[{{ $language->id }}]"
+                                                                   class="form-control @error($name.'.'.$language->id) is-invalid @enderror"
+                                                                   value="{{ old(@$name.'.'.$language->id, isset($multipleContentData[$language->id]) ? $multipleContentData[$language->id][0]->content->media->{$name}??$multipleContentData[$language->id][0]->description->{$name} : '') }}"
+                                                                   placeholder="@lang(stringToTitle($name))">
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                                             @enderror
@@ -99,11 +97,8 @@
                                                             <label class="form-label">
                                                                 @lang(stringToTitle($name))
                                                             </label>
-                                                            <textarea
-                                                                class="summernote @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                name="{{ $name }}[{{ $language->id }}]">
-                                                                 {{ old($name.'.'.$language->id, isset($multipleContentData[$language->id]) ? @$multipleContentData[$language->id][0]->description->{$name} : '') }}
-                                                            </textarea>
+                                                            <textarea class="summernote @error($name.'.'.$language->id) is-invalid @enderror"
+                                                                      name="{{ $name }}[{{ $language->id }}]">{{ old($name.'.'.$language->id, isset($multipleContentData[$language->id]) ? @$multipleContentData[$language->id][0]->description->{$name} : '') }}</textarea>
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                                             @enderror
@@ -157,8 +152,7 @@
                                                                      data-hs-theme-appearance="dark">
                                                                 <span
                                                                     class="d-block">@lang("Browse your file here")</span>
-                                                                <input type="file"
-                                                                        name="{{ $name }}"
+                                                                <input type="file" name="{{ $name }}"
                                                                        class="js-file-attach form-check-input"
                                                                        id="logoUploader" data-hs-file-attach-options='{
                                                                       "textTarget": "#contentImg",
@@ -184,6 +178,8 @@
                 @endforeach
             </div>
         @endif
+
+
     </div>
 
 @endsection

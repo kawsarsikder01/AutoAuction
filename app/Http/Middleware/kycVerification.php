@@ -22,21 +22,21 @@ class kycVerification
 
      $user = Auth::user();
 
-//       $kyc = Kyc::get();
-//       foreach($kyc as $item){
-//          $validateForm =  UserKyc::where('user_id', $user->id)->where('kyc_type',$item->name)->get();
-//           if(!$validateForm->first()){
-//               return redirect()->route('user.profile')->with(['warning'=>'You are not submitted '.$item->name.' form','kycForm' => $item->name]);
-//           }else{
-//
-//               $check = checkKycForm($validateForm);
-//               if (isset($check['is_pending'])){
-//                   return back()->with('warning',"Your ". $check['is_pending']." is pending");
-//               }elseif (isset($check['rejected'])){
-//                   return back()->with('warning',"Your ". $check['rejected']." form has been rejected");
-//               }
-//           }
-//       }
+       $kyc = Kyc::where('status',1)->get();
+       foreach($kyc as $item){
+          $validateForm =  UserKyc::where('user_id', $user->id)->where('kyc_type',$item->name)->get();
+           if(!$validateForm->first()){
+               return redirect()->route('user.profile')->with(['warning'=>'You are not submitted '.$item->name.' form','kycForm' => $item->name]);
+           }else{
+
+               $check = checkKycForm($validateForm);
+               if (isset($check['is_pending'])){
+                   return back()->with('warning',"Your ". $check['is_pending']." is pending");
+               }elseif (isset($check['rejected'])){
+                   return back()->with('warning',"Your ". $check['rejected']." form has been rejected");
+               }
+           }
+       }
         return $next($request);
     }
 }

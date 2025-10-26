@@ -62,8 +62,9 @@
                                                 id="shortNameLabel" name="short_name">
                                                 @if($shortNames)
                                                     @foreach($shortNames as $key => $shortName)
+
                                                         <option
-                                                            value="{{ $shortName }}" {{ old('short_name', $language->short_name) == $shortName ? 'selected' : '' }}>@lang(strtoupper($shortName))</option>
+                                                            value="{{ $key }}" {{ old('short_name', $language->short_name) == $key ? 'selected' : '' }}>@lang(strtoupper($key)) - @lang($shortName)</option>
                                                     @endforeach
                                                 @endif
                                             </select>

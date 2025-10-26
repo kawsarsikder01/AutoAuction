@@ -20,6 +20,7 @@
                 </div>
             </div>
         </div>
+{{--        @dd($template)--}}
 
         <div class="row">
             <div class="col-lg-12">
@@ -128,9 +129,8 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>@lang('Message')</label>
-                                                    <textarea
-                                                        class="form-control summernote @error('in_app_notification_template.'.$value->id) is-invalid @enderror"
-                                                        name="in_app_notification_template[{{ $value->id }}]">{{ old('in_app_notification_template.'.$value->id, $templates[$key]->in_app ?? '') }}</textarea>
+                                                    <textarea class="form-control summernote @error('in_app_notification_template.'.$value->id) is-invalid @enderror"
+                                                              name="in_app_notification_template[{{ $value->id }}]">{{ old('in_app_notification_template.'.$value->id, $templates[$key]->in_app ?? '') }}</textarea>
                                                     @error('in_app_notification_template.'.$value->id)
                                                     <span class="invalid-feedback">
                                                         {{ __($message) }}

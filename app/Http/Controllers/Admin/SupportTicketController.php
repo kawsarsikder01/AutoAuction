@@ -41,7 +41,7 @@ class SupportTicketController extends Controller
     }
 
 
-    public function ticketSearch(Request $request)
+    public function ticketSearch(Request $request, $status = 'all')
     {
 
         $filterSubject = $request->subject;
@@ -51,16 +51,26 @@ class SupportTicketController extends Controller
         $startDate = $filterDate[0];
         $endDate = isset($filterDate[1]) ? trim($filterDate[1]) : null;
 
-        $supportTicket = SupportTicket::with('user')
+        $supportTicket = SupportTicket::query()->with('user:id,username,firstname,lastname,image,image_driver')
+            ->whereHas('user')
+            ->where(function ($query) use ($status) {
+                if ($status == 'answered'){
+                    $query->where('status', 1);
+                }elseif ($status == 'closed'){
+                    $query->where('status', 3);
+                }elseif ($status == 'replied'){
+                    $query->where('status', 2);
+                }
+            })
             ->orderBy('id', 'DESC')
             ->when(!empty($search), function ($query) use ($search) {
                 return $query->where(function ($subquery) use ($search) {
                     $subquery->where('subject', 'LIKE', "%$search%")
                         ->orWhereHas('user', function ($q) use ($search) {
                             $q->where('firstname', 'LIKE', "%$search%");
-                            $q->OrWhere('lastname', 'LIKE', "%$search%");
-                            $q->OrWhere('username', 'LIKE', "%$search%");
-                            $q->OrWhere('email', 'LIKE', "%$search%");
+                            $q->orWhere('lastname', 'LIKE', "%$search%");
+                            $q->orWhere('username', 'LIKE', "%$search%");
+                            $q->orWhere('email', 'LIKE', "%$search%");
                         });
                 });
             })
@@ -90,13 +100,14 @@ class SupportTicketController extends Controller
                 return $counter;
             })
             ->addColumn('username', function ($item) {
-                return '<a class="d-flex align-items-center me-2" href="#">
+                $url = route("admin.user.edit", optional($item->user)->id);
+                return '<a class="d-flex align-items-center me-2" href="' . $url . '">
                                 <div class="flex-shrink-0">
                                   ' . optional($item->user)->profilePicture() . '
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                   <h5 class="text-hover-primary mb-0">' . optional($item->user)->firstname . ' ' . optional($item->user)->lastname . '</h5>
-                                  <span class="fs-6 text-body">' . optional($item->user)->username . '</span>
+                                  <span class="fs-6 text-body">@' . optional($item->user)->username . '</span>
                                 </div>
                               </a>';
             })
@@ -189,7 +200,7 @@ class SupportTicketController extends Controller
                 for ($i = 0; $i < $numberOfAttachments; $i++) {
                     if ($request->hasFile('attachments.' . $i)) {
                         $file = $request->file('attachments.' . $i);
-                        $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'),null,null,'avif',60);
+                        $supportFile = $this->fileUpload($file, config('filelocation.ticket.path'), null,null,'avif',null);
                         if (empty($supportFile['path'])) {
                             throw new Exception('File could not be uploaded.');
                         }
@@ -221,7 +232,7 @@ class SupportTicketController extends Controller
             ];
 
             $this->userPushNotification($ticketRes->user, 'ADMIN_REPLIED_TICKET', $msg, $action);
-            $this->userFirebasePushNotification($ticketRes->user, 'ADMIN_REPLIED_TICKET', $msg, $action);
+            $this->userFirebasePushNotification($ticketRes->user, 'ADMIN_REPLIED_TICKET', $msg,route('user.ticket.view', $ticketRes->ticket));
             $this->sendMailSms($ticketRes->user, 'ADMIN_REPLIED_TICKET', [
                 'ticket_id' => $ticketRes->ticket,
                 'ticket_subject' => $ticketRes->subject,

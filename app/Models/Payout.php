@@ -10,7 +10,7 @@ class Payout extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'payout_method_id', 'payout_currency_code', 'amount', 'charge', 'net_amount', 'amount_in_base_currency',
-    'charge_in_base_currency', 'net_amount_in_base_currency', 'response_id', 'last_error', 'information', 'meta_field', 'feedback', 'trx_id', 'status'];
+        'charge_in_base_currency', 'net_amount_in_base_currency', 'response_id', 'last_error', 'information', 'meta_field', 'feedback', 'trx_id', 'status'];
 
     protected $table = 'payouts';
 

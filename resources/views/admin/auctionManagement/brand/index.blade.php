@@ -22,77 +22,91 @@
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBrandModal">@lang('Create Brand')</button>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-thead-bordered table-nowrap table-align-middle card-table">
-                <thead class="thead-light">
-                <tr>
-                    <th>@lang('No.')</th>
-                    <th>@lang('Name')</th>
-                    <th>@lang('Status')</th>
-                    <th class="text-center">
-                        @foreach($languages as $language)
-                            <img class="avatar avatar-xss avatar-square me-2"
-                                 src="{{ getFile($language->flag_driver, $language->flag) }}"
-                                 alt="{{ $language->name }} Flag">
-                        @endforeach
-                    </th>
-                    <th>@lang('Action')</th>
-                </tr>
-                </thead>
+       <div class="card-body">
+           <div class="table-responsive">
+               <table class="table table-thead-bordered table-nowrap table-align-middle card-table">
+                   <thead class="thead-light">
+                   <tr>
+                       <th>@lang('No.')</th>
+                       <th>@lang('Name')</th>
+                       <th>@lang('Status')</th>
+                       <th class="text-center">
+                           @foreach($languages as $language)
+                               <img class="avatar avatar-xss avatar-square me-2"
+                                    src="{{ getFile($language->flag_driver, $language->flag) }}"
+                                    alt="{{ $language->name }} Flag">
+                           @endforeach
+                       </th>
+                       <th>@lang('Action')</th>
+                   </tr>
+                   </thead>
 
-                <tbody>
-                    @php
-                        $sl = 0;
-                    @endphp
-                    @foreach ($brand as $item)
-                        <tr>
-                            <td>{{++$sl}}</td>
-                            <td>{{$item->name}}</td>
+                   <tbody>
+                   @php
+                       $sl = 0;
+                   @endphp
+                   @foreach ($brand as $item)
+                       <tr>
+                           <td>{{++$sl}}</td>
+                           <td>{{$item->name}}</td>
 
-                            <td ><span  class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
-                            <td class="text-center">
-                                @if($item->type !== 2)
-                                    @if($item->language_id)
-                                        <a href="{{ route('admin.edit.car.brand', [$item->id,$item->language_id]) }}"
-                                           class="btn btn-white btn-icon btn-sm flag-btn"> <i
-                                                class="bi bi-check2"></i></a>
-                                    @endif
-                                    @foreach($languages as $language)
-                                        @if($item->language_id !== $language->id)
-                                            <a href="{{ route('admin.edit.car.brand',[$item->id,$language->id]) }}"
-                                               class="btn btn-white btn-icon btn-sm flag-btn"
-                                               target="_blank"> <i class="bi-pencil"></i></a>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a class="btn btn-white btn-sm editBrandBtn"href="javascript:void(0)" data-name="{{$item->name}}" data-status="{{$item->status}}" data-route="{{route("admin.update.car.brand",$item->id)}}" data-bs-toggle="modal" data-bs-target="#editBrandModal">
-                                        <i class="bi-pencil-fill me-1"></i> Edit</a>
+                           <td ><span  class="badge  {{$item->status == 1 ? 'bg-soft-success text-success':'bg-soft-danger text-danger'}} bg-soft-success text-success"><span class="legend-indicator bg-{{$item->status == 1? 'success':'danger'}}"></span>{{$item->status == 1 ? 'Active':'Inactive'}}</span></td>
+                           <td class="text-center">
+                               @if($item->type !== 2)
+                                   @if($item->language_id)
+                                       <a href="{{ route('admin.edit.car.brand', [$item->id,$item->language_id]) }}"
+                                          class="btn btn-white btn-icon btn-sm flag-btn"> <i
+                                               class="bi bi-check2"></i></a>
+                                   @endif
+                                   @foreach($languages as $language)
+                                       @if($item->language_id !== $language->id)
+                                           <a href="{{ route('admin.edit.car.brand',[$item->id,$language->id]) }}"
+                                              class="btn btn-white btn-icon btn-sm flag-btn"
+                                              target="_blank"> <i class="bi-pencil"></i></a>
+                                       @endif
+                                   @endforeach
+                               @else
+                                   N/A
+                               @endif
+                           </td>
+                           <td>
+                               <div class="btn-group" role="group">
+                                   <a class="btn btn-white btn-sm editBrandBtn"href="javascript:void(0)" data-name="{{$item->name}}" data-status="{{$item->status}}" data-route="{{route("admin.update.car.brand",$item->id)}}" data-bs-toggle="modal" data-bs-target="#editBrandModal">
+                                       <i class="bi-pencil-fill me-1"></i> @lang('Edit')</a>
 
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-white btn-icon btn-sm dropdown-toggle dropdown-toggle-empty" id="pageEditDropdown" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                            <div class="dropdown-menu dropdown-menu-end mt-1" aria-labelledby="pageEditDropdown">
-                                                <a class="dropdown-item deleteBtn text-danger"
-                                                   href="javascript:void(0)"
-                                                   data-route="{{ route("admin.delete.car.brand", $item->id) }}"
-                                                   data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                                    <i class="bi-trash dropdown-item-icon text-danger"></i> @lang("Delete")
-                                                </a>
-                                            </div>
-                                        </div>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                   <div class="btn-group">
+                                       <button type="button" class="btn btn-white btn-icon btn-sm dropdown-toggle dropdown-toggle-empty" id="pageEditDropdown" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                       <div class="dropdown-menu dropdown-menu-end mt-1" aria-labelledby="pageEditDropdown">
+                                           <a class="dropdown-item deleteBtn text-danger"
+                                              href="javascript:void(0)"
+                                              data-route="{{ route("admin.delete.car.brand", $item->id) }}"
+                                              data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                               <i class="bi-trash dropdown-item-icon text-danger"></i> @lang("Delete")
+                                           </a>
+                                       </div>
+                                   </div>
+                               </div>
+                           </td>
+                       </tr>
+                   @endforeach
+                   </tbody>
+               </table>
+           </div>
+       </div>
+        <div class="card-footer">
+            <div class="row justify-content-center justify-content-sm-between align-items-sm-center">
+                <div class="col-sm-auto">
+                    <div class="d-flex justify-content-center justify-content-sm-end">
+                        <!-- Pagination -->
+                        {{ $brand->appends($_GET)->links('admin.layouts.pagination') }}
+                    </div>
+                </div>
+                <!-- End Col -->
+            </div>
         </div>
     </div>
 </div>
+
 <!-- Modal -->
 <div id="createBrandModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

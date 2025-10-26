@@ -21,7 +21,7 @@ class GoogleApiSettingController extends Controller
         $googleSheetCredential = GoogleSheetApi::firstOrFail();
 
         $request->validate([
-              'credential' => 'nullable',
+            'credential' => 'nullable',
         ]);
 
         if ($request->hasFile('credential')) {

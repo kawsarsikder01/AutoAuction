@@ -1,5 +1,7 @@
 @extends($theme . 'layouts.app')
-@section('title',trans($pageSeo->page_title??''))
+@section('title')
+{!! $pageSeo->page_title??'' !!}
+@endsection
 @section('content')
 <x-banner-component :pagetitle="$pageSeo->page_title??''" :path="$pageSeo->breadcrumb_image??''" :driver="$pageSeo->breadcrumb_image_driver??''"/>
  <!-- blog details  -->
@@ -27,6 +29,7 @@
               @empty
                   <div class="text-center p-4">
                       <img  class="dataTables-image mb-3 w-50"
+                            id="auctionEmptyImage"
                             src="{{ asset($themeTrue.'img/img/no_data_found.jpg') }}"
                             alt="Image Description">
                       <p class="mb-0">@lang("No Blog Found")</p>
@@ -44,7 +47,7 @@
                 <div class="side-box search-box">
                    <form action="{{route('blog.search')}}" method="get">
                       <div class="input-group">
-                         <input type="text" class="form-control" name="name" placeholder="search Here" />
+                         <input type="text" class="form-control" name="name" placeholder="@lang('search Here')" />
                          <button><i class="fal fa-search" aria-hidden="true"></i></button>
                       </div>
                    </form>

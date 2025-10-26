@@ -21,6 +21,28 @@
         </div>
 
         <div class="row">
+            <div class="col-lg-12">
+                <div class="shadow p-3 mb-5 alert-soft-blue mb-4 mb-lg-7" role="alert">
+                    <div class="alert-box d-flex flex-wrap align-items-center">
+                        <div class="flex-shrink-0">
+                            <img class="avatar avatar-xl"
+                                 src="{{ asset('assets/admin/img/oc-megaphone-light.svg') }}"
+                                 alt="Image Description" data-hs-theme-appearance="default">
+                            <img class="avatar avatar-xl"
+                                 src="{{ asset('assets/admin/img/oc-megaphone-light.svg') }}"
+                                 alt="Image Description" data-hs-theme-appearance="dark">
+                        </div>
+
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="alert-heading text-info mb-1">@lang("Attention!")</h3>
+                            <div class="d-flex align-items-center">
+                                <p class="mb-0 text-info"> @lang(" If you get 500(server error) for some reason, please turn on `Debug Log` and try again. Then you can see what was missing in your system. ")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-lg-3">
                 @include('admin.control_panel.components.sidebar', ['settings' => config('generalsettings.settings'), 'suffix' => 'Settings'])
             </div>

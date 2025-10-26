@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('page_title',__('Google Sheet API Settings'))
+@section('page_title',__('Azure Translate API'))
 @section('content')
     <div class="content container-fluid">
         <div class="page-header">
@@ -23,7 +23,7 @@
             <div class="col-lg-3">
                 @include('admin.control_panel.components.sidebar', ['settings' => config('generalsettings.settings'), 'suffix' => 'Settings'])
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <div class="d-grid gap-3 gap-lg-5">
                     <div class="card">
                         <div class="card-header">
@@ -69,16 +69,44 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <div id="emailSection" class="card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h2 class="card-title h4 mt-2">@lang("Instruction")</h2>
                     </div>
                     <div class="card-body">
-                        <p>@lang("✓ If you upload it in  public_html folder, then visit http://your-sitename in browser.")</p>
-                        <p>@lang("✓ If you upload it in a folder in  public_html folder, then visit http://your-sitename/folder_name in browser.")</p>
-                        <p>@lang("✓ If you upload it in your created subdomain folder, then visit http://your-subdomain-name in browser.")</p>
-                        <p>@lang("✓ If you upload it in a folder in your created subdomain folder, then visit http://your-subdomain-name/folder_name in browser.")</p>
+                        <p>@lang('To use the Microsoft Azure Translator Text API, you need to obtain Azure credentials in the form of an API key. Follow these steps to get your Azure credentials for the Translate API:')</p>
+                        <ol>
+                            <li class="mb-3">
+                                <b>@lang("Subscription Key")</b>
+                                <ol>
+                                    <li> @lang("Log in to the")  <a href="https://portal.azure.com/" target="_blank">@lang('Azure portal')</a></li>
+                                    <li>@lang('Navigate to your Translator Text resource.')</li>
+                                    <li>@lang('In the left-hand menu, under "Settings," click on "Keys and Endpoint."')</li>
+                                    <li>@lang('Copy either "Key1" or "Key2" under the "Keys" section. This is your Subscription Key.')</li>
+                                </ol>
+                            </li>
+                            <li class="mb-3"><b>@lang('Endpoint (URL)')</b>
+                                <ol>
+                                    <li>@lang('In the same "Keys and Endpoint" section, find the "Endpoint" field.')</li>
+                                    <li>@lang('Copy the URL next to "Endpoint." This is your Endpoint URL.')</li>
+                                </ol>
+                            </li>
+                            <li class="mb-3"><b>@lang('Subscription Region')</b>
+                                <ol>
+                                    <li>@lang('In the same "Keys and Endpoint" section, find the "Location" field.')</li>
+                                    <li>@lang('Copy the region value next to "Location." This is your Subscription Region.')</li>
+                                </ol>
+                            </li>
+                        </ol>
+                        <p>@lang("Now you have collected the necessary information:")</p>
+
+                        <ul>
+                            <li>@lang("Subscription Key: [Your Subscription Key]")</li>
+                            <li>@lang("Endpoint (URL): [Your Endpoint URL]")</li>
+                            <li>@lang("Subscription Region: [Your Subscription Region]")</li>
+                        </ul>
+                        <!-- End List -->
                     </div>
                 </div>
             </div>

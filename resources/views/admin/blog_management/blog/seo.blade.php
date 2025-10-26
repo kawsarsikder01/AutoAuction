@@ -38,7 +38,7 @@
                                                class="form-control @error('page_title') is-invalid @enderror"
                                                name="page_title" id="PageTitleLabel"
                                                placeholder="@lang("Page Title")" aria-label="@lang("Page Title")"
-                                               value="{{ old('page_title', $blog->details->page_title) }}" autocomplete="off">
+                                               value="{{ old('page_title', $blog->page_title) }}" autocomplete="off">
                                         @error('page_title')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                         @enderror

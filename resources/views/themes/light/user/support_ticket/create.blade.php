@@ -7,7 +7,7 @@
                 <div class="card">
                     <div class="card-header bg-white">
                         <h4 class="card-header-title ">
-                            Create Ticket
+                            @lang('Create Ticket')
                         </h4>
                     </div>
                     <div class="card-body">
@@ -58,7 +58,7 @@
                 </form>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>

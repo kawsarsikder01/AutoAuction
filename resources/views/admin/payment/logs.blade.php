@@ -193,7 +193,7 @@
                                                 <div class="tom-select-custom">
                                                     <select class="js-select form-select" id="filter_method">
                                                         <option value="all"
-                                                                data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle me-2" src="{{ asset("assets/upload/gateway/all_gateway.png")  }}" alt="..." /><span class="text-truncate">@lang("All Gateway")</span></span>'
+                                                                data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle me-2" src="{{ asset("assets/admin/img/payment.jpg") }}" alt="..." /><span class="text-truncate">@lang("All Gateway")</span></span>'
                                                         @forelse($methods as $method)
                                                             <option value="@lang($method->id)"
                                                                     data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle me-2" src="{{getFile($method->driver, $method->image)}}" alt="Flag" /><span class="text-truncate">{{ $method->name }}</span></span>'>
@@ -356,6 +356,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.payment.search") }}",
                 },

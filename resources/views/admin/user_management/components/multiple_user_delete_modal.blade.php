@@ -11,7 +11,7 @@
             <form action="" method="post">
                 @csrf
                 <div class="modal-body">
-                    @lang('"Do you want to delete all selected user data?')
+                    @lang('Do you want to delete all selected user data?')
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-white" data-bs-dismiss="modal">@lang('Close')</button>

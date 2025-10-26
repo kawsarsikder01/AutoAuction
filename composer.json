@@ -29,6 +29,7 @@
         "midtrans/midtrans-php": "^2.5",
         "mollie/laravel-mollie": "^2.14",
         "plivo/plivo-php": "^4.52",
+        "pragmarx/google2fa": "^8.0",
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.2",
         "securionpay/securionpay-php": "^2.2",

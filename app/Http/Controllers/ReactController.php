@@ -10,7 +10,11 @@ class ReactController extends Controller
 {
     public function submit(Request $request,$id)
     {
-        $ipAddress = $request->header('X-Forwarded-For') ?? $request->ip(); // Replace with the IP address you want to check
+        $ipAddress = request()->ip(); // Replace with the IP address you want to check
+        $checkReact = React::where('vehicle_id',$id)->where('ip_address',$ipAddress)->first();
+        if($checkReact){
+            return response()->json("You Can't Submit React");
+        }
         $react = new React();
         $react->vehicle_id = $id;
         $react->ip_address = $ipAddress;

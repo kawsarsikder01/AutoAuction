@@ -12,8 +12,10 @@ use App\Models\Kyc;
 use App\Models\Language;
 use App\Models\Payout;
 use App\Models\PlanPurchaseHistory;
+use App\Models\User;
 use App\Models\UserKyc;
 use App\Models\Vehicle;
+use App\Models\Visitor;
 use App\Traits\Upload;
 use hisorange\BrowserDetect\Parser as Browser;
 use Illuminate\Http\Request;
@@ -58,27 +60,33 @@ class HomeController extends Controller
         $is_pending = [];
         $rejected = [];
         $kyc = Kyc::get();
-        foreach($kyc as $item){
-            $validateForm =  UserKyc::where('user_id', $user->id)->where('kyc_type',$item->name)->get();
-            if(!$validateForm->first()){
+        foreach ($kyc as $item) {
+            $validateForm = UserKyc::where('user_id', $user->id)->where('kyc_type', $item->name)->get();
+            if (!$validateForm->first()) {
                 $not_submitedForm[] = $item->name;
-            }else{
-                    $check = checkKycForm($validateForm);
-                if (isset($check['is_pending'])){
+            } else {
+                $check = checkKycForm($validateForm);
+                if (isset($check['is_pending'])) {
                     $is_pending[] = $check['is_pending'];
-                }elseif (isset($check['rejected'])){
-                    $rejected[]  = $check['rejected'];
+                } elseif (isset($check['rejected'])) {
+                    $rejected[] = $check['rejected'];
                 }
 
             }
         }
-            $kycForm['not_submitedForm'] =  $not_submitedForm;
-            $kycForm['is_pending'] =  $is_pending;
-            $kycForm['rejected'] =  $rejected;
+        $kycForm['not_submitedForm'] = $not_submitedForm;
+        $kycForm['is_pending'] = $is_pending;
+        $kycForm['rejected'] = $rejected;
 
+        $data['vehicles'] = Vehicle::withCount('biddingHistory')
+            ->with('biddingHistory','details')
+            ->where('user_id',Auth::user()->id)
+            ->orderByDesc('bidding_history_count')
+            ->take(7)
+            ->get();
 
-            $data['user'] = Auth::user();
-            $data['firebaseNotify'] = config('firebase');
+        $data['user'] = Auth::user();
+        $data['firebaseNotify'] = config('firebase');
         $countVehicle = Vehicle::select([
             DB::raw('COUNT(DISTINCT CASE WHEN vehicle_details.sold_status = 1 AND vehicle.user_id = ' . Auth::user()->id . ' THEN vehicle.id END) as soldedVehicle'),
             DB::raw('COUNT(DISTINCT CASE WHEN vehicle.release_status = 2 AND vehicle.user_id = ' . Auth::user()->id . ' THEN vehicle.id END) as cancelAuction'),
@@ -91,29 +99,21 @@ class HomeController extends Controller
         $data['soldedVehicle'] = $countVehicle->pluck('soldedVehicle')->first();
         $data['cancelAuction'] = $countVehicle->pluck('cancelAuction')->first();
         $data['totalWinAuction'] = $countVehicle->pluck('totalWinAuction')->first();
-        $data['totalListedVehicle'] =  Vehicle::where('user_id',Auth::user()->id)->count();
-            $userLoginsData = DB::table('user_logins')
-                ->whereDate('created_at', '>=', now()->subDays(30))
-                ->select('browser', 'os', 'get_device')
-                ->where('user_id',Auth::user()->id)
-                ->get();
+        $data['totalListedVehicle'] = Vehicle::where('user_id', Auth::user()->id)->count();
 
-            $data['userLoginsBrowserData'] = $userLoginsData->groupBy('browser')->map->count();
-            $data['userLoginsOSData'] = $userLoginsData->groupBy('os')->map->count();
-            $data['userLoginsDeviceData'] = $userLoginsData->groupBy('get_device')->map->count();
-            return view(template() . 'user.dashboard', $data,compact('kycForm'));
+        return view(template() . 'user.dashboard', $data, compact('kycForm'));
 
     }
 
     public function kycShow($slug, $id)
     {
-       try {
-        $data['kycs'] = Kyc::where('status', 1)->get();
-        $data['kyc'] = Kyc::where('status', 1)->findOrFail($id);
-        return view($this->theme . 'user.kyc.show', $data);
-       } catch (\Exception $exception) {
-        abort(404);
-       }
+        try {
+            $data['kycs'] = Kyc::where('status', 1)->get();
+            $data['kyc'] = Kyc::where('status', 1)->findOrFail($id);
+            return view($this->theme . 'user.kyc.show', $data);
+        } catch (\Exception $exception) {
+            abort(404);
+        }
     }
 
     public function profile()
@@ -128,7 +128,7 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         if ($request->hasFile('image')) {
-            $image = $this->fileUpload($request->image, config('filelocation.userProfile.path'), null,null,'avif', 60, $user->image, $user->image_driver);
+            $image = $this->fileUpload($request->image, config('filelocation.userProfile.path'), null, null, 'avif', 60, $user->image, $user->image_driver);
             if ($image) {
                 $profileImage = $image['path'];
                 $ImageDriver = $image['driver'];
@@ -208,13 +208,13 @@ class HomeController extends Controller
 
     public function kycVerificationSubmit(Request $request)
     {
-        $data =  $request->except('_token', '_method');
+        $data = $request->except('_token', '_method');
         $reqData = array();
-        foreach($data as $key => $value){
-            if(is_numeric($value) == true){
-                $reqData[$key] = (int) $value;
-            }else{
-                $reqData[$key] =  $value;
+        foreach ($data as $key => $value) {
+            if (is_numeric($value) == true) {
+                $reqData[$key] = (int)$value;
+            } else {
+                $reqData[$key] = $value;
             }
         }
         $kyc = Kyc::where('id', $request->type)->where('status', 1)->firstOrFail();
@@ -379,46 +379,77 @@ class HomeController extends Controller
             return back()->with('error', 'Wrong Verification Code.');
         }
     }
+
     public function getChartData()
     {
         $purchasePlun = PlanPurchaseHistory::selectRaw('DAY(purchase_date) as day, SUM(price) as total')
             ->whereMonth('purchase_date', now()->month)
             ->groupBy('day')
-            ->where('user_id',Auth::user()->id)
+            ->where('user_id', Auth::user()->id)
             ->get();
-        $depositData =Deposit::where('depositable_type', 'App\Models\Fund')
+        $depositData = Deposit::where('depositable_type', 'App\Models\Fund')
             ->whereMonth('created_at', now()->month)
             ->selectRaw('DAY(created_at) as day, SUM(payable_amount_in_base_currency) as total')
             ->groupBy('day')
             ->where('user_id', Auth::user()->id)
             ->get();
-        $payoutData =  Payout::where('user_id',Auth::user()->id)
-            ->where('status',2)
+        $payoutData = Payout::where('user_id', Auth::user()->id)
+            ->where('status', 2)
             ->selectRaw('DAY(created_at) as day, SUM(net_amount_in_base_currency) as total')
-            ->whereMonth('created_at', now()->month)
-            ->groupBy('day')
-            ->get();
-        $bidHistory =  BiddingHistory::where('user_id',Auth::user()->id)
-            ->selectRaw('DAY(created_at) as day, SUM(bid_amount) as total')
             ->whereMonth('created_at', now()->month)
             ->groupBy('day')
             ->get();
 
         $xValues = $this->getFormattedDates();
         return response()->json([
-            'xValues' => $xValues,
+            'labels' => $xValues,
             'purchasePlan' => $this->formatChartData($purchasePlun),
             'deposit' => $this->formatChartData($depositData),
             'payout' => $this->formatChartData($payoutData),
-            'bidHistory'=>$this->formatChartData($bidHistory),
         ]);
 
     }
+
+    public function getBidHistory()
+    {
+        $bidHistory = BiddingHistory::where('user_id', Auth::user()->id)
+            ->selectRaw('DAY(created_at) as day, SUM(bid_amount) as total')
+            ->whereMonth('created_at', now()->month)
+            ->groupBy('day')
+            ->get();
+        $labels = $this->getFormattedDates();
+        return response()->json([
+            'bidHistory' => $this->formatChartData($bidHistory),
+            'labels' => $labels,
+        ]);
+
+    }
+
+    public function getUserLoginHistory()
+    {
+        $userLoginsData = DB::table('user_logins')
+            ->whereDate('created_at', '>=', now()->subDays(30))
+            ->select('browser', 'os', 'get_device')
+            ->where('user_id', Auth::user()->id)
+            ->get();
+
+        $data['userLoginsBrowserData'] = $userLoginsData->groupBy('browser')->map->count();
+        $data['userLoginsOSData'] = $userLoginsData->groupBy('os')->map->count();
+        $data['userLoginsDeviceData'] = $userLoginsData->groupBy('get_device')->map->count();
+        return response()->json([
+           'userLoginsBrowserData'  => $data['userLoginsBrowserData'],
+            'userLoginsOSData' => $data['userLoginsOSData'],
+            'userLoginsDeviceData' =>  $data['userLoginsDeviceData']
+        ]);
+    }
+
+
     private function getDayNumbers()
     {
         // Assuming 30 days in a month, adjust accordingly
         return range(1, 30);
     }
+
     private function getFormattedDates()
     {
         $currentMonth = now();
@@ -440,6 +471,29 @@ class HomeController extends Controller
         }
 
         return $formattedData;
+    }
+    public function topVisitedAuction()
+    {
+        $Auctions = Vehicle::withCount('visitors')
+            ->where('user_id',Auth::user()->id)
+            ->orderByDesc('visitors_count')
+            ->take(7)
+            ->get();
+        $topVisitedAuction = [];
+        foreach ($Auctions  as $item){
+            $topVisitedAuction[$item->details->title] = $item->visitors_count;
+        }
+        return response()->json([
+            'topVisitedAuction' => array_values($topVisitedAuction),
+            'labels' => array_keys($topVisitedAuction)
+        ]);
+    }
+
+    public function getUserKyc()
+    {
+        $userKycs = UserKyc::where('user_id',Auth::user()->id)->get();
+
+        return view(template().'user.kyc.show',compact('userKycs'));
     }
 
 }

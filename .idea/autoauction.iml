@@ -8,13 +8,12 @@
       <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/paythrow/php-sdk/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/razorpay/razorpay-php/libs/Requests-1.7.0/library" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/razorpay/razorpay-php/src" isTestSource="false" packagePrefix="Razorpay\Api\" />
-      <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/razorpay/razorpay-php/tests" isTestSource="false" packagePrefix="Razorpay\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/razorpay/razorpay-php/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/razorpay/razorpay-php/tests" isTestSource="false" packagePrefix="Razorpay\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/stripe/stripe-php/lib" isTestSource="false" packagePrefix="StripeJS\" />
       <sourceFolder url="file://$MODULE_DIR$/app/Services/Gateway/stripe/stripe-php/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/tests/Feature" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/Unit" isTestSource="true" />
@@ -23,6 +22,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/aws/aws-sdk-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/beberlei/assert" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/cinetpay/cinetpay-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dflydev/dot-access-data" />
@@ -39,6 +39,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/fakerphp/faker" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/filp/whoops" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/firebase/php-jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/flutterwavedev/flutterwave-v3" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fruitcake/php-cors" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/google/apiclient" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/google/apiclient-services" />
@@ -57,9 +58,11 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/psr7" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/uri-template" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hamcrest/hamcrest-php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/hisorange/browser-detect" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/infobip-community/infobip-api-php-sdk" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/infobip/infobip-api-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/image" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/jaybizzle/crawler-detect" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laminas/laminas-diactoros" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/framework" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/pint" />
@@ -77,16 +80,20 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/flysystem-local" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/fractal" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/mime-type-detection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/pipeline" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mailersend/laravel-driver" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mailersend/mailersend" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/matomo/device-detector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/matthiasmullie/minify" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/matthiasmullie/path-converter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/midtrans/midtrans-php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mobiledetect/mobiledetectlib" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mockery/mockery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mollie/laravel-mollie" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mollie/mollie-api-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mtdowling/jmespath.php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mustangostang/spyc" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/php-enum" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/nesbot/carbon" />
@@ -151,6 +158,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/recursion-context" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/type" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/version" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/securionpay/securionpay-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/backtrace" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/flare-client-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/ignition" />
@@ -205,6 +213,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/tightenco/collect" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/twilio/sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ua-parser/uap-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/vonage/client" />
@@ -217,16 +226,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/yajra/laravel-datatables-fractal" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yajra/laravel-datatables-html" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yajra/laravel-datatables-oracle" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/hisorange/browser-detect" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/jaybizzle/crawler-detect" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/league/pipeline" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/matomo/device-detector" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/mobiledetect/mobiledetectlib" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/mustangostang/spyc" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/ua-parser/uap-php" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/flutterwavedev/flutterwave-v3" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/securionpay/securionpay-php" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/cinetpay/cinetpay-php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/pragmarx/google2fa" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

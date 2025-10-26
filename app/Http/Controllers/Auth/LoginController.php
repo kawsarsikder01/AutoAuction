@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Facades\App\Services\Google\GoogleRecaptchaService;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
@@ -55,7 +57,7 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
-        //GoogleRecaptchaService::responseRecaptcha($request['g-recaptcha-response']);
+        // GoogleRecaptchaService::responseRecaptcha($request['g-recaptcha-response']);
 
         // if (basicControl()->reCaptcha_status_login) {
         //     $request['g-recaptcha-response'] = 'sometimes|required';
@@ -78,8 +80,47 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        $basicControl = basicControl();
 
-        $this->validateLogin($request);
+        $validator = Validator::make($request->all(), [
+            $this->username() => ['required', 'string'],
+            'password' => ['required', 'string', 'max:100'],
+            'captcha' => [
+                Rule::requiredIf(function () use ($basicControl) {
+                    return $basicControl->manual_recaptcha == 1 && $basicControl->reCaptcha_status_login == 1;
+                }),
+                function ($attribute, $value, $fail) use ($basicControl) {
+                    if ($basicControl->manual_recaptcha == 1 && $basicControl->reCaptcha_status_login == 1) {
+                        if (!$value) {
+                            $fail('The captcha field is required.');
+                        } else {
+                            if (session()->get('captcha') !== $value) {
+                                $fail('The captcha does not match.');
+                            }
+                        }
+                    }
+                },
+            ],
+            'g-recaptcha-response' => [
+                Rule::requiredIf(function () use ($basicControl) {
+                    return $basicControl->google_user_login_recaptcha_status && $basicControl->google_recaptcha == 1;
+                }),
+                function ($attribute, $value, $fail) use ($basicControl) {
+                    if ($basicControl->google_user_login_recaptcha_status && $basicControl->google_recaptcha == 1) {
+                        if (!$value) {
+                            $fail('The reCAPTCHA field is required.');
+                        }
+                        // Optionally, you can add the code to verify Google's reCAPTCHA response here
+                    }
+                },
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+
 
         if (method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)) {

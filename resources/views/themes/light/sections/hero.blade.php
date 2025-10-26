@@ -6,7 +6,6 @@
              <div class="text-box">
                 <h5 class="text-primary text-uppercase">{{$hero['single']['heading']??''}}</h5>
                 <h1>{{$hero['single']['sub_heading']??''}}</h1>
-                {{-- <h1>Buy Your Next Dream at <span class="text-">Auto Auction</span></h1> --}}
                 <p class="text-white">
                   {!! $hero['single']['description']??'' !!}
                 </p>

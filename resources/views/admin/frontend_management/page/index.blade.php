@@ -111,12 +111,17 @@
                                                         </a>
                                                     @endforeach
                                                 @else
-                                                    N/A
+                                                    @foreach($allLanguage as $language)
+                                                        <a href="{{ route('admin.edit.static.page', [$page->id, $theme, $language->id]) }}"
+                                                           class="btn btn-white btn-icon btn-sm flag-btn"
+                                                           target="_blank">
+                                                            <i class="bi {{ $page->getLanguageEditClass($page->id, $language->id) }}"></i>
+                                                        </a>
+                                                    @endforeach
                                                 @endif
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    {{--                                                    @if($page->type == 1)--}}
                                                     @if($page->type == 0)
                                                         <a class="btn btn-white btn-sm"
                                                            href="{{ route('admin.edit.page', [$page->id, $theme, $defaultLanguage->id]) }}">
@@ -124,7 +129,7 @@
                                                         </a>
                                                     @else
                                                         <a class="btn btn-white btn-sm"
-                                                           href="{{ route('admin.edit.static.page', $page->id) }}">
+                                                           href="{{ route('admin.edit.static.page', [$page->id, $theme, $defaultLanguage->id]) }}">
                                                             <i class="bi-pencil-fill me-1"></i> @lang("Edit")
                                                         </a>
                                                     @endif

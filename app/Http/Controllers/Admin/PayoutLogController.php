@@ -48,7 +48,10 @@ class PayoutLogController extends Controller
         $startDate = $filterDate[0];
         $endDate = isset($filterDate[1]) ? trim($filterDate[1]) : null;
 
-        $payout = Payout::with('user', 'method')
+        $payout = Payout::query()->with(['user:id,username,firstname,lastname,image,image_driver', 'method:id,name,logo,driver'])
+            ->whereHas('user')
+            ->whereHas('method')
+            ->orderBy('id', 'desc')
             ->where('status', '!=', 0)
             ->orderBy('id', 'desc')
             ->when(!empty($search), function ($query) use ($search) {
@@ -100,7 +103,7 @@ class PayoutLogController extends Controller
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                   <h5 class="text-hover-primary mb-0">' . optional($item->user)->firstname . ' ' . optional($item->user)->lastname . '</h5>
-                                  <span class="fs-6 text-body">' . optional($item->user)->username . '</span>
+                                  <span class="fs-6 text-body">@' . optional($item->user)->username . '</span>
                                 </div>
                               </a>';
             })
@@ -120,11 +123,11 @@ class PayoutLogController extends Controller
             })
             ->addColumn('amount', function ($item) {
                 $statusClass = $item->getStatusClass();
-                return "<h6 class='mb-0 $statusClass '>" . fractionNumber(getAmount($item->amount)). ' ' . $item->payout_currency_code . "</h6>";
+                return "<h6 class='mb-0 $statusClass '>" . currencyPosition($item->net_amount_in_base_currency). "</h6>";
 
             })
             ->addColumn('charge', function ($item) {
-                return "<span class='text-danger'>".getAmount($item->charge) . ' ' . $item->payout_currency_code."</span>";
+                return "<span class='text-danger'>".currencyPosition($item->charge_in_base_currency) ."</span>";
             })
             ->addColumn('net amount', function ($item) {
                 return "<h6>".currencyPosition(getAmount($item->amount_in_base_currency))."</h6>";
@@ -186,12 +189,12 @@ class PayoutLogController extends Controller
                 data-id='$item->id'
                 data-info='" . json_encode($details) . "'
                 data-userid='" . optional($item->user)->id . "'
-                data-sendername='" . optional($item->user)->firstname . ' ' . optional($item->user)->lastname . "'
+                data-sendername='" . optional($item->user)->firstname .' '.optional($item->user)->lastname ."'
                 data-transactionid='$item->trx_id'
                 data-feedback='$item->feedback'
-                data-amount=' " . currencyPosition(getAmount($item->amount)) . "'
+                data-amount=' " . currencyPosition(getAmount($item->amount_in_base_currency)) . "'
                 data-method='" . optional($item->method)->name . "'
-                data-gatewayimage='" . getFile(optional($item->method)->driver, optional($item->method)->image) . "'
+                data-gatewayimage='" . getFile(optional($item->method)->driver, optional($item->method)->logo) . "'
                 data-datepaid='" . dateTime($item->created_at, 'd M Y') . "'
                 data-status='$item->status'
                 data-status_color='$statusColor'
@@ -215,6 +218,8 @@ class PayoutLogController extends Controller
             'status' => ['required', Rule::in(['2', '3'])],
         ]);
         $payout = Payout::where('id', $request->id)->whereIn('status', [1])->with('user', 'method')->firstOrFail();
+
+
         if ($request->status == 3) {
             $this->cancelPayout($request->id, $request->feedback);
             return back()->with('success', "Payment Rejected.");
@@ -271,8 +276,6 @@ class PayoutLogController extends Controller
                 $payout->save();
             }
         }
-        $payout->user->balance = $payout->user->balance - $payout->net_amount_in_base_currency;
-        $payout->user->update();
 
         return back()->with('success', 'Payment Confirmed');
     }
@@ -289,7 +292,7 @@ class PayoutLogController extends Controller
         }
 
         /* Add money from Sender Wallet */
-        $addBalance = updateBalance($payout->user_id, $payout->net_amount, 1);
+        $addBalance = updateBalance($payout->user_id, $payout->net_amount_in_base_currency, 1);
 
         $payout->feedback = $feedback;
         $payout->status = 3;
@@ -304,10 +307,10 @@ class PayoutLogController extends Controller
         ];
 
         $action = [
-            "link" => "#",
+            "link" => route('user.payout.index'),
             "icon" => "fa fa-money-bill-alt text-white"
         ];
-        $firebaseAction = "#";
+        $firebaseAction = route('user.payout.index');
         $this->sendMailSms($receivedUser, 'PAYOUT_CANCEL', $params);
         $this->userPushNotification($receivedUser, 'PAYOUT_CANCEL', $params, $action);
         $this->userFirebasePushNotification($receivedUser, 'PAYOUT_CANCEL', $params, $firebaseAction);
@@ -327,11 +330,11 @@ class PayoutLogController extends Controller
             "link" => route('user.payout.index'),
             "icon" => "fas fa-money-bill-alt text-white"
         ];
-        $fireBaseAction = "#";
+        $fireBaseAction = route('user.payout.index');
         $this->userPushNotification($payout->user, 'PAYOUT_APPROVED', $msg, $action);
         $this->userFirebasePushNotification('PAYOUT_APPROVED', $msg, $fireBaseAction);
         $this->sendMailSms($payout->user, 'PAYOUT_APPROVED', [
-            'gateway' => optional($payout->method)->name,
+            'gateway_name' => optional($payout->method)->name,
             'amount' => currencyPosition($payout->amount),
             'charge' => currencyPosition($payout->charge),
             'transaction' => $payout->trx_id,

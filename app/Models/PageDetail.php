@@ -15,26 +15,14 @@ class PageDetail extends Model
 
     protected $casts = ['sections' => 'array'];
 
-    protected function name(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
-            set: fn (string $value) => ucfirst($value),
-        );
-    }
-
-    protected function templateName(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
-            set: fn (string $value) => ucfirst($value),
-        );
-    }
 
     public function page()
     {
         return $this->belongsTo(Page::class, 'page_id');
     }
 
-
+    public function language()
+    {
+        return $this->belongsTo(Language::class, 'language_id', 'id');
+    }
 }

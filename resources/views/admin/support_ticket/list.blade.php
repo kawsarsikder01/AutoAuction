@@ -17,7 +17,6 @@
             </div>
         </div>
 
-
         <div class="row">
             <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
                 <div class="card h-100">
@@ -334,6 +333,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.ticket.search", $status) }}",
                 },

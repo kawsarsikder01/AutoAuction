@@ -22,6 +22,7 @@ class NotificationTemplate extends Model
         'status',
         'notify_for',
         'lang_code',
+        'email_from'
     ];
 
     protected $casts = [

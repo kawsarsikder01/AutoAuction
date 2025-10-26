@@ -9,7 +9,7 @@
     <title>@yield('page_title') - {{ __(basicControl()->site_title) }}</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/admin/favicon.png') }}">
+    <link rel="shortcut icon" href="{{ getFile(basicControl()->favicon_driver, basicControl()->favicon) }}">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -121,6 +121,7 @@
 <script src="{{ asset('assets/admin/js/hs-toggle-password.js') }}"></script>
 <script src="{{ asset('assets/admin/js/theme.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/google.com_recaptcha_api.js') }}"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 @stack('script')
 

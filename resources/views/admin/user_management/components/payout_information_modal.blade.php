@@ -22,7 +22,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <small class="text-cap text-secondary mb-0">@lang('Payment method:')</small>
+                            <small class="text-cap text-secondary mb-0">@lang('Payout method:')</small>
                             <div class="d-flex align-items-center">
                                 <img class="avatar avatar-xss me-2 gateway_modal_image" src="" alt="Image Description">
                                 <span class="text-dark method"></span>
@@ -32,12 +32,12 @@
 
                     <div class="row mb-6">
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <small class="text-cap text-secondary mb-0">@lang('Amount paid:')</small>
+                            <small class="text-cap text-secondary mb-0">@lang('Payout Amount:')</small>
                             <h5 class="text-dark amount"></h5>
                         </div>
 
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <small class="text-cap text-secondary mb-0">@lang('Date paid:')</small>
+                            <small class="text-cap text-secondary mb-0">@lang('Payout Date:')</small>
                             <span class="text-dark date"></span>
                         </div>
 

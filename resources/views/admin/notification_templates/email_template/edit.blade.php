@@ -84,7 +84,7 @@
                                             <div class="my-4 section-title">{{trans('Mail in')}}  {{ __($value->name) }}
                                                 : {{ __(isset($templates[$key]) ? $templates[$key]->name : '') }}</div>
                                             <div class="row mb-4 d-flex align-items-center">
-                                                <div class="col-md-12">
+                                                <div class="col-md-6">
                                                     <label class="form-label">@lang('Subject')</label>
                                                     <input
                                                         class="form-control @error('subject.'.$value->id) is-invalid @enderror"
@@ -99,6 +99,20 @@
                                                 </div>
 
                                                 <div class="col-md-6">
+                                                    <label class="form-label">@lang('Mail From')</label>
+                                                    <input
+                                                        class="form-control @error('email_from.'.$value->id) is-invalid @enderror"
+                                                        type="text" name="email_from[{{ $value->id }}]"
+                                                        value="{{ old('email_from.'.$value->id, isset($templates[$key]) ? $templates[$key]->email_from : '') }}"
+                                                        autocomplete="off">
+                                                    @error('email_from.'.$value->id)
+                                                    <span class="invalid-feedback">
+                                                        {{ __($message) }}
+                                                    </span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="col-md-6 mt-2">
                                                     <label class="form-label">@lang('Name')</label>
                                                     <input
                                                         class="form-control @error('name.'.$value->id) is-invalid @enderror"
@@ -112,7 +126,7 @@
                                                     @enderror
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mt-2">
                                                     <label class="row form-check form-switch"
                                                            for="status[{{ $value->id }}]">
                                                                 <span class="col-8 col-sm-9 ms-0 mt-4">
@@ -141,9 +155,8 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>@lang('Message')</label>
-                                                    <textarea
-                                                        class="form-control summernote @error('email_template.'.$value->id) is-invalid @enderror"
-                                                        name="email_template[{{ $value->id }}]">{{ old('email_template.'.$value->id, $templates[$key]->email ?? '') }}</textarea>
+                                                    <textarea class="form-control summernote @error('email_template.'.$value->id) is-invalid @enderror"
+                                                              name="email_template[{{ $value->id }}]">{{ old('email_template.'.$value->id, $templates[$key]->email ?? '') }}</textarea>
                                                     @error('email_template.'.$value->id)
                                                     <span class="invalid-feedback">
                                                         {{ __($message) }}

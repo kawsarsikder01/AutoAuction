@@ -48,7 +48,12 @@ use App\Http\Controllers\Admin\ReportController;
 |
 */
 
-
+Route::get('queue-work', function () {
+    return Illuminate\Support\Facades\Artisan::call('queue:work', ['--stop-when-empty' => true]);
+})->name('queue.work');
+Route::get('schedule-run', function () {
+    return Illuminate\Support\Facades\Artisan::call('schedule:run');
+})->name('schedule:run');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
@@ -78,8 +83,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard/chartLoginHistory', [DashboardController::class, 'chartLoginHistory'])->name('chartLoginHistory');
+        Route::get('dashboard/chartTransactionRecords', [DashboardController::class, 'chartTransactionRecords'])->name('chartTransactionRecords');
+        Route::get('dashboard/chartKycRecords', [DashboardController::class, 'chartKycRecords'])->name('chartKycRecords');
+        Route::get('dashboard/chartTicketRecords', [DashboardController::class, 'chartTicketRecords'])->name('chartTicketRecords');
+        Route::get('dashboard/chartUserRecords', [DashboardController::class, 'chartUserRecords'])->name('chartUserRecords');
+        Route::get('dashboard/planPurchaseHistory', [DashboardController::class, 'planPurchaseHistory'])->name('planPurchaseHistory');
         Route::post('save-token', [DashboardController::class, 'saveToken'])->name('save.token');
-        Route::get('monthly-deposit-withdraw', [DashboardController::class, 'monthlyDepositWithdraw'])->name('monthly.deposit.withdraw');
+        Route::get('dashboard/visitors',[DashboardController::class,'getVisitors'])->name('get.visitors');
+        Route::get('dashboard/get/bid/history',[DashboardController::class,'getBidHistory'])->name('get.bidHistory');
+        Route::get('dashboard/monthly-deposit-withdraw', [DashboardController::class, 'monthlyDepositWithdraw'])->name('monthly.deposit.withdraw');
         /*== Control Panel ==*/
         Route::get('settings/{settings?}', [BasicControlController::class, 'index'])->name('settings');
         Route::get('basic-control', [BasicControlController::class, 'basicControl'])->name('basic.control');
@@ -113,6 +126,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         /* ===== EMAIL CONFIG ===== */
         Route::get('email-controls', [EmailConfigController::class, 'emailControls'])->name('email.control');
+        Route::get('cookie', [BasicControlController::class, 'cookie'])->name('cookie');
+        Route::post('update/cookie', [BasicControlController::class, 'updateCookie'])->name('update.cookie');
         Route::get('email-config/edit/{method}', [EmailConfigController::class, 'emailConfigEdit'])->name('email.config.edit');
         Route::post('email-config/update/{method}', [EmailConfigController::class, 'emailConfigUpdate'])->name('email.config.update');
         Route::post('email-config/set-as-default/{method}', [EmailConfigController::class, 'emailSetAsDefault'])->name('email.set.default');
@@ -170,7 +185,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('languages', [LanguageController::class, 'index'])->name('language.index');
         Route::get('language/create', [LanguageController::class, 'create'])->name('language.create');
         Route::post('language/store', [LanguageController::class, 'store'])->name('language.store');
-        Route::get('language/edit{id}', [LanguageController::class, 'edit'])->name('language.edit');
+        Route::get('language/edit/{id}', [LanguageController::class, 'edit'])->name('language.edit');
         Route::put('language/update/{id}', [LanguageController::class, 'update'])->name('language.update');
         Route::delete('language-delete/{id}', [LanguageController::class, 'destroy'])->name('language.delete');
         Route::put('change-language-status/{id}', [LanguageController::class, 'changeStatus'])->name('change.language.status');
@@ -244,20 +259,27 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         /*= Frontend Manage =*/
         Route::get('frontend/pages/{theme}', [PageController::class, 'index'])->name('page.index');
-        Route::get('frontend/create-page/{theme}', [PageController::class, 'createPage'])->name('create.page');
-        Route::post('frontend/create-page/store/{theme}', [PageController::class, 'createPageStore'])->name('create.page.store');
-        Route::get('frontend/edit-page/{id}/{theme}/{language?}', [PageController::class, 'editPage'])->name('edit.page');
-        Route::post('frontend/update-page/{id}/{theme}', [PageController::class, 'updatePage'])->name('update.page');
+        Route::get('frontend/create-page/{theme}', [PageController::class, 'create'])->name('create.page');
+        Route::post('frontend/create-page/store/{theme}', [PageController::class, 'store'])->name('create.page.store');
+        Route::get('frontend/edit-page/{id}/{theme}/{language?}', [PageController::class, 'edit'])->name('edit.page');
+        Route::post('frontend/update-page/{id}/{theme}', [PageController::class, 'update'])->name('update.page');
         Route::post('frontend/page/update-slug', [PageController::class, 'updateSlug'])->name('update.slug');
-        Route::delete('frontend/page/delete/{id}', [PageController::class, 'pageDelete'])->name('page.delete');
+        Route::delete('frontend/page/delete/{id}', [PageController::class, 'delete'])->name('page.delete');
+
         Route::get('frontend/page/seo/{id}', [PageController::class, 'pageSEO'])->name('page.seo');
         Route::post('frontend/page/seo/update/{id}', [PageController::class, 'pageSeoUpdate'])->name('page.seo.update');
-        Route::get('edit/static/page/{id}',[PageController::class,'editStaticPage'])->name('edit.static.page');
-        Route::post('update/static/page/{id}',[PageController::class ,'updateStaticPage'])->name('update.static.page');
+        Route::get('frontend/edit-static-page/{id}/{theme}/{language?}', [PageController::class, 'editStaticPage'])->name('edit.static.page');
+        Route::post('frontend/update-static-page/{id}/{theme}', [PageController::class, 'updateStaticPage'])->name('update.static.page');
 
         Route::get('frontend/manage-menu', [ManageMenuController::class, 'manageMenu'])->name('manage.menu');
         Route::post('frontend/header-menu-item/store', [ManageMenuController::class, 'headerMenuItemStore'])->name('header.menu.item.store');
         Route::post('frontend/footer-menu-item/store', [ManageMenuController::class, 'footerMenuItemStore'])->name('footer.menu.item.store');
+
+        Route::post('frontend/manage-menu/add-custom-link', [ManageMenuController::class, 'addCustomLink'])->name('add.custom.link');
+        Route::get('frontend/manage-menu/edit-custom-link/{pageId}', [ManageMenuController::class, 'editCustomLink'])->name('edit.custom.link');
+        Route::post('frontend/manage-menu/update-custom-link/{pageId}', [ManageMenuController::class, 'updateCustomLink'])->name('update.custom.link');
+        Route::delete('frontend/manage-menu/delete-custom-link/{pageId}', [ManageMenuController::class, 'deleteCustomLink'])->name('delete.custom.link');
+        Route::get('frontend/manage-menu/get-custom-link-data', [ManageMenuController::class, 'getCustomLinkData'])->name('get.custom.link');
 
         Route::get('frontend/contents/{name}', [ContentController::class, 'index'])->name('manage.content');
         Route::post('frontend/contents/store/{name}/{language}', [ContentController::class, 'store'])->name('content.store');

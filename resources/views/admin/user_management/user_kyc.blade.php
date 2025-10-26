@@ -232,6 +232,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.user.kyc.search", $user->id) }}",
                 },

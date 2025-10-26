@@ -26,10 +26,10 @@
     <link rel="stylesheet" href="{{asset($themeTrue.'css/addProduct.css')}}"/>
     <link rel="stylesheet" href="{{asset($themeTrue.'css/flatpickr.css')}}"/>
     <style>
-        {{--:root {--}}
-        {{--    --primary:  {{ basicControl()->primary_color }};--}}
-        {{--    --secondary: {{ basicControl()->secondary_color }};--}}
-        {{--}--}}
+        :root {
+            --primary:  {{ basicControl()->primary_color }};
+            --secondary: {{ basicControl()->secondary_color }};
+        }
 
     </style>
     @stack('style')
@@ -106,6 +106,11 @@
                                             class="fal fa-user"></i>@lang('View Profile')</a>
                                 </li>
                                 <li>
+                                    <a href="{{route('user.show.user.kyc')}}">
+                                        <i class="fal fa-id-card"></i></i>
+                                        @lang('Verification Center')</a>
+                                </li>
+                                <li>
                                     @auth
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -150,76 +155,81 @@
 <script src="{{asset($themeTrue.'js/flatpickr.js')}}"></script>
 
 
-<script src="{{ asset('assets/admin/js/notiflix-aio-2.7.0.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/notiflix-aio-3.2.6.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/jquery.uploadPreview.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/pusher.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/vue.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/axios.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/pusher.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/vue.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/axios.min.js') }}"></script>
+<script src="{{ asset('assets/admin/js/flatpickr.min.js') }}"></script>
 
 @stack('js-lib')
 
+@if(basicControl()->in_app_notification && auth()->guard('web')->check())
+    <script>
+        'use strict';
+        let pushNotificationArea = new Vue({
+            el: "#pushNotificationArea",
+            data: {
+                items: [],
+            },
+            beforeMount() {
+                this.getNotifications();
+                this.pushNewItem();
+            },
+            methods: {
+                getNotifications() {
+                    let app = this;
+                    axios.get("{{ route('user.push.notification.show') }}")
+                        .then(function (res) {
+                            app.items = res.data;
+                        })
+                },
+                readAt(id, link) {
+                    let app = this;
+                    let url = "{{ route('user.push.notification.readAt', 0) }}";
+                    url = url.replace(/.$/, id);
+                    axios.get(url)
+                        .then(function (res) {
+                            if (res.status) {
+                                app.getNotifications();
+                                if (link !== '#') {
+                                    window.location.href = link
+                                }
+                            }
+                        })
+                },
+                readAll() {
+                    let app = this;
+                    let url = "{{ route('user.push.notification.readAll') }}";
+                    axios.get(url)
+                        .then(function (res) {
+                            if (res.status) {
+                                app.items = [];
+                            }
+                        })
+                },
+                pushNewItem() {
+                    let app = this;
+                    Pusher.logToConsole = false;
+                    let pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+                        encrypted: true,
+                        cluster: "{{ env('PUSHER_APP_CLUSTER') }}"
+                    });
+                    let channel = pusher.subscribe('user-notification.' + "{{ Auth::id() }}");
+                    channel.bind('App\\Events\\UserNotification', function (data) {
+                        app.items.unshift(data.message);
+                    });
+                    channel.bind('App\\Events\\UpdateUserNotification', function (data) {
+                        app.getNotifications();
+                    });
+                }
+            }
+        });
+    </script>
+@endif
 
 <script>
     'use strict';
-    let pushNotificationArea = new Vue({
-        el: "#pushNotificationArea",
-        data: {
-            items: [],
-        },
-        beforeMount() {
-            this.getNotifications();
-            this.pushNewItem();
-        },
-        methods: {
-            getNotifications() {
-                let app = this;
-                axios.get("{{ route('user.push.notification.show') }}")
-                    .then(function (res) {
-                        console.log(res)
-                        app.items = res.data;
-                    })
-            },
-            readAt(id, link) {
-                let app = this;
-                let url = "{{ route('user.push.notification.readAt', 0) }}";
-                url = url.replace(/.$/, id);
-                axios.get(url)
-                    .then(function (res) {
-                        if (res.status) {
-                            app.getNotifications();
-                            if (link !== '#') {
-                                window.location.href = link
-                            }
-                        }
-                    })
-            },
-            readAll() {
-                let app = this;
-                let url = "{{ route('user.push.notification.readAll') }}";
-                axios.get(url)
-                    .then(function (res) {
-                        if (res.status) {
-                            app.items = [];
-                        }
-                    })
-            },
-            pushNewItem() {
-                let app = this;
-                Pusher.logToConsole = false;
-                let pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-                    encrypted: true,
-                    cluster: "{{ env('PUSHER_APP_CLUSTER') }}"
-                });
-                let channel = pusher.subscribe('user-notification.' + "{{ Auth::id() }}");
-                channel.bind('App\\Events\\UserNotification', function (data) {
-                    app.items.unshift(data.message);
-                });
-                channel.bind('App\\Events\\UpdateUserNotification', function (data) {
-                    app.getNotifications();
-                });
-            }
-        }
-    });
 
     // dashboard_toggle_sidemenu
     const toggleSideMenu = () => {
@@ -254,26 +264,26 @@
 
 @stack('script')
 
-</body>
-</html>
-
-
-@if (session()->has('success'))
-    <script>
-        Notiflix.Notify.Success("@lang(session('success'))");
-    </script>
-@endif
 
 @if (session()->has('error'))
     <script>
-        Notiflix.Notify.Failure("@lang(session('error'))");
+        Notiflix.Notify.failure("@lang(session('error'))");
+    </script>
+@endif
+@if (session()->has('success'))
+    <script>
+        Notiflix.Notify.success("@lang(session('success'))");
     </script>
 @endif
 
 @if (session()->has('warning'))
     <script>
-        Notiflix.Notify.Warning("@lang(session('warning'))");
+        Notiflix.Notify.warning("@lang(session('warning'))");
     </script>
 @endif
+
+</body>
+</html>
+
 
 

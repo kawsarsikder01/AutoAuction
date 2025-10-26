@@ -40,10 +40,10 @@ class KycController extends Controller
 
         $customMessages = [
             'field_name.*.required' => 'The form label field is required.',
+            'input_type.*.required' => 'The input type field is required.',
             'is_required.*.required' => 'The required field is required.',
             'input_type.*.in' => 'The Input type is invalid.',
             'is_required.*.in' => 'The required value is invalid.',
-            'type.*.required' => 'The form type  is required.',
         ];
 
         $validator = Validator::make($requestData, $rules, $customMessages);
@@ -68,7 +68,7 @@ class KycController extends Controller
                 'name' => $request->name,
                 'slug' => Slug($request->name),
                 'input_form' => $inputForm,
-                'status' => $request->status,
+                'status' => $request->status
             ]);
 
             if (!$kyc) {
@@ -142,8 +142,7 @@ class KycController extends Controller
                 'name' => $request->name,
                 'slug' => slug($request->name),
                 'input_form' => $inputForm,
-                'status' => $request->status,
-                'type' => $request->type
+                'status' => $request->status
             ]);
 
             if (!$kyc) {
@@ -174,7 +173,6 @@ class KycController extends Controller
                 ->toArray();
             \Cache::put('userKYCRecord', $userKYCRecord);
         }
-
         return view('admin.kyc.user_kyc', compact('status', 'userKYCRecord'));
     }
 
@@ -187,16 +185,17 @@ class KycController extends Controller
         $startDate = $filterDate[0];
         $endDate = isset($filterDate[1]) ? trim($filterDate[1]) : null;
 
-        $userKyc = UserKyc::with('user')
+        $userKyc = UserKyc::query()->with(['user:id,username,firstname,lastname,image,image_driver'])
+            ->whereHas('user')
             ->orderBy('id', 'DESC')
             ->when(!empty($search), function ($query) use ($search) {
                 return $query->where(function ($subquery) use ($search) {
                     $subquery->where('kyc_type', 'LIKE', "%$search%")
                         ->orWhereHas('user', function ($q) use ($search) {
                             $q->where('firstname', 'LIKE', "%$search%");
-                            $q->OrWhere('lastname', 'LIKE', "%$search%");
-                            $q->OrWhere('username', 'LIKE', "%$search%");
-                            $q->OrWhere('email', 'LIKE', "%$search%");
+                            $q->orWhere('lastname', 'LIKE', "%$search%");
+                            $q->orWhere('username', 'LIKE', "%$search%");
+                            $q->orWhere('email', 'LIKE', "%$search%");
                         });
                 });
             })
@@ -243,7 +242,7 @@ class KycController extends Controller
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                   <h5 class="text-hover-primary mb-0">' . optional($item->user)->firstname . ' ' . optional($item->user)->lastname . '</h5>
-                                  <span class="fs-6 text-body">' . optional($item->user)->username . '</span>
+                                  <span class="fs-6 text-body">@' . optional($item->user)->username . '</span>
                                 </div>
                               </a>';
             })
@@ -330,7 +329,7 @@ class KycController extends Controller
             $templateKey = 'KYC_REJECTED';
         }
         $action = [
-            "link" => route('profile'),
+            "link" => "#",
             "icon" => "fa-light fa-address-book"
         ];
         $this->sendMailSms($user, $templateKey);

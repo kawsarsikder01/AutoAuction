@@ -5,7 +5,7 @@
     <div class="main row">
        <div class="col-12">
           <div class="dashboard-heading">
-             <h4 class="mb-0">Support Ticket</h4>
+             <h4 class="mb-0">@lang('Support Ticket')</h4>
              <a href="{{route('user.ticket.create')}}" type="button" class="btn-custom"  >
                 @lang('Create ticket')
              </a>
@@ -16,10 +16,10 @@
              <table class="table table-striped">
                 <thead>
                    <tr>
-                      <th scope="col">Subject</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Last Reply</th>
-                      <th scope="col">Action</th>
+                      <th scope="col">@lang('Subject')</th>
+                      <th scope="col">@lang('Status')</th>
+                      <th scope="col">@lang('Last Reply')</th>
+                      <th scope="col">@lang('Action')</th>
                    </tr>
                 </thead>
                 <tbody>

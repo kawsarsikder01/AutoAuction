@@ -217,7 +217,7 @@ class PayoutMethodController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $image = $this->fileUpload($request->image, config('filelocation.payoutMethod.path'), null,null, 'avif', 60, $payoutMethod->logo, $payoutMethod->driver);
+                $image = $this->fileUpload($request->image, config('filelocation.payoutMethod.path'), null, null, 'avif', 60, $payoutMethod->logo, $payoutMethod->driver);
                 if ($image) {
                     $gatewayImage = $image['path'];
                     $driver = $image['driver'];

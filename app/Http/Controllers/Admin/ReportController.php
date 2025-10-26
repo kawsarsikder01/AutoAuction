@@ -18,9 +18,22 @@ class ReportController extends Controller
     {
         return view('admin.Reports.reports');
     }
-    public function getReports()
+    public function getReports(Request $request)
     {
-        $reports = Report::orderBy('created_at','desc');
+        $reports = Report::orderBy('created_at','desc')
+        ->when(!empty($request->search['value']),function ($query)use($request){
+            $query->where('subject','LIKE','%'.$request->search['value'].'%')
+                ->orWhereHas('reporter',function ($q)use($request){
+                    $q->where('firstname','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                })
+                ->orWhereHas('repotedUser',function ($q)use($request){
+                    $q->where('firstname','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                });
+        });
         return DataTables::of($reports)
             ->addColumn('no',function ($report){
                 static $counter = 0;
@@ -150,7 +163,7 @@ class ReportController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($report->Vehicle->user, 'RELEASE_PAYMENT_SELLER_SELLER', $msg, $action);
-            $this->userFirebasePushNotification($report->Vehicle->user,'RELEASE_PAYMENT_SELLER_SELLER', $msg, "#");
+            $this->userFirebasePushNotification($report->Vehicle->user,'RELEASE_PAYMENT_SELLER_SELLER', $msg, route('user.listed.vehicle'));
             $this->sendMailSms($report->Vehicle->user, 'RELEASE_PAYMENT_SELLER_SELLER',$msg);
             $msg2 = [
                 'vehicle_model' => $report->Vehicle->details->title,
@@ -163,7 +176,7 @@ class ReportController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER', $msg2, $action2);
-            $this->userFirebasePushNotification($bid->bidder,'RELEASE_PAYMENT_SELLER_BIDDER', $msg2, "#");
+            $this->userFirebasePushNotification($bid->bidder,'RELEASE_PAYMENT_SELLER_BIDDER', $msg2, route('user.bidding.history'));
             $this->sendMailSms($bid->bidder, 'RELEASE_PAYMENT_SELLER_BIDDER',$msg2);
             return back()->with('success','Seller Payment Release Successfully');
         }catch (Exception $error){
@@ -200,7 +213,7 @@ class ReportController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($bid->bidder, 'RELEASE_HOLD_BALANCE', $msg, $action);
-            $this->userFirebasePushNotification($bid->bidder,'RELEASE_HOLD_BALANCE', $msg, "#");
+            $this->userFirebasePushNotification($bid->bidder,'RELEASE_HOLD_BALANCE', $msg,route('user.bidding.history'));
             $this->sendMailSms($bid->bidder, 'RELEASE_HOLD_BALANCE',$msg);
 
             $msg1 = [
@@ -213,7 +226,7 @@ class ReportController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($report->Vehicle->user, 'CANCEL_AUCTION', $msg1, $action1);
-            $this->userFirebasePushNotification($report->Vehicle->user,'CANCEL_AUCTION', $msg1, "#");
+            $this->userFirebasePushNotification($report->Vehicle->user,'CANCEL_AUCTION', $msg1,route('user.listed.vehicle'));
             $this->sendMailSms($report->Vehicle->user, 'CANCEL_AUCTION',$msg1);
             return back()->with('success','Release Bidder Payment Successfully');
         }catch (Exception $error){

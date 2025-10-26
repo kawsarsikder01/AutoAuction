@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\User;
 use App\Models\UserLogin;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,9 +17,11 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Facades\App\Services\Google\GoogleRecaptchaService;
+use App\Traits\Notify;
 
 class RegisterController extends Controller
 {
+    use Notify;
     /*
     |--------------------------------------------------------------------------
     | Register Controller
@@ -85,15 +88,22 @@ class RegisterController extends Controller
                     ->uncompromised()];
         }
 
-        //GoogleRecaptchaService::responseRecaptcha($data['g-recaptcha-response']);
-        if (basicControl()->reCaptcha_status_registration) {
+
+        if ($basicControl->google_recaptcha &&basicControl()->google_user_registration_recaptcha_status) {
             $rules['g-recaptcha-response'] = ['sometimes', 'required'];
+        }
+        if ($basicControl->manual_recaptcha && basicControl()->reCaptcha_status_registration){
+            $rules['captcha'] = ['required',function($attribute, $value, $fail){
+                if ($value !== session()->get('captcha')){
+                    $fail('The captcha does not match');
+                }
+            }];
         }
 
         $rules['first_name'] = ['required', 'string', 'max:91'];
         $rules['last_name'] = ['required', 'string', 'max:91'];
         $rules['username'] = ['required', 'alpha_dash', 'min:5', 'unique:users,username'];
-        $rules['email'] = ['required', 'string', 'email', 'max:255', 'unique:users,email'];
+        $rules['email'] = ['required', 'string', 'email', 'max:255',  'unique:users,email'];
         return Validator::make($data, $rules, [
             'first_name.required' => 'First Name Field is required',
             'last_name.required' => 'Last Name Field is required',
@@ -110,7 +120,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $basic = basicControl();
-        return User::create([
+        return  User::create([
             'firstname' => $data['first_name'],
             'lastname' => $data['last_name'],
             'username' => $data['username'],
@@ -119,6 +129,7 @@ class RegisterController extends Controller
             'email_verification' => ($basic->email_verification) ? 0 : 1,
             'sms_verification' => ($basic->sms_verification) ? 0 : 1,
         ]);
+
     }
 
     public function register(Request $request)
@@ -126,6 +137,16 @@ class RegisterController extends Controller
         $this->validator($request->all())->validate();
 
         $user = $this->create($request->all());
+
+        $msg = [
+            'name' => $user->firstname.' '.$user->lastname,
+            'site_title' => basicControl()->site_title,
+            'username' => $user->username,
+            'email' =>$user->email
+        ];
+        $subject = "Welcome to ".basicControl()->site_title."!";
+        $this->sendMailSms($user,'USER_WELCOME',$msg,$subject);
+
         $this->guard()->login($user);
 
 
@@ -162,6 +183,8 @@ class RegisterController extends Controller
         $ul['get_device'] = UserSystemInfo::get_device();
 
         UserLogin::create($ul);
+
+        event(new Registered($user));
 
     }
 

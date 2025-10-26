@@ -199,16 +199,7 @@ return [
         ]
     ],
     'privacy_policy' => [
-        'single' => [
-            'field_name' => [
-                'heading'   => 'text',
-                'multitext' => 'textarea'
-            ],
-            'validation' => [
-                'heading.*'   => 'required | max:50',
-                'multitext.*' => 'required | max:300'
-            ]
-        ],
+        
         'multiple' => [
             'field_name' => [
                 'heading' => 'text',
@@ -220,6 +211,21 @@ return [
             ]
         ]
     ] ,
+
+    'cookie_policy' => [
+    
+        'multiple' => [
+            'field_name' => [
+                'heading' => 'text',
+                'text'    => 'textarea',
+            ],
+            'validation' => [
+                'heading.*' => 'required | max:50',
+                'text.*'    => 'required | max:1000',
+            ]
+        ]
+    ] ,
+
     'contact' => [
         'single' => [
             'field_name' => [
@@ -314,6 +320,8 @@ return [
         'icon'         => 'icon',
         'count_number' => 'number',
         'start_date'   => 'date',
+        'total_raised_amount' => 'number'
+
     ]
 ];
 

@@ -84,8 +84,8 @@
                                         @enderror
                                     </div>
 
-                                   <div class="col-md-8">
-                                       <label class="row form-check form-switch mb-4" for="maintenanceModeStatus">
+                                    <div class="col-md-8">
+                                        <label class="row form-check form-switch mb-4" for="maintenanceModeStatus">
                                         <span class="col-8 col-sm-9 ms-0">
                                           <span class="d-block text-dark">@lang("Maintenance Mode Status")</span>
                                           <span class="d-block fs-5">@lang("Maintenance mode is a feature that allows you to temporarily disable access to your online store's frontend.")</span>
@@ -94,11 +94,11 @@
                                           <input  type="checkbox" name="is_maintenance_mode" id="maintenanceModeStatus" class="form-check-input" value="1"
                                           {{ $basicControl->is_maintenance_mode == 1 ? 'checked' : '' }}>
                                         </span>
-                                       @error('is_maintenance_mode')
-                                       <span class="invalid-feedback d-block">{{ $message }}</span>
-                                       @enderror
-                                       </label>
-                                   </div>
+                                            @error('is_maintenance_mode')
+                                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-end mt-4">

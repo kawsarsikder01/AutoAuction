@@ -9,11 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use App\Traits\Notify;
+use App\Traits\Upload;
 
 
 class VehicleController extends Controller
 {
-    use Notify;
+    use Notify,Upload;
     public function pendingVehicle()
     {
         return view('admin.vehicleRequest.pendingVehicle');
@@ -21,7 +22,23 @@ class VehicleController extends Controller
 
     public function pendingVehicleSearch(Request $request)
     {
-        $vehichle = Vehicle::where('status',0)->with('details','user');
+        $vehichle = Vehicle::query()->with('details:id,vehicle_id,title','user:id,firstname,lastname,username,image,image_driver')
+                    ->where('status',0)
+                    ->when(!empty($request->search['value']),function ($query)use($request){
+                        $query->whereHas('details',function ($q)use($request){
+                            $q->where('title','LIKE','%'.$request->search['value'].'%')
+                            ->orWhere('vehicle_type','LIKE','%'.$request->search['value'].'%')
+                            ->orWhere('engine_type','LIKE','%'.$request->search['value'].'%')
+                            ->orWhere('price',$request->search['value']);
+                        })
+                            ->orWhereHas('user',function ($q)use($request){
+                                $q->where('firstname','LIKE','%'.$request->search['value'].'%')
+                                    ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                                    ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                            });
+
+                    })
+            ->orderByDesc('created_at');
 
         return DataTables::of($vehichle)
             ->addColumn('no', function ($item) {
@@ -139,10 +156,22 @@ class VehicleController extends Controller
     {
         return view('admin.vehicleRequest.approvedVehicle');
     }
-    public function getApprovedVehicle()
+    public function getApprovedVehicle(Request $request)
     {
-        $vehichle = Vehicle::where('status',1)->with('details','user');
+        $vehichle = Vehicle::query()->with('details:id,vehicle_id,title','user:id,firstname,lastname,username,image,image_driver')
+                                ->where('status',1)
+                                ->when(!empty($request->search['value']),function ($query)use($request){
+                                    $query->whereHas('details',function ($q)use($request){
+                                        $q->where('title','LIKE','%'.$request->search['value'].'%');
+                                    })
+                                    ->orWhereHas('user',function ($q)use($request){
+                                        $q->where('firstname','LIKE','%'.$request->search['value'].'%')
+                                        ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                                        ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                                    });
 
+                                })
+        ->orderByDesc('created_at');
         return DataTables::of($vehichle)
             ->addColumn('no', function ($item) {
                 static $counter = 0;
@@ -222,9 +251,25 @@ class VehicleController extends Controller
       }
     }
 
-    public function getRejectedList()
+    public function getRejectedList(Request $request)
     {
-        $vehichle = Vehicle::where('status',2)->with('details','user');
+        $vehichle = Vehicle::query()->with('details:id,vehicle_id,title','user:id,firstname,lastname,username,image,image_driver')
+            ->where('status',2)
+            ->when(!empty($request->search['value']),function ($query)use($request){
+                $query->whereHas('details',function ($q)use($request){
+                    $q->where('title','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('vehicle_type','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('engine_type','LIKE','%'.$request->search['value'].'%')
+                        ->orWhere('price',$request->search['value']);
+                })
+                    ->orWhereHas('user',function ($q)use($request){
+                        $q->where('firstname','LIKE','%'.$request->search['value'].'%')
+                            ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                            ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                    });
+
+            })
+        ->orderByDesc('created_at');
 
         return DataTables::of($vehichle)
             ->addColumn('no', function ($item) {
@@ -272,10 +317,19 @@ class VehicleController extends Controller
         return view('admin.vehicleBiddingHistory.viewBiddingHistory',compact('id'));
 
     }
-    public function getBiddingHistory($id)
+    public function getBiddingHistory(Request $request , $id)
     {
-        $vehicle = Vehicle::with('biddingHistory')->findOrFail($id);
-        $biddingHistory = $vehicle->biddingHistory;
+
+        $biddingHistory= BiddingHistory::with('bidder:id,firstname,lastname,username,image,image_driver')
+                        ->when(!empty($request->search['value']) , function ($query)use($request){
+                            $query->where('bid_amount',$request->search['value'])
+                                    ->orWhereHas('bidder',function ($q)use($request){
+                                        $q->where('firstname','LIKE','%'.$request->search['value'].'%')
+                                            ->orWhere('lastname','LIKE','%'.$request->search['value'].'%')
+                                            ->orWhere('username','LIKE','%'.$request->search['value'].'%');
+                                    });
+                        })
+                      ->where('vehicle_id',$id);
         return DataTables::of($biddingHistory)
             ->addColumn('no', function ($item) {
                 static $counter = 0;
@@ -357,10 +411,10 @@ class VehicleController extends Controller
                     "icon" => "fas fa-money-bill-alt text-white"
                 ];
                 $this->userPushNotification($vehicle->user, 'DELETE_VEHICLE', $msg, $action);
-                $this->userFirebasePushNotification($vehicle->user,'DELETE_VEHICLE', $msg, $action);
+                $this->userFirebasePushNotification($vehicle->user,'DELETE_VEHICLE', $msg, route('user.listed.vehicle'));
                 $this->sendMailSms($vehicle->user, 'DELETE_VEHICLE',$msg);
             }
-
+            $vehicle->reacts()->delete();
             $vehicle->details->delete();
             foreach ($vehicle->path_name as $path){
                 $this->fileDelete($vehicle->driver,$path);

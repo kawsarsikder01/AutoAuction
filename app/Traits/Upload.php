@@ -23,6 +23,9 @@ trait Upload
     public function fileUpload($file, $location, $fileName = null, $size = null, $encodedFormat = null, $encodedQuality = 90, $oldFileName = null, $oldDriver = 'local')
     {
         $activeDisk = config('filesystems.default');
+        if ($encodedFormat == 'avif'){
+            $encodedFormat =  'webp';
+        }
 
         if (!empty($oldFileName) && Storage::disk($oldDriver)->exists($oldFileName))
             Storage::disk($oldDriver)->delete($oldFileName);

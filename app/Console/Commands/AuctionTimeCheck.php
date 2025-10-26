@@ -64,11 +64,11 @@ class AuctionTimeCheck extends Command
                             'vehicle_model' => $soldVehicle->vehicle->details->title,
                         ];
                         $action = [
-                            "link" => '#',
+                            "link" =>route('user.bidding.history'),
                             "icon" => "fas fa-money-bill-alt text-white"
                         ];
                         $this->userPushNotification($soldVehicle->bidder, 'WIN_AUCTION', $msg, $action);
-                        $this->userFirebasePushNotification($soldVehicle->bidder,'WIN_AUCTION', $msg, "#");
+                        $this->userFirebasePushNotification($soldVehicle->bidder,'WIN_AUCTION', $msg, route('user.bidding.history'));
                         $this->sendMailSms($soldVehicle->bidder, 'WIN_AUCTION', [
                             'username' => $soldVehicle->bidder->firstname." ".$soldVehicle->bidder->lastname,
                             'vehicle_model' => $soldVehicle->vehicle->details->title,
@@ -89,7 +89,7 @@ class AuctionTimeCheck extends Command
                         ];
 
                         $this->userPushNotification($vehicle->user, 'SOLD_VEHICLE',$vehicleOwnerMessage, $action);
-                        $this->userFirebasePushNotification($vehicle->user,'SOLD_VEHICLE',$vehicleOwnerMessage, "#");
+                        $this->userFirebasePushNotification($vehicle->user,'SOLD_VEHICLE',$vehicleOwnerMessage, route('user.listed.vehicle'));
                         $this->sendMailSms($vehicle->user,'SOLD_VEHICLE',$vehicleOwnerMessage);
 
 

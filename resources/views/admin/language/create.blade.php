@@ -77,7 +77,7 @@
                                                 @if($shortNames)
                                                     @foreach($shortNames as $key => $shortName)
                                                         <option
-                                                            value="{{ $shortName }}" {{ old('short_name') }}>@lang(strtoupper($shortName))</option>
+                                                            value="{{ $key }}" {{ old('short_name') }}>@lang(strtoupper($key)) - {{$shortName}}
                                                     @endforeach
                                                 @endif
                                             </select>

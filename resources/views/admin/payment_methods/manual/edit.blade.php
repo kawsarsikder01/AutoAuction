@@ -69,8 +69,7 @@
                                     <div class="col-md-12 mb-5">
                                         <label class="form-label"
                                                for="descriptionArea">@lang("Gateway Description")</label>
-                                        <textarea id="descriptionArea" class="form-control" name="description"
-                                                  placeholder="Description">{{ old('description', $method->description) }}</textarea>
+                                        <textarea id="descriptionArea" class="form-control" name="description" placeholder="Description">{{ old('description', $method->description) }}</textarea>
                                         <span class="invalid-feedback d-block">
                                             @error('description') @lang($message) @enderror
                                         </span>
@@ -105,9 +104,7 @@
 
                                     <div class="col-sm-9">
                                         <label for="nameLabel" class="form-label">@lang('Payment Description')</label>
-                                        <textarea id="summernote" name="note" autocomplete="off">
-                                            {{ old('note', trans($method->note)) }}
-                                        </textarea>
+                                        <textarea id="summernote" name="note" autocomplete="off">{{ old('note', $method->note) }}</textarea>
                                         <span class="invalid-feedback d-block">
                                             @error('note') @lang($message) @enderror
                                         </span>

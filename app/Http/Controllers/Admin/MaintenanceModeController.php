@@ -33,7 +33,7 @@ class MaintenanceModeController extends Controller
             $maintenanceMode = MaintenanceMode::firstOrCreate();
 
             if ($request->hasFile('image')) {
-                $image = $this->fileUpload($request->image, config('filelocation.maintenanceMode.path'),null,null, 'avif', 60,$maintenanceMode->image, $maintenanceMode->image_driver);
+                $image = $this->fileUpload($request->image, config('filelocation.maintenanceMode.path'), null, null,'avif', 60,$maintenanceMode->image,$maintenanceMode->image_driver);
                 throw_if(empty($image['path']), 'Image could not be uploaded.');
                 $image = $image['path'];
                 $imageDriver = $image['driver'] ?? 'local';

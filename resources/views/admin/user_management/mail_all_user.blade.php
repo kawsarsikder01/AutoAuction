@@ -49,8 +49,7 @@
                                                     <label class="form-label"
                                                            for="descriptionLabel">@lang('Email Body')</label>
                                                     </label>
-                                                    <textarea class="form-control summernote"
-                                                              name="description"></textarea>
+                                                    <textarea class="form-control summernote" name="description"></textarea>
                                                     @error('description')
                                                     <span class="invalid-feedback d-block">{{ $message }}</span>
                                                     @enderror

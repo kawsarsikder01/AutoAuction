@@ -84,8 +84,7 @@
 
                                 <label class="form-label">@lang('Email Description')</label>
                                 <textarea class="form-control" name="email_description" id="summernote"
-                                          placeholder="@lang('Enter default form email template')"
-                                          rows="20">{{$basicControl->email_description}}</textarea>
+                                          placeholder="@lang('Enter default form email template')" rows="20">{{$basicControl->email_description}}</textarea>
 
 
                                 <button type="submit"

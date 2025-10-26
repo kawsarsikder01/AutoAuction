@@ -87,7 +87,7 @@
                                 <a href="{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}" id="viewAuctionDetails"><span>{{$vehicle->details->title}}</span></a>
                         </td>
                         <td data-label="@lang('Total Bid')">
-                            {{count($vehicle->biddingHistory)}}
+                            <span class="badge badge-primary"> {{count($vehicle->biddingHistory)}} </span>
                         </td>
                         <td data-label="@lang('Initial Price')">
                             {{currencyPosition($vehicle->details->price)}}
@@ -123,28 +123,38 @@
                             @endif
                         </td>
                         <td data-label="@lang('Action')">
-                            <div>
-                                @if($vehicle->details->sold_status == 1)
-                                    @if($vehicle->release_status == 0)
-                                        <a href="javascript:void(0);" id="ReleaseProperty" data-route="{{route('user.release.property')}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-id="{{$vehicle->id}}" class="btn-action-icon bg-info" >
-                                            <i class="fa-solid fa-truck-fast" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Release Your Vehicle"></i>
+
+                            <div class='btn-group' role='group'>
+                                <a href='{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}' class='btn-custom2'>
+                                    <i class='bi-eye-fill dropdown-item-icon'></i> @lang('View')
+                                </a>
+                                <div class='btn-group'>
+                                    <button type='button' class='dropdown-button dropdown-toggle dropdown-toggle-empty' id='userEditDropdown' data-bs-toggle='dropdown' aria-expanded='false'></button>
+                                    <div class='dropdown-menu dropdown-menu-end mt-1' aria-labelledby='userEditDropdown'>
+                                        @if($vehicle->details->sold_status == 1)
+                                            @if($vehicle->release_status == 0)
+                                                <a href="javascript:void(0);" class="dropdown-item loginAccount" id="ReleaseProperty" data-route="{{route('user.release.property')}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-id="{{$vehicle->id}}"  >
+                                                    <i class="fa-solid fa-truck-fast"></i>Release
+                                                </a>
+                                            @endif
+                                        @else
+                                            <a href="{{route('user.edit.vehicle',$vehicle->id)}}" class="dropdown-item">
+                                                <i class="fa-regular fa-pen-to-square"></i>Edit
+                                            </a>
+                                        @endif
+                                        <a href="{{route('user.vehicle.bidding.history',$vehicle->id)}}"  class="dropdown-item">
+                                            <i class="fa-regular fa-history"></i> Bidding History
                                         </a>
-                                    @endif
-                                @else
-                                    <a href="{{route('user.edit.vehicle',$vehicle->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Edit" class="btn-action-icon bg-info">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </a>
-                                @endif
-                                    <a href="{{route('user.vehicle.bidding.history',$vehicle->id)}}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Biddding History" class="btn-action-icon bg-warning">
-                                        <i class="fa-regular fa-history"></i>
-                                    </a>
-                                    <a href="{{ route('auction.details', [slug($vehicle->details->title)??'',$vehicle->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="View"class="btn-action-icon bg-success">
-                                        <i class="fad fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('user.delete.vehicle', $vehicle->id) }}" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="Delete" class="btn-action-icon bg-primary">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
+                                        <a href="{{route('user.auction.statistic',$vehicle->id)}}"  class="dropdown-item">
+                                            <i class="fa-solid fa-chart-line"></i> Statistic
+                                        </a>
+                                        <a href="{{ route('user.delete.vehicle', $vehicle->id) }}"  class="dropdown-item">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
+                        
                          </td>
                     </tr>
                 @endforeach

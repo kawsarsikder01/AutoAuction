@@ -71,9 +71,9 @@
                                                       "placeholder": "Select a category",
                                                       "hideSearch": true
                                                     }'>
-                                                <option value="">Select a category</option>
+                                                <option value="">@lang('Select a category')</option>
                                                 @foreach($blogCategory as $category)
-                                                    <option value="{{ $category->id }}" {{ $blog->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                                    <option value="{{ $category->id }}" @selected($blog->category_id == $category->id)>{{ $category->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -93,9 +93,6 @@
                                                <button class="btn btn-white btn-sm ms-1" id="change_slug" type="button">Edit</button>
                                            </span>
                                             </div>
-                                            @error("slug")
-                                            <span class="invalid-feedback d-block">{{ $message }}</span>
-                                            @enderror
 
                                         </div>
 
@@ -126,7 +123,7 @@
                                 <div class="row mb-3">
                                     <div class="col-md-12">
                                         <label for="short_description" class="form-label">@lang("Short Description")</label>
-                                        <input type="text" name="short_description" class="form-control" id="shortDescription" value="{{ old("short_description",$blog->details->short_description) }}"
+                                        <input type="text" name="short_description" class="form-control" id="shortDescription" value="{{ old("short_description",optional($blog->details)->short_description) }}"
                                                placeholder="@lang("short description")" autocomplete="off">
                                         @error("short_description")
                                         <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -375,7 +372,7 @@
             });
 
             $('#summernote').summernote({
-                placeholder: 'Describe how to make a manual payment.',
+                placeholder: 'Blog Details.',
                 height: 160,
                 callbacks: {
                     onBlurCodeview: function () {

@@ -182,14 +182,54 @@ class PayoutController extends Controller
         }
     }
 
+    public function validateUserBalance($bid_amount,$vehicle_id = null)
+    {
+        $user = Auth::user();
+        $biddingHistorys =BiddingHistory::whereIn('bid_amount', function ($query) {
+            $query->selectRaw('MAX(bid_amount)')
+                ->from('bidding_history')
+                ->groupBy('vehicle_id');
+        })->with('vehicle')->where('user_id',$user->id)->where('wining_status',0)->get();
+        $totalBidAmount = $bid_amount;
+        foreach($biddingHistorys as $biddingHistory){
+            if ($biddingHistory->vehicle->biddingHistory->max('bid_amount') != $biddingHistory->bid_amount){
+                continue;
+            }
+            $totalBidAmount = $totalBidAmount + $biddingHistory->bid_amount;
+            if ($biddingHistory->vehicle->biddingHistory->max('bid_amount') == $biddingHistory->bid_amount){
+                if($vehicle_id && $vehicle_id == $biddingHistory->vehicle_id){
+                    $totalBidAmount = $totalBidAmount - $biddingHistory->bid_amount;
+                }
+            }
+        }
+        if ($biddingHistorys->first() && $totalBidAmount - $bid_amount > 0  ){
+            if($totalBidAmount  > $user->balance){
+                $totalBidAmount = $totalBidAmount- $bid_amount;
+                return "Your balance is low because your $totalBidAmount ".basicControl()->currency_symbol." is hold";
+            }
+        }
+        if($user->balance < $bid_amount){
+            return "Your balance is low please deposit your account";
+        }
+
+        return 'success';
+
+    }
+
     public function confirmPayout(Request $request, $trx_id)
     {
 
         $payout = Payout::where('trx_id', $trx_id)->first();
+
         $payoutMethod = PayoutMethod::findOrFail($payout->payout_method_id);
         $basic = basicControl();
 
         if ($request->isMethod('get')) {
+            $checkBalance =  $this->validateUserBalance($payout->net_amount_in_base_currency);
+
+            if ($checkBalance !== 'success'){
+                return back()->with('error', $checkBalance);
+            }
             if ($payoutMethod->code == 'flutterwave') {
                 return view(template() . 'user.payout.gateway.' . $payoutMethod->code, compact('payout', 'payoutMethod', 'basic'));
             } elseif ($payoutMethod->code == 'paystack') {
@@ -238,7 +278,7 @@ class PayoutController extends Controller
                     if ($k == $inVal->field_name) {
                         if ($inVal->type == 'file' && $request->hasFile($inKey)) {
                             try {
-                                $file = $this->fileUpload($request[$inKey], config('filelocation.payoutLog.path'));
+                                $file = $this->fileUpload($request[$inKey], config('filelocation.payoutLog.path'),null,null,'webp',60);
                                 $reqField[$inKey] = [
                                     'field_name' => $inVal->field_name,
                                     'field_value' => $file['path'],
@@ -290,7 +330,7 @@ class PayoutController extends Controller
             $payout->status = 1;
 
             $user = Auth::user();
-            $updateBalance = updateBalance($payout->user_id, $payout->net_amount, 0);
+            $updateBalance = updateBalance($payout->user_id, $payout->net_amount_in_base_currency, 0);
             $this->userNotify($user, $payout);
 
             $payout->save();
@@ -405,7 +445,6 @@ class PayoutController extends Controller
         }
         $validation = config('banks.' . $purifiedData['transfer_name'] . '.validation');
 
-
         $rules = [];
         if ($validation != null) {
             foreach ($validation as $key => $cus) {
@@ -420,9 +459,7 @@ class PayoutController extends Controller
 
         $rules['currency_code'] = 'required';
 
-
         $validate = Validator::make($request->all(), $rules);
-//        dd($validate);
         if ($validate->fails()) {
 
             return back()->withErrors($validate)->withInput();
@@ -573,7 +610,7 @@ class PayoutController extends Controller
     {
         $params = [
             'username' => $user->name,
-            'amount' => currencyPosition($payout->amount),
+            'amount' => currencyPosition($payout->amount_in_base_currency),
             'transaction' => $payout->trx_id,
         ];
 
@@ -589,7 +626,7 @@ class PayoutController extends Controller
         $this->adminFirebasePushNotification('PAYOUT_REQUEST_TO_ADMIN', $params, $firebaseAction);
 
         $params = [
-            'amount' => currencyPosition($payout->amount),
+            'amount' => currencyPosition($payout->amount_in_base_currency),
             'transaction' => $payout->trx_id,
         ];
         $action = [

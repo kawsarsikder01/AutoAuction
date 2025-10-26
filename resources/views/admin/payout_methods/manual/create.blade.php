@@ -91,9 +91,7 @@
                                         <div>
                                             <label class="form-label"
                                                    for="descriptionLabel">@lang('Description')</label>
-                                            <textarea id="exampleFormControlTextarea1" name="description"
-                                                      class="form-control" placeholder="@lang("Description")"
-                                                      rows="4">{{ old("description") }}</textarea>
+                                            <textarea id="exampleFormControlTextarea1" name="description" class="form-control" placeholder="@lang("Description")" rows="4">{{ old("description") }}</textarea>
                                         </div>
                                         @error('description')
                                         <span class="invalid-feedback d-block">{{ $message }}</span>

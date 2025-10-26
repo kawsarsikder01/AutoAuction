@@ -140,8 +140,7 @@
                                 <div class="row">
                                     <div class="col-md-12 mt-4">
                                         <label class="form-label" for="descriptionArea">@lang("Description")</label>
-                                        <textarea id="descriptionArea" class="form-control" name="description"
-                                                  placeholder="Description"
+                                        <textarea id="descriptionArea" class="form-control" name="description" placeholder="Description"
                                                   rows="3">{{ old('description', $method->description) }}</textarea>
                                         <span class="invalid-feedback">
                                             @error('description') @lang($message) @enderror

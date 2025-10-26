@@ -85,24 +85,23 @@ class PluginController extends Controller
     public function googleRecaptchaConfigurationUpdate(Request $request)
     {
 
+
         try {
             $request->validate([
                 'google_recaptcha_site_key' => 'required|string|min:3',
                 'google_recaptcha_secret_key' => 'required|string|min:3',
                 'google_recaptcha_site_verify_url' => 'required|string|min:3',
-                'admin_login_recaptcha_status' => 'integer|in:0,1',
-                'user_login_recaptcha_status' => 'integer|in:0,1',
-                'user_registration_reCaptcha_status' => 'integer|in:0,1',
+                'user_login_recaptcha' => 'integer|in:0,1',
+                'google_user_login_recaptcha_status' => 'integer|in:0,1',
+                'user_registration_recaptcha' => 'integer|in:0,1',
             ]);
 
             $basicControl = basicControl();
             $basicControl->update([
-                'recaptcha_admin_login' => $request->admin_login_recaptcha,
-                'reCaptcha_status_login' => $request->user_login_recaptcha,
-                'reCaptcha_status_registration' => $request->user_registration_recaptcha
+                'google_admin_login_recaptcha_status' => $request->admin_login_recaptcha,
+                'google_user_login_recaptcha_status' => $request->user_login_recaptcha,
+                'google_user_registration_recaptcha_status' => $request->user_registration_recaptcha
             ]);
-
-
             $env = [
                 'GOOGLE_RECAPTCHA_SITE_KEY' => $request->google_recaptcha_site_key,
                 'GOOGLE_RECAPTCHA_SECRET_KEY' => $request->google_recaptcha_secret_key,
@@ -113,7 +112,6 @@ class PluginController extends Controller
 
             Artisan::call('config:clear');
             Artisan::call('cache:clear');
-
             return back()->with('success', 'Successfully Updated');
 
         } catch (\Exception $e) {

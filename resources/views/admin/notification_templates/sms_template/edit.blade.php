@@ -128,9 +128,8 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>@lang('Message')</label>
-                                                    <textarea
-                                                        class="form-control summernote @error('sms_template.'.$value->id) is-invalid @enderror"
-                                                        name="sms_template[{{ $value->id }}]">{{ old('sms_template.'.$value->id, $template->sms ?? '') }}</textarea>
+                                                    <textarea class="form-control summernote @error('sms_template.'.$value->id) is-invalid @enderror"
+                                                              name="sms_template[{{ $value->id }}]">{{ old('sms_template.'.$value->id, $template->sms ?? '') }}</textarea>
                                                     @error('sms_template.'.$value->id)
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ __($message) }}</strong>

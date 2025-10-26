@@ -15,7 +15,12 @@ class ReportController extends Controller
     use Notify;
     public function index()
     {
-        $reports = Report::where(function ($query){
+        $reports = Report::with(['reporter'=>function($query){
+            $query->select('id','firstname','lastname');
+        },'repotedUser'=>function($query){
+            $query->select('id','firstname','lastname');
+        }])
+        ->where(function ($query){
             $query->where('repoter_id',Auth::user()->id);
         })->orWhere(function ($query){
             $query->where('reported_user_id',Auth::user()->id);
@@ -78,7 +83,7 @@ class ReportController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white",
             ];
             $this->userPushNotification($report->repotedUser,'REPORT_NOTIFICATION_USER',$msg2,$action2);
-            $this->userFirebasePushNotification($report->repotedUser,'REPORT_NOTIFICATION_USER',$msg2,$action2);
+            $this->userFirebasePushNotification($report->repotedUser,'REPORT_NOTIFICATION_USER',$msg2,route('user.get.conversation',$report->id));
             $this->sendMailSms($report->repotedUser,'REPORT_NOTIFICATION_USER',$msg2);
 
             return back()->with('success','Your Report send Successfully');

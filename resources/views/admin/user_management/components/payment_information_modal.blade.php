@@ -12,12 +12,12 @@
 
                     <div class="row mb-6">
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <small class="text-cap text-secondary mb-0">@lang('Amount paid:')</small>
+                            <small class="text-cap text-secondary mb-0">@lang('Payment Amount:')</small>
                             <h5 class="amount"></h5>
                         </div>
 
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <small class="text-cap text-secondary mb-0">@lang('Date paid:')</small>
+                            <small class="text-cap text-secondary mb-0">@lang('Payment Date:')</small>
                             <span class="text-dark date"></span>
                         </div>
 
@@ -106,9 +106,9 @@
                                     <small class="text-cap mb-2">@lang('Send Your Feedback')</small>
                                     <textarea name="feedback" class="form-control feedback" placeholder="Feedback" rows="3" >{{old('feedback')}}</textarea>
                                     @error('feedback')
-                                        <span class="invalid-feedback d-block">{{ $message }}</span>
+                <span class="invalid-feedback d-block">{{ $message }}</span>
                                     @enderror
-                                </div>`;
+                </div>`;
 
             } else {
                 feedbackField = `<div class="mb-3">

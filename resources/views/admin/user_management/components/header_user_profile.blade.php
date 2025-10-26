@@ -1,6 +1,7 @@
 <div class="profile-cover">
     <div class="profile-cover-img-wrapper">
-        <img id="profileCoverImg" class="profile-cover-img" src="{{ asset('assets/admin/img/img1.jpg') }}" alt="Image Description"/>
+        <img id="profileCoverImg" class="profile-cover-img" src="{{ asset('assets/admin/img/img1.jpg') }}"
+             alt="Image Description"/>
     </div>
 </div>
 
@@ -8,15 +9,17 @@
     <label class="avatar avatar-xxl avatar-circle avatar-uploader profile-cover-avatar"
            for="editAvatarUploaderModal">
         <img id="editAvatarImgModal" class="avatar-img"
-             src="{{ getFile($user->image, $user->image_driver) }}" alt="Image Description"/>
+             src="{{ getFile($user->image_driver, $user->image) }}" alt="Image Description"/>
         <span class="avatar-uploader-trigger"><i class="bi-pencil-fill avatar-uploader-icon shadow-sm"></i></span>
     </label>
 
     <h1 class="page-header-title">
         @lang($user->firstname. ' ' . $user->lastname)
-        <i class="bi-patch-check-fill fs-2 text-primary" data-bs-toggle="tooltip"
-           data-bs-placement="top"
-           title="Verified Profile"></i>
+        @if($user->email_verification && $user->sms_verification)
+            <i class="bi-patch-check-fill fs-2 text-primary" data-bs-toggle="tooltip"
+               data-bs-placement="top"
+               title="Verified Profile"></i>
+        @endif
     </h1>
 
     <ul class="list-inline list-px-2">
@@ -112,7 +115,7 @@
 @push("script")
     <script>
         "use script";
-        $(document).on('click', '.addBalance', function (){
+        $(document).on('click', '.addBalance', function () {
             $('.setBalanceRoute').attr('action', $(this).data('route'));
             $('.user-balance').text($(this).data('balance'));
         })

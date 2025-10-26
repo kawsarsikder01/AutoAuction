@@ -36,5 +36,19 @@ class Language extends Model
             '1' => 'success',
         ][$this->status] ?? 'danger';
     }
+    public function notificationTemplates()
+    {
+        return $this->hasMany(NotificationTemplate::class,'language_id');
+    }
+
+    public function pageDetails()
+    {
+        return $this->hasMany(PageDetail::class,'language_id');
+    }
+
+    public function contentDetails()
+    {
+        return $this->hasMany(ContentDetails::class,'language_id');
+    }
 
 }

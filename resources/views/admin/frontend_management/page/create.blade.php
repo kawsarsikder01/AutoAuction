@@ -85,8 +85,7 @@
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                     data-bs-target="#blockModal">@lang("Insert Section")</button>
                                         </div>
-                                        <textarea class="form-control" name="page_content" id="summernote"
-                                                  rows="20">{{ old("page_content") }}</textarea>
+                                        <textarea class="form-control" name="page_content" id="summernote" rows="20">{{ old("page_content") }}</textarea>
                                         @error("page_content")
                                         <span class="invalid-feedback d-block">{{ $message }}</span>
                                         @enderror

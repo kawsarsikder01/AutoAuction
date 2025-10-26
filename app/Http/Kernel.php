@@ -37,7 +37,8 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\ValidateRequestData::class,
-             \App\Http\Middleware\Language::class,
+            \App\Http\Middleware\Language::class,
+            \App\Http\Middleware\ActivityByUser::class
         ],
 
         'api' => [
@@ -70,6 +71,6 @@ class Kernel extends HttpKernel
         'userCheck' => \App\Http\Middleware\CheckUserStatus::class,
         'kycVerification' => \App\Http\Middleware\kycVerification::class,
         'CheckSeller' => \App\Http\Middleware\CheckSeller::class,
-
+        'visitor' => \App\Http\Middleware\Visitor::class
     ];
 }

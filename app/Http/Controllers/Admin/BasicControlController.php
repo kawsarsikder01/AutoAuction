@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\Artisan;
 use Facades\App\Services\BasicService;
 use Facades\App\Services\CurrencyLayerService;
 use Exception;
+use App\Traits\Upload;
 use function GuzzleHttp\Promise\all;
 
 class BasicControlController extends Controller
 {
+   use  Upload;
     public function index($settings = null)
     {
         $settings = $settings ?? 'settings';
@@ -27,7 +29,6 @@ class BasicControlController extends Controller
         $data['basicControl'] = basicControl();
         $data['timeZones'] = timezone_identifiers_list();
         $data['dateFormat'] = config('dateformat');
-
         return view('admin.control_panel.basic_control', $data);
     }
 
@@ -112,6 +113,65 @@ class BasicControlController extends Controller
                 throw new Exception('Something went wrong, when updating data');
 
             session()->flash('success', 'Basic Control Configure Successfully');
+            Artisan::call('optimize:clear');
+            return back();
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+
+    }
+
+    public function cookie()
+    {
+        $data['basicControl'] = basicControl();
+        return view('admin.control_panel.cookie',$data);
+    }
+
+    public function updateCookie(Request $request)
+    {
+        
+        
+        $basic = BasicControl();
+        $request->validate([
+            'cookie_title' => 'required|string|min:3|max:100',
+            'cookie_button_name' => 'required|string|max:30',
+            'cookie_button_url' => 'nullable',
+            'cookie_short_text' => 'required|string|max:200',
+            'cookie_image' => 'nullable|max:3072|image|mimes:jpg,jpeg,png'
+        ]);
+
+        if($request->hasFile('cookie_image')){
+
+                $image = $this->fileUpload($request->cookie_image,config('filelocation.cookie.path'),null,null,'webp',80);
+                if($image){
+                $path = $image['path'];
+                $driver = $image['driver'];
+            }else{
+                    return back()->with('error', 'Image could not be uploaded.');
+            }
+        }
+
+
+        try {
+            $basic = BasicControl();
+            $response = BasicControl::updateOrCreate([
+                'id' => $basic->id ?? ''
+            ], [
+                'cookie_title' => $request->cookie_title,
+                'cookie_button_name' => $request->cookie_button_name,
+                'cookie_button_url' => $request->cookie_button_url,
+                'cookie_short_text' => $request->cookie_short_text,
+                'cookie_status' => $request->cookie_status,
+                'cookie_image' => $path??$basic->cookie_image,
+                'cookie_driver' => $driver??$basic->cookie_driver,
+            ]);
+
+            if (!$response){
+                throw new Exception('Something went wrong, when updating data');
+            }
+            
+            session()->flash('success', 'Cookie Update Successfully');
             Artisan::call('optimize:clear');
             return back();
         } catch (\Exception $e) {

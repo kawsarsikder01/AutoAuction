@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BiddingHistory;
+use Exception;
+use Carbon\Carbon;
+
+use App\Models\User;
+use App\Models\React;
+use App\Traits\Notify;
+use App\Models\Vehicle;
 use App\Models\CarBrand;
 use App\Models\CarCategory;
-use App\Models\User;
-use App\Models\Vehicle;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
+use App\Models\BiddingHistory;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\Notify;
+
 class BidderController extends Controller
 {
     use Notify;
@@ -34,8 +37,8 @@ class BidderController extends Controller
         $maxBid = BiddingHistory::with('vehicle')
             ->where('vehicle_id',$id)
             ->where('bid_amount',$maxBidAmount)->first();
-
-        return view(template().'auction.auctionDetails',compact('vehicle','maxBid'));
+            $react = React::where('vehicle_id',$vehicle->id)->get();
+        return view(template().'auction.auctionDetails',compact('vehicle','maxBid','react'));
         } catch (Exception $error) {
             return view(template().'errors.404');
         }
@@ -46,11 +49,17 @@ class BidderController extends Controller
         $user = Auth::user();
         $data['categories'] =  CarCategory::get();
         $data['brands'] =  CarBrand::get();
-        $biddingHistorys =BiddingHistory::with('vehicle')
+        $biddingHistorys =BiddingHistory::with(['vehicle.user' => function($query){
+            $query->select('id'); 
+        },'bidder','vehicle'=>function($query){
+            $query->select('id', 'release_status','user_id','payment_status'); 
+        },'vehicle.details' => function($query){
+            $query->select('id', 'vehicle_id', 'title', 'sold_status'); 
+        }])
+       
                         ->where('user_id',$user->id)
                         ->orderBy('created_at', 'DESC')
                         ->paginate(basicControl()->paginate);
-
         return view(template().'user.pages.biddingHistory',compact('biddingHistorys'),$data);
     }
 
@@ -99,11 +108,11 @@ class BidderController extends Controller
                 ];
                 //seller notify
                 $this->userPushNotification($vehicle->user, 'SELLER_PAYMENT_CONFIRMATION',$msg1, $action1);
-                $this->userFirebasePushNotification($vehicle->user,'SELLER_PAYMENT_CONFIRMATION',$msg1, "#",);
+                $this->userFirebasePushNotification($vehicle->user,'SELLER_PAYMENT_CONFIRMATION',$msg1, route('user.listed.vehicle'),);
                 $this->sendMailSms($vehicle->user,'SELLER_PAYMENT_CONFIRMATION',$msg1);
                 //bidder notify
                 $this->userPushNotification($soldVehicle->bidder, 'BIDDER_PAYMENT_CONFIRMATION',$msg2, $action);
-                $this->userFirebasePushNotification($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2, "#",);
+                $this->userFirebasePushNotification($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2,  route('user.bidding.history'),);
                 $this->sendMailSms($soldVehicle->bidder,'BIDDER_PAYMENT_CONFIRMATION',$msg2);
             }
 

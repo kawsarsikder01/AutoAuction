@@ -24,7 +24,7 @@ class ContentController extends Controller
 
         $data['singleContent'] = config('contents.' . $content . '.single');
         $data['multipleContents'] = config('contents.' . $content . '.multiple');
-        $data['languages'] = Language::orderBy('default_status','desc')->get();
+        $data['languages'] = Language::orderBy('default_status', 'desc')->get();
         $defaultLanguage = $data['languages']->where('default_status', true)->first();
 
         $data['singleContentData'] = ContentDetails::with('content')
@@ -46,13 +46,13 @@ class ContentController extends Controller
 
     public function store(Request $request, $content, $language)
     {
-
         if (!array_key_exists($content, config('contents'))) {
             abort(404);
         }
 
         $inputData = $request->except('_token', '_method');
         $validate = Validator::make($inputData, config('contents.' . $content . '.single.validation'), config('contents.message'));
+
         if ($validate->fails()) {
             $validate->errors()->add('errActive', $language);
             return back()->withInput()->withErrors($validate);
@@ -65,7 +65,7 @@ class ContentController extends Controller
             if ($request->hasFile($key)) {
                 try {
                     $size = config('contents.' . $content . '.single.size.image');
-                    $image = $this->fileUpload($request->{$key}, config('filelocation.contents.path'), null, null, 'avif', 60);
+                    $image = $this->fileUpload($request->$key, config('filelocation.contents.path'), null, $size, 'avif', 60, @$singleContent->media->image->path, @$singleContent->media->image->driver);
                     $mediaData[$key] = $image;
                 } catch (\Exception $exp) {
                     return back()->with('alert', 'Image could not be uploaded.');
@@ -83,7 +83,7 @@ class ContentController extends Controller
         }
 
         $field_name = array_diff_key(config('contents.' . $content . '.single.field_name'), config("contents.content_media"));
-        $description = [];
+
         foreach ($field_name as $name => $type) {
             $description[$name] = $inputData[$name][$language];
         }
@@ -95,14 +95,10 @@ class ContentController extends Controller
             );
         }
 
-        if (!$contentDetails){
-
-            return back()->with('alert','Something went wrong, Please try again.');
+        if (!$contentDetails) {
+            return back()->with('Something went wrong, Please try again.');
         }
-
         return back()->with('success', 'Content Created Successfully');
-
-
     }
 
     public function manageContentMultiple($content)
@@ -110,7 +106,7 @@ class ContentController extends Controller
         if (!array_key_exists($content, config('contents'))) {
             abort(404);
         }
-        $data['languages'] = Language::orderBy('default_status','desc')->get();
+        $data['languages'] = Language::orderBy('default_status', 'desc')->get();
         $data['multipleContent'] = config('contents.' . $content . '.multiple');
 
         return view('admin.frontend_management.content.create', $data, compact('content'));
@@ -139,7 +135,7 @@ class ContentController extends Controller
             if ($request->hasFile($key)) {
                 try {
                     $size = config('contents.' . $content . '.multiple.size.image');
-                    $image = $this->fileUpload($request->image, config('filelocation.contents.path'), null, null, 'avif', 60);
+                    $image = $this->fileUpload($request->$key, config('filelocation.contents.path'), null, $size, 'avif', 60);
                     $mediaData[$key] = $image;
                 } catch (\Exception $exp) {
                     return back()->with('alert', 'Image could not be uploaded.');
@@ -151,41 +147,37 @@ class ContentController extends Controller
             }
         }
 
-
         if (isset($mediaData)) {
             $multipleContent->media = $mediaData;
             $multipleContent->save();
         }
 
         $field_name = array_diff_key(config('contents.' . $content . '.multiple.field_name'), config("contents.content_media"));
-        $description = array();
         foreach ($field_name as $name => $type) {
             $description[$name] = $inputData[$name][$language];
         }
+
         if ($language != 0) {
             $contentDetails = ContentDetails::create([
                 'content_id' => $multipleContent->id,
                 'language_id' => $language,
-                'description' => $description ?: null
+                'description' => $description ?? null
             ]);
         }
 
-        if (!$contentDetails){
+        if (!$contentDetails) {
             throw new \Exception("Something went wrong, Please try again");
         }
 
         return back()->with('success', 'Created Successfully');
-
     }
 
     public function multipleContentItemEdit($content, $id)
     {
-
         if (!array_key_exists($content, config('contents'))) {
             abort(404);
         }
-
-        $data['languages'] = Language::orderBy('default_status','desc')->get();
+        $data['languages'] = Language::orderBy('default_status', 'desc')->get();
         $data['multipleContent'] = config('contents.' . $content . '.multiple');
 
         $data['multipleContentData'] = ContentDetails::with('content')
@@ -195,14 +187,12 @@ class ContentController extends Controller
                 $query->where('type', 'multiple');
             })
             ->get()->groupBy('language_id');
-
-
         return view('admin.frontend_management.content.edit', $data, compact('content', 'id'));
-
     }
 
     public function multipleContentItemUpdate(Request $request, $content, $id, $language)
     {
+
         if (!array_key_exists($content, config('contents'))) {
             abort(404);
         }
@@ -216,14 +206,12 @@ class ContentController extends Controller
         }
 
         $multipleContent = Content::findOrFail($id);
-        // dd($multipleContent->media->image);
-
         foreach (config('contents.content_media') as $key => $media) {
             $old_data = $multipleContent->media->{$key} ?? null;
             if ($request->hasFile($key)) {
                 try {
                     $size = config('contents.' . $content . '.multiple.size.image');
-                    $image = $this->fileUpload($request->image, config('filelocation.contents.path'),  null, null,  'avif', 60);
+                    $image = $this->fileUpload($request->$key, config('filelocation.contents.path'), null, $size, 'avif', 60, @$multipleContent->media->image->path, @$multipleContent->media->image->driver);
                     $mediaData[$key] = $image;
                 } catch (\Exception $exp) {
                     return back()->with('alert', 'Image could not be uploaded.');
@@ -234,29 +222,30 @@ class ContentController extends Controller
                 $mediaData[$key] = $old_data;
             }
         }
+
         if (isset($mediaData)) {
             $multipleContent->media = $mediaData;
             $multipleContent->save();
         }
 
         $field_name = array_diff_key(config('contents.' . $content . '.multiple.field_name'), config("contents.content_media"));
+
         foreach ($field_name as $name => $type) {
             $description[$name] = $inputData[$name][$language];
         }
-//dd($description);
+
         if ($language != 0) {
             $contentDetails = ContentDetails::updateOrCreate(
                 ['content_id' => $id, 'language_id' => $language],
-                ['content_id' => $id, 'language_id' => $language, 'description' => $description ?? null]
+                ['content_id' => $id, 'language_id' => $language, 'description' => $description ?: null]
             );
         }
 
-        if (!$contentDetails){
+        if (!$contentDetails) {
             throw new \Exception("Something went wrong, Please try again");
         }
 
         return back()->with('success', 'Created Successfully');
-
     }
 
 

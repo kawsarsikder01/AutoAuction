@@ -11,7 +11,7 @@
                     <div class="col-md-12">
                        <div class="card p-5">
                            <h3 class="title text-center">{{trans('Please follow the instruction below')}}</h3>
-                           <p class="text-center mt-2 ">{{trans('You have requested to deposit')}} <b
+                           <p class="text-center mt-2 ">@lang($depositType) <b
                                    class="text--base">{{getAmount($deposit->amount)}}
                                    {{config('basic.base_currency')}}</b> , {{trans('Please pay')}}
                                <b class="text--base">{{getAmount($deposit->payable_amount)}} {{$deposit->payment_method_currency}}</b> {{trans('for successful payment')}}

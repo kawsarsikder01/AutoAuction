@@ -31,7 +31,6 @@
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Expand"></i>
             </button>
 
-
             <div class="dropdown ms-2">
                 <div class="d-none d-lg-block">
                     <div
@@ -107,78 +106,77 @@
         <!-- Notification -->
         <div class="navbar-nav-wrap-content-end" id="pushNotificationArea">
             <ul class="navbar-nav">
-                <li class="nav-item d- d-sm-inline-block">
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-ghost-secondary btn-icon rounded-circle"
-                                id="navbarNotificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                                data-bs-auto-close="outside">
-                            <i class="bi-bell"></i>
-                            <span class="btn-status btn-sm-status btn-status-danger" v-if="items.length > 0"
-                                  v-cloak></span>
-                        </button>
-                        <div
-                            class="dropdown-menu dropdown-menu-end dropdown-card navbar-dropdown-menu navbar-dropdown-menu-borderless navbarNotificationsDropdown data-bs-dropdown-animation"
-                            aria-labelledby="navbarNotificationsDropdown">
-                            <div class="card ">
-                                <div class="card-header card-header-content-between">
-                                    <h4 class="card-title mb-0">@lang('Notifications')</h4>
-                                </div>
-                                <div class="card-body-height">
-                                    <div id="notificationTabContent">
-                                        <ul class="list-group list-group-flush navbar-card-list-group">
-                                            <li class="list-group-item form-check-select"
-                                                v-for="(item, index) in items">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       id="notificationCheck6">
-                                                                <label class="form-check-label"
-                                                                       for="notificationCheck6"></label>
-                                                                <span class="form-check-stretched-bg"></span>
-                                                            </div>
-                                                            <div class="avatar avatar-sm avatar-circle">
-                                                                <img class="avatar-img" :src="item.description.image"
-                                                                     alt="Image Description">
-                                                            </div>
+                @if(basicControl()->in_app_notification)
+                    <li class="nav-item d- d-sm-inline-block">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-ghost-secondary btn-icon rounded-circle"
+                                    id="navbarNotificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                    data-bs-auto-close="outside">
+                                <i class="bi-bell"></i>
+                                <span class="btn-status btn-sm-status btn-status-danger" v-if="items.length > 0"
+                                      v-cloak></span>
+                            </button>
+                            <div
+                                class="dropdown-menu dropdown-menu-end dropdown-card navbar-dropdown-menu navbar-dropdown-menu-borderless navbarNotificationsDropdown data-bs-dropdown-animation"
+                                aria-labelledby="navbarNotificationsDropdown">
+                                <div class="card ">
+                                    <div class="card-header card-header-content-between">
+                                        <h4 class="card-title mb-0">@lang('Notifications')</h4>
+                                    </div>
+                                    <div class="card-body-height">
+                                        <div id="notificationTabContent">
+                                            <ul class="list-group list-group-flush navbar-card-list-group">
+                                                <li class="list-group-item form-check-select"
+                                                    v-for="(item, index) in items">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           id="notificationCheck6">
+                                                                    <label class="form-check-label"
+                                                                           for="notificationCheck6"></label>
+                                                                    <span class="form-check-stretched-bg"></span>
+                                                                </div>
+                                                                <div class="avatar avatar-sm avatar-circle">
+                                                                    <img class="avatar-img"
+                                                                         :src="item.description.image"
+                                                                         alt="Image Description">
+                                                                </div>
 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col ms-n2">
+                                                            <h5 class="mb-1">@{{ item.description.name }}</h5>
+                                                            <p class="text-body fs-5">@{{ item.description.text }}</p>
+                                                            <small class="col-auto text-muted text-cap" v-cloak>@{{
+                                                                item.formatted_date }}</small>
                                                         </div>
                                                     </div>
-                                                    <div class="col ms-n2">
-                                                        <h5 class="mb-1">@{{ item.description.name }}</h5>
-                                                        <p class="text-body fs-5" v-html="item.description.text"></p>
-                                                        <small class="col-auto text-muted text-cap" v-cloak>@{{
-                                                            item.formatted_date }}</small>
-                                                    </div>
-                                                </div>
-                                                <a class="stretched-link" :href="item.description.link"></a>
-                                            </li>
-                                        </ul>
-                                        <div class="text-center p-4" v-if="items.length < 1">
-                                            <img class="dataTables-image mb-3"
-                                                 src="{{ asset('assets/admin/img/oc-error.svg') }}"
-                                                 alt="Image Description" data-hs-theme-appearance="default">
-                                            <img class="dataTables-image mb-3"
-                                                 src="{{ asset('assets/admin/img/oc-error-light.svg') }}"
-                                                 alt="Image Description" data-hs-theme-appearance="dark">
-                                            <p class="mb-0">@lang("No Notifications Found")</p>
+                                                    <a class="stretched-link" :href="item.description.link"></a>
+                                                </li>
+                                            </ul>
+                                            <div class="text-center p-4" v-if="items.length < 1">
+                                                <img class="dataTables-image mb-3"
+                                                     src="{{ asset('assets/admin/img/oc-error.svg') }}"
+                                                     alt="Image Description" data-hs-theme-appearance="default">
+                                                <img class="dataTables-image mb-3"
+                                                     src="{{ asset('assets/admin/img/oc-error-light.svg') }}"
+                                                     alt="Image Description" data-hs-theme-appearance="dark">
+                                                <p class="mb-0">@lang("No Notifications Found")</p>
+                                            </div>
                                         </div>
-                                    </div>
 
+                                    </div>
+                                    <a class="card-footer text-center" href="javascript:void(0)" v-if="items.length > 0"
+                                       @click.prevent="readAll">
+                                        @lang("Clear all notifications") <i class="bi-chevron-right"></i>
+                                    </a>
                                 </div>
-                                <a class="card-footer text-center" href="javascript:void(0)" v-if="items.length > 0"
-                                   @click.prevent="readAll">
-                                    @lang("Clear all notifications") <i class="bi-chevron-right"></i>
-                                </a>
                             </div>
                         </div>
-                    </div>
-
-                </li>
-
-
-
+                    </li>
+                @endif
 
 
                 <li class="nav-item">
@@ -187,7 +185,8 @@
                            data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"
                            data-bs-dropdown-animation>
                             <div class="avatar avatar-sm avatar-circle">
-                                <img class="avatar-img" src="{{getFile(Auth::guard('admin')->user()->image_driver, Auth::guard('admin')->user()->image)}}"
+                                <img class="avatar-img"
+                                     src="{{getFile(Auth::guard('admin')->user()->image_driver, Auth::guard('admin')->user()->image)}}"
                                      alt="Image Description">
                                 <span class="avatar-status avatar-sm-status avatar-status-success"></span>
                             </div>
@@ -199,7 +198,8 @@
                             <div class="dropdown-item-text">
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-sm avatar-circle">
-                                        <img class="avatar-img" src="{{getFile(Auth::guard('admin')->user()->image_driver, Auth::guard('admin')->user()->image)}}"
+                                        <img class="avatar-img"
+                                             src="{{getFile(Auth::guard('admin')->user()->image_driver, Auth::guard('admin')->user()->image)}}"
                                              alt="Image Description">
                                     </div>
                                     <div class="flex-grow-1 ms-3">
@@ -231,4 +231,70 @@
     </div>
 </header>
 <!-- ========== END HEADER ========== -->
-{{--@{{ removeHtmlTags(item.description.text)}}--}}
+
+@if(basicControl()->in_app_notification)
+    @push('script')
+        <script>
+            'use strict'
+            let pushNotificationArea = new Vue({
+                el: "#pushNotificationArea",
+                data: {
+                    items: [],
+                },
+                mounted() {
+                    this.getNotifications();
+                    this.pushNewItem();
+                },
+                methods: {
+                    getNotifications() {
+                        let app = this;
+                        axios.get("{{ route('admin.push.notification.show') }}")
+                            .then(function (res) {
+                                app.items = res.data;
+                            })
+                    },
+                    readAt(id, link) {
+                        let app = this;
+                        let url = "{{ route('admin.push.notification.readAt', 0) }}";
+                        url = url.replace(/.$/, id);
+                        axios.get(url)
+                            .then(function (res) {
+                                if (res.status) {
+                                    app.getNotifications();
+                                    if (link !== '#') {
+                                        window.location.href = link
+                                    }
+                                }
+                            })
+                    },
+                    readAll() {
+                        let app = this;
+                        let url = "{{ route('admin.push.notification.readAll') }}";
+                        axios.get(url)
+                            .then(function (res) {
+                                if (res.status) {
+                                    app.items = [];
+                                }
+                            })
+                    },
+                    pushNewItem() {
+                        let app = this;
+                        Pusher.logToConsole = false;
+                        let pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+                            encrypted: true,
+                            cluster: "{{ env('PUSHER_APP_CLUSTER') }}"
+                        });
+                        let channel = pusher.subscribe('admin-notification.' + "{{ Auth::id() }}");
+                        channel.bind('App\\Events\\AdminNotification', function (data) {
+                            app.items.unshift(data.message);
+                        });
+                        channel.bind('App\\Events\\UpdateAdminNotification', function (data) {
+                            app.getNotifications();
+                        });
+                    }
+                }
+            });
+        </script>
+    @endpush
+@endif
+

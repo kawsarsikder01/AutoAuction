@@ -190,8 +190,7 @@
 
                                     <div class="col-sm-9">
                                         <label for="descriptionLabel" class="form-label">@lang('Description')</label>
-                                        <textarea name="description" class="form-control custom_textarea" rows="3"
-                                                  id="descriptionLabel"
+                                        <textarea name="description" class="form-control custom_textarea" rows="3" id="descriptionLabel"
                                                   placeholder="@lang("Description")">{{ $payoutMethod->description }}</textarea>
 
                                         <label class="row form-check form-switch mt-3" for="manual_status">

@@ -57,7 +57,7 @@
 
 
                     <div class="nav-item">
-                        <a class="nav-link {{ menuActive(['admin.plan.list']) }}"
+                        <a class="nav-link {{ menuActive(['admin.plan.list','admin.create.plan','admin.plan.edit']) }}"
                            href="{{ route('admin.plan.list') }}" data-placement="left">
                             <i class="bi bi-box-seam nav-icon"></i>
                             <span class="nav-link-title">@lang('Plan')</span>
@@ -93,7 +93,7 @@
                     </div>
 
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{menuActive(['admin.pending.vehicle','admin.approved.vehicle','admin.vehicle.rejected.list'], 2)}}"
+                        <a class="nav-link dropdown-toggle {{menuActive(['admin.pending.vehicle','admin.approved.vehicle','admin.vehicle.rejected.list','admin.view.vehicle.biddingHistory'], 2)}}"
                            href="#navbarVerticalVehicleRequest"
                            role="button"
                            data-bs-toggle="collapse"
@@ -104,19 +104,19 @@
                             <span class="nav-link-title">@lang('Vehicle Request')</span>
                         </a>
                         <div id="navbarVerticalVehicleRequest"
-                             class="nav-collapse collapse {{ menuActive(['admin.pending.vehicle','admin.approved.vehicle','admin.vehicle.rejected.list'], 2) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.pending.vehicle','admin.approved.vehicle','admin.vehicle.rejected.list','admin.view.vehicle.biddingHistory'], 2) }}"
                              data-bs-parent="#navbarVerticalVehicleRequest">
                             <a class="nav-link {{ menuActive(['admin.pending.vehicle']) }}"
                                href="{{ route('admin.pending.vehicle') }}">@lang('Pending Vehicle')</a>
 
-                            <a class="nav-link  {{ menuActive(['admin.approved.vehicle']) }}"
+                            <a class="nav-link  {{ menuActive(['admin.approved.vehicle','admin.view.vehicle.biddingHistory']) }}"
                                href="{{ route("admin.approved.vehicle") }}">@lang('Approved Vehicle')</a>
                             <a class="nav-link  {{ menuActive(['admin.vehicle.rejected.list']) }}"
                                href="{{ route("admin.vehicle.rejected.list") }}">@lang('Rejected Vehicle')</a>
                         </div>
                     </div>
                     <div class="nav-item">
-                        <a class="nav-link {{ menuActive(['admin.reports']) }}"
+                        <a class="nav-link {{ menuActive(['admin.reports','admin.user.report']) }}"
                            href="{{ route('admin.reports') }}" data-placement="left">
                             <i class="bi bi-flag nav-icon"></i>
                             <span class="nav-link-title">@lang('Reports')</span>
@@ -157,7 +157,7 @@
                     <span class="dropdown-header mt-4"> @lang("Ticket Panel")</span>
                     <small class="bi-three-dots nav-subtitle-replacer"></small>
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.ticket'], 2) }}"
+                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.ticket', 'admin.ticket.search', 'admin.ticket.view'], 3) }}"
                            href="#navbarVerticalTicketMenu"
                            role="button"
                            data-bs-toggle="collapse"
@@ -168,7 +168,7 @@
                             <span class="nav-link-title">@lang("Support Ticket")</span>
                         </a>
                         <div id="navbarVerticalTicketMenu"
-                             class="nav-collapse collapse {{ menuActive(['admin.ticket'], 2) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.ticket','admin.ticket.search', 'admin.ticket.view'], 2) }}"
                              data-bs-parent="#navbarVerticalTicketMenu">
                             <a class="nav-link {{ request()->is('admin/tickets/all') ? 'active' : '' }}"
                                href="{{ route('admin.ticket', 'all') }}">@lang("All Tickets")
@@ -186,14 +186,14 @@
                     <span class="dropdown-header mt-4"> @lang('Kyc Management')</span>
                     <small class="bi-three-dots nav-subtitle-replacer"></small>
                     <div class="nav-item">
-                        <a class="nav-link {{ menuActive(['admin.kyc.form.list']) }}"
+                        <a class="nav-link {{ menuActive(['admin.kyc.form.list','admin.kyc.create','admin.kyc.edit']) }}"
                            href="{{ route('admin.kyc.form.list') }}" data-placement="left">
                             <i class="bi-stickies nav-icon"></i>
                             <span class="nav-link-title">@lang('KYC Setting')</span>
                         </a>
                     </div>
 
-                    <div class="nav-item" {{ menuActive(['admin.kyc.list'], 3) }}>
+                    <div class="nav-item" {{ menuActive(['admin.kyc.list*','admin.kyc.view'], 3) }}>
                         <a class="nav-link dropdown-toggle collapsed" href="#navbarVerticalKycRequestMenu"
                            role="button"
                            data-bs-toggle="collapse" data-bs-target="#navbarVerticalKycRequestMenu"
@@ -203,8 +203,9 @@
                             <span class="nav-link-title">@lang("KYC Request")</span>
                         </a>
                         <div id="navbarVerticalKycRequestMenu"
-                             class="nav-collapse collapse {{ menuActive(['admin.kyc.list'], 2) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.kyc.list*','admin.kyc.view'], 2) }}"
                              data-bs-parent="#navbarVerticalKycRequestMenu">
+
                             <a class="nav-link {{ Request::is('admin/kyc/pending') ? 'active' : '' }}"
                                href="{{ route('admin.kyc.list', 'pending') }}">
                                 @lang('Pending KYC')
@@ -224,7 +225,9 @@
                     <small class="bi-three-dots nav-subtitle-replacer"></small>
 
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.users'], 3) }}"
+                        <a class="nav-link dropdown-toggle {{  menuActive(['admin.mail.all.user','admin.users','admin.users.add','admin.user.edit',
+                                                                        'admin.user.view.profile','admin.user.transaction','admin.user.payment',
+                                                                        'admin.user.payout','admin.user.kyc.list','admin.send.email'], 3) }}"
                            href="#navbarVerticalUserPanelMenu"
                            role="button"
                            data-bs-toggle="collapse"
@@ -235,11 +238,15 @@
                             <span class="nav-link-title">@lang('User Management')</span>
                         </a>
                         <div id="navbarVerticalUserPanelMenu"
-                             class="nav-collapse collapse {{ menuActive(['admin.users'], 2) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.mail.all.user','admin.users','admin.users.add','admin.user.edit',
+                                                                        'admin.user.view.profile','admin.user.transaction','admin.user.payment',
+                                                                        'admin.user.payout','admin.user.kyc.list','admin.send.email'], 2) }}"
                              data-bs-parent="#navbarVerticalUserPanelMenu">
+
                             <a class="nav-link {{ menuActive(['admin.users']) }}" href="{{ route('admin.users') }}">
                                 @lang('All User')
                             </a>
+
                             <a class="nav-link {{ menuActive(['admin.mail.all.user']) }}"
                                href="{{ route("admin.mail.all.user") }}">@lang('Mail To Users')</a>
                         </div>
@@ -257,7 +264,7 @@
                     </div>
 
                     <div
-                            class="nav-item {{ menuActive(['admin.payment.methods', 'admin.deposit.manual.index'], 3) }}">
+                        class="nav-item {{ menuActive(['admin.payment.methods', 'admin.edit.payment.methods', 'admin.deposit.manual.index', 'admin.deposit.manual.create', 'admin.deposit.manual.edit'], 3) }}">
                         <a class="nav-link dropdown-toggle"
                            href="#navbarVerticalGatewayMenu"
                            role="button"
@@ -269,16 +276,18 @@
                             <span class="nav-link-title">@lang('Payment Setting')</span>
                         </a>
                         <div id="navbarVerticalGatewayMenu"
-                             class="nav-collapse collapse {{ menuActive(['admin.payment.methods', 'admin.deposit.manual.index'], 2) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.payment.methods', 'admin.edit.payment.methods', 'admin.deposit.manual.index', 'admin.deposit.manual.create', 'admin.deposit.manual.edit'], 2) }}"
                              data-bs-parent="#navbarVerticalGatewayMenu">
-                            <a class="nav-link {{ menuActive(['admin.payment.methods']) }}"
+
+                            <a class="nav-link {{ menuActive(['admin.payment.methods', 'admin.edit.payment.methods',]) }}"
                                href="{{ route('admin.payment.methods') }}">@lang('Payment Gateway')</a>
-                            <a class="nav-link {{ menuActive(['admin.deposit.manual.index']) }}"
+
+                            <a class="nav-link {{ menuActive([ 'admin.deposit.manual.index', 'admin.deposit.manual.create', 'admin.deposit.manual.edit']) }}"
                                href="{{ route('admin.deposit.manual.index') }}">@lang('Manual Gateway')</a>
                         </div>
                     </div>
                     <div class="nav-item">
-                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.payout.method.list', 'admin.payout.withdraw.days'], 3) }}"
+                        <a class="nav-link dropdown-toggle {{ menuActive(['admin.payout.method.list','admin.payout.method.create','admin.manual.method.edit','admin.payout.method.edit','admin.payout.withdraw.days'], 3) }}"
                            href="#navbarVerticalWithdrawMenu"
                            role="button"
                            data-bs-toggle="collapse"
@@ -288,11 +297,10 @@
                             <i class="bi bi-wallet2 nav-icon"></i>
                             <span class="nav-link-title">@lang('Withdraw Setting')</span>
                         </a>
-
                         <div id="navbarVerticalWithdrawMenu"
-                             class="nav-collapse collapse {{ menuActive(['admin.payout.method.list', 'admin.payout.withdraw.days'], 2) }}"
+                             class="nav-collapse collapse {{ menuActive(['admin.payout.method.list','admin.payout.method.create','admin.manual.method.edit','admin.payout.method.edit','admin.payout.withdraw.days'], 2) }}"
                              data-bs-parent="#navbarVerticalWithdrawMenu">
-                            <a class="nav-link {{ menuActive(['admin.payout.method.list']) }}"
+                            <a class="nav-link {{ menuActive(['admin.payout.method.list','admin.payout.method.create','admin.manual.method.edit','admin.payout.method.edit']) }}"
                                href="{{ route('admin.payout.method.list') }}">@lang('Withdraw Method')</a>
 
                             <a class="nav-link  {{ menuActive(['admin.payout.withdraw.days']) }}"
@@ -300,11 +308,12 @@
                         </div>
                     </div>
 
+
                     <span class="dropdown-header mt-4">@lang("Themes Settings")</span>
                     <small class="bi-three-dots nav-subtitle-replacer"></small>
                     <div id="navbarVerticalThemeMenu">
                         <div class="nav-item">
-                            <a class="nav-link {{ menuActive(['admin.page.index']) }}"
+                            <a class="nav-link {{ menuActive(['admin.page.index','admin.create.page','admin.edit.page','admin.edit.static.page']) }}"
                                href="{{ route('admin.page.index', basicControl()->theme) }}"
                                data-placement="left">
                                 <i class="fa-light fa-list nav-icon"></i>
@@ -313,7 +322,8 @@
                         </div>
 
                         <div class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.manage.menu') }}" data-placement="left">
+                            <a class="nav-link {{ menuActive(['admin.manage.menu']) }}"
+                               href="{{ route('admin.manage.menu') }}" data-placement="left">
                                 <i class="bi-folder2-open nav-icon"></i>
                                 <span class="nav-link-title">@lang('Manage Menu')</span>
                             </a>
@@ -330,7 +340,7 @@
                            role="button" data-bs-toggle="collapse"
                            data-bs-target="#navbarVerticalContentsMenu" aria-expanded="false"
                            aria-controls="navbarVerticalContentsMenu">
-                            <i class="fa-light fa-section nav-icon"></i>
+                            <i class="fa-light fa-pen nav-icon"></i>
                             <span class="nav-link-title">@lang('Manage Content')</span>
                         </a>
                         <div id="navbarVerticalContentsMenu"

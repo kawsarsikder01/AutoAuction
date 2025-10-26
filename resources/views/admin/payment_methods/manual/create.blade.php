@@ -34,7 +34,8 @@
                                     <div class="col-md-6">
                                         <label for="nameLabel" class="form-label">@lang('Name')</label>
                                         <input type="text" class="form-control  @error('name') is-invalid @enderror"
-                                               name="name" id="nameLabel" placeholder="@lang("Name")" aria-label="@lang("Name")"
+                                               name="name" id="nameLabel" placeholder="@lang("Name")"
+                                               aria-label="@lang("Name")"
                                                autocomplete="off"
                                                value="{{ old('name') }}">
                                         @error('name')
@@ -53,7 +54,8 @@
                                             <input class="form-check-input @error('status') is-invalid @enderror"
                                                    type="checkbox" name="status" id="ManualStatusSwitch"
                                                    value="1">
-                                            <label class="form-check-label text-center" for="ManualStatusSwitch"></label>
+                                            <label class="form-check-label text-center"
+                                                   for="ManualStatusSwitch"></label>
                                         </span>
                                             @error('manual_status')
                                             <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -65,8 +67,7 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-5">
                                         <label class="form-label" for="descriptionArea">@lang("Description")</label>
-                                        <textarea id="descriptionArea" class="form-control" name="description"
-                                                  placeholder="Description">{{ old('description') }}</textarea>
+                                        <textarea id="descriptionArea" class="form-control" name="description" placeholder="Description">{{ old('description') }}</textarea>
                                         <span class="invalid-feedback d-block">
                                             @error('description') @lang($message) @enderror
                                         </span>
@@ -99,9 +100,7 @@
                                     </div>
                                     <div class="col-sm-9">
                                         <label for="noteLabel" class="form-label">@lang('Payment Description')</label>
-                                        <textarea id="summernote" id="noteLabel" name="note">
-                                            {{ old("note") }}
-                                        </textarea>
+                                        <textarea id="summernote" id="noteLabel" name="note">{{ old("note") }}</textarea>
                                         @error('note')
                                         <span class="invalid-feedback d-block">{{ $message }}</span>
                                         @enderror
@@ -275,7 +274,8 @@
                                     </div>
                                     <div class="table-responsive position-relative">
                                         <table
-                                            class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table" id="supported_currency_table">
+                                            class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
+                                            id="supported_currency_table">
                                             <thead class="thead-light">
                                             <tr>
                                                 <th scope="col">@lang('Currency')</th>
@@ -295,108 +295,114 @@
 
                                             @if($oldCurrencyCounts > 0)
                                                 @for($i = 0; $i < $oldCurrencyCounts; $i++)
-                                            <tr>
-                                                <td>
-                                                    <input type="text" class="form-control change_currency"
-                                                           name="receivable_currencies[{{$i}}][currency]"
-                                                           placeholder="@lang("Currency")" aria-label="@lang("Currency")"
-                                                           value="{{ old("receivable_currencies.$i.currency") }}"
-                                                           autocomplete="off">
-                                                    @error('receivable_currencies.' . $i . '.currency')
-                                                    <span class="invalid-feedback d-block mb-1">{{ $message }}</span>
-                                                    @enderror
-                                                </td>
-                                                <td>
-                                                    <div class="input-group mb-1">
-                                                        <span class="input-group-text"> 1 {{ $basicControl->base_currency ? : 'USD' }} = </span>
-                                                        <input type="text"
-                                                               class="form-control @error('conversion_rate') is-invalid @enderror"
-                                                               name="receivable_currencies[{{$i}}][conversion_rate]"
-                                                               value="{{ old("receivable_currencies.$i.conversion_rate") }}"
-                                                               autocomplete="off">
-                                                        <span
-                                                            class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
-                                                        @error("receivable_currencies.$i.conversion_rate")
-                                                        <span class="invalid-feedback d-block mb-1">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group mb-1">
-                                                        <input type="text"
-                                                               class="form-control @error('min_limit') is-invalid @enderror"
-                                                               name="receivable_currencies[{{$i}}][min_limit]"
-                                                               value="{{ old("receivable_currencies.$i.min_limit") }}"
-                                                               autocomplete="off">
-                                                        <span
-                                                            class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
-                                                        @error("receivable_currencies.$i.min_limit")
-                                                        <span
-                                                            class="invalid-feedback d-block mb-1">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group mb-1">
-                                                        <input type="text"
-                                                               class="form-control @error('max_limit') is-invalid @enderror"
-                                                               name="receivable_currencies[{{$i}}][max_limit]"
-                                                               value="{{ old("receivable_currencies.$i.max_limit") }}"
-                                                               autocomplete="off">
-                                                        <span
-                                                            class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
-                                                        @error("receivable_currencies.$i.max_limit")
-                                                        <span
-                                                            class="invalid-feedback d-block mb-1">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group mb-1">
-                                                        <input type="text"
-                                                               class="form-control @error('percentage_charge') is-invalid @enderror"
-                                                               name="receivable_currencies[{{$i}}][percentage_charge]"
-                                                               value="{{ old("receivable_currencies.$i.percentage_charge") }}"
-                                                               autocomplete="off">
-                                                        <span
-                                                            class="input-group-text">%</span>
-                                                        @error("receivable_currencies.$i.percentage_charge")
-                                                        <span
-                                                            class="invalid-feedback d-block mb-1">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group mb-1">
-                                                        <input type="text"
-                                                               class="form-control @error('fixed_charge') is-invalid @enderror"
-                                                               name="receivable_currencies[{{$i}}][fixed_charge]"
-                                                               autocomplete="off" value="{{ old("receivable_currencies.$i.fixed_charge") }}">
-                                                        <span
-                                                            class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
-                                                        @error("receivable_currencies.$i.fixed_charge")
-                                                        <span
-                                                            class="invalid-feedback d-block mb-1">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </td>
-                                                <td class="table-column-ps-0">
-                                                    <button type="button" class="btn btn-white remove-row">
-                                                        <i class="bi-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" class="form-control change_currency"
+                                                                   name="receivable_currencies[{{$i}}][currency]"
+                                                                   placeholder="@lang("Currency")"
+                                                                   aria-label="@lang("Currency")"
+                                                                   value="{{ old("receivable_currencies.$i.currency") }}"
+                                                                   autocomplete="off">
+                                                            @error('receivable_currencies.' . $i . '.currency')
+                                                            <span
+                                                                class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                            @enderror
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group mb-1">
+                                                                <span class="input-group-text"> 1 {{ $basicControl->base_currency ? : 'USD' }} = </span>
+                                                                <input type="text"
+                                                                       class="form-control @error('conversion_rate') is-invalid @enderror"
+                                                                       name="receivable_currencies[{{$i}}][conversion_rate]"
+                                                                       value="{{ old("receivable_currencies.$i.conversion_rate") }}"
+                                                                       autocomplete="off">
+                                                                <span
+                                                                    class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
+                                                                @error("receivable_currencies.$i.conversion_rate")
+                                                                <span
+                                                                    class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group mb-1">
+                                                                <input type="text"
+                                                                       class="form-control @error('min_limit') is-invalid @enderror"
+                                                                       name="receivable_currencies[{{$i}}][min_limit]"
+                                                                       value="{{ old("receivable_currencies.$i.min_limit") }}"
+                                                                       autocomplete="off">
+                                                                <span
+                                                                    class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
+                                                                @error("receivable_currencies.$i.min_limit")
+                                                                <span
+                                                                    class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group mb-1">
+                                                                <input type="text"
+                                                                       class="form-control @error('max_limit') is-invalid @enderror"
+                                                                       name="receivable_currencies[{{$i}}][max_limit]"
+                                                                       value="{{ old("receivable_currencies.$i.max_limit") }}"
+                                                                       autocomplete="off">
+                                                                <span
+                                                                    class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
+                                                                @error("receivable_currencies.$i.max_limit")
+                                                                <span
+                                                                    class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group mb-1">
+                                                                <input type="text"
+                                                                       class="form-control @error('percentage_charge') is-invalid @enderror"
+                                                                       name="receivable_currencies[{{$i}}][percentage_charge]"
+                                                                       value="{{ old("receivable_currencies.$i.percentage_charge") }}"
+                                                                       autocomplete="off">
+                                                                <span
+                                                                    class="input-group-text">%</span>
+                                                                @error("receivable_currencies.$i.percentage_charge")
+                                                                <span
+                                                                    class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group mb-1">
+                                                                <input type="text"
+                                                                       class="form-control @error('fixed_charge') is-invalid @enderror"
+                                                                       name="receivable_currencies[{{$i}}][fixed_charge]"
+                                                                       autocomplete="off"
+                                                                       value="{{ old("receivable_currencies.$i.fixed_charge") }}">
+                                                                <span
+                                                                    class="input-group-text set-currency">{{ old("receivable_currencies.$i.currency") }}</span>
+                                                                @error("receivable_currencies.$i.fixed_charge")
+                                                                <span
+                                                                    class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td class="table-column-ps-0">
+                                                            <button type="button" class="btn btn-white remove-row">
+                                                                <i class="bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
                                                 @endfor
                                             @else
                                                 <tr>
                                                     <td>
                                                         <input type="text" class="form-control change_currency"
                                                                name="receivable_currencies[0][currency]"
-                                                               placeholder="@lang("Currency")" aria-label="@lang("Currency")"
+                                                               placeholder="@lang("Currency")"
+                                                               aria-label="@lang("Currency")"
                                                                value="{{ old("receivable_currencies.0.currency") }}"
                                                                autocomplete="off">
                                                         @error('receivable_currencies.0.currency')
-                                                        <span class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                        <span
+                                                            class="invalid-feedback d-block mb-1">{{ $message }}</span>
                                                         @enderror
                                                     </td>
                                                     <td>
@@ -410,7 +416,8 @@
                                                             <span
                                                                 class="input-group-text set-currency">{{ old("receivable_currencies.0.currency") }}</span>
                                                             @error('receivable_currencies.0.conversion_rate')
-                                                            <span class="invalid-feedback d-block mb-1">{{ $message }}</span>
+                                                            <span
+                                                                class="invalid-feedback d-block mb-1">{{ $message }}</span>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -652,9 +659,6 @@
             HSCore.components.HSTomSelect.init('.js-select')
 
         });
-
-
-
 
 
     </script>

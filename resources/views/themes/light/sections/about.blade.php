@@ -8,7 +8,8 @@
                 <div class="shape-content">
                    <img src="{{asset($themeTrue.'img/icon/mercedes.png')}}" alt="" class="img-fluid mb-3" />
                    <h5>@lang('Total Raised')</h5>
-                   <h4>@lang(currencyPosition($about['single']['total_raised_amount']??''))</h4>
+
+                   <h4>@lang(currencyPosition($about['single']['media']->total_raised_amount??''))</h4>
                 </div>
              </div>
           </div>

@@ -112,18 +112,18 @@
                                         </li>
                                     @endif
                                 @endforeach
-                                    @if($userKyc->reason)
-                                        <li class="list-group-item">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <h5>@lang("Rejected Reason")</h5>
-                                                <ul class="list-unstyled list-py-2 text-body">
-                                                    <li>
-                                                        @lang($userKyc->reason)
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    @endif
+                                @if($userKyc->reason)
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5>@lang("Rejected Reason")</h5>
+                                            <ul class="list-unstyled list-py-2 text-body">
+                                                <li>
+                                                    @lang($userKyc->reason)
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                @endif
 
                             </ul>
                             @if($userKyc->status == 0)
@@ -175,8 +175,7 @@
                             <input type="hidden" name="status" id="status" value="">
                             <div class="reject_area mt-2">
                                 <span class="mb-1">@lang('Rejection Reason')</span>
-                                <textarea class="form-control @error('title') is-invalid @enderror" id="rejected_area"
-                                          placeholder="@lang("Message")">{{ old('rejected_reason') }}</textarea>
+                                <textarea class="form-control @error('title') is-invalid @enderror" id="rejected_area" placeholder="@lang("Message")">{{ old('rejected_reason') }}</textarea>
                                 @error('rejected_reason')
                                 <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
@@ -223,9 +222,5 @@
     </script>
 @endpush
 
-<span class='mb-1'>@lang('Rejection Reason')</span>
-<textarea class='form-control @error('title') is-invalid @enderror' id='rejected_area'
-          placeholder='@lang('Message')'>{{ old('rejected_reason') }}</textarea>
-@error('rejected_reason')
-<span class='invalid-feedback d-block'>{{ $message }}</span>
-@enderror
+
+

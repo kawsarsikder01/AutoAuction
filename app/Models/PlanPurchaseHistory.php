@@ -16,6 +16,10 @@ class PlanPurchaseHistory extends Model
     {
         return $this->hasOne(User::class,'purchased_plan_id');
     }
+    public function planPurchasedUser()
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
     public function vehicle()
     {
         return $this->hasMany(Vehicle::class,'user_current_plan_id');

@@ -117,10 +117,10 @@
                            <div class="col-lg-12">
                               <div class="inbox-wrapper">
                                  <!-- top bar -->
-                                 <div class="top-bar">
+                                 <div class="card-header">
                                     <div class="d-flex align-items-center">
                                        <div class="name">
-                                        <p><i class="bi bi-people fs-4"></i> <span class="text-black m-2 fs-4" >Conversation</span></p>
+                                        <p class="card-header-title"><i class="bi bi-people fs-4"></i> <span class="text-black m-2 fs-4" >Conversation</span></p>
                                        </div>
                                     </div>
                                  </div>
@@ -235,5 +235,9 @@
     </div>
 @endsection
 @push('css')
-    <link rel="stylesheet" href="{{ asset('assets/admin/css/conversation.css')}}">
+    <style>
+        .chats{
+            background-image: url("{{asset('assets/admin/img/bg1.jpg')}}");
+        }
+    </style>
 @endpush

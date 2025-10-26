@@ -2,7 +2,7 @@
 
 @section('title',trans('Blog Details'))
 @section('content')
-<x-banner-component :pagetitle="$blogDetails->page_title??''" :path="$blogDetails->blog->breadcrumb_image??''" :driver="$blogDetails->blog->breadcrumb_image_driver??''"/>
+<x-banner-component :pagetitle="optional($blogDetails->blog)->page_title??''" :path="$blogDetails->blog->breadcrumb_image??''" :driver="$blogDetails->blog->breadcrumb_image_driver??''"/>
 <section class="blog-section blog-details">
     <div class="container">
        <div class="row justify-content-between">
@@ -29,7 +29,7 @@
                 <div class="side-box search-box">
                     <form action="{{route('blog.search')}}" method="get">
                         <div class="input-group">
-                            <input type="text" class="form-control" name="name" placeholder="search Here" />
+                            <input type="text" class="form-control" name="name" placeholder="@lang('search Here')" />
                             <button><i class="fal fa-search" aria-hidden="true"></i></button>
                         </div>
                     </form>

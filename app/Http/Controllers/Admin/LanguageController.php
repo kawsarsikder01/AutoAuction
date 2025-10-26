@@ -17,14 +17,14 @@ class LanguageController extends Controller
 
     public function index()
     {
-
         $languages = Language::all();
         return view('admin.language.list', compact('languages'));
     }
 
     public function create()
     {
-        $shortNames = array_keys(config('languages.langCode'));
+
+        $shortNames = config('languages.langCode');
         return view('admin.language.create', compact('shortNames'));
 
     }
@@ -42,7 +42,7 @@ class LanguageController extends Controller
 
         try {
             if ($request->file('flag') && $request->file('flag')->isValid()) {
-                $image = $this->fileUpload($request->flag, config('filelocation.language.path'), null,null,'avif',60);
+                $image = $this->fileUpload($request->flag, config('filelocation.language.path'), null, null, 'avif', 60);
                 if ($image) {
                     $flagImage = $image['path'];
                     $driver = $image['driver'] ?? 'local';
@@ -55,11 +55,10 @@ class LanguageController extends Controller
                 'status' => $request->status,
                 'rtl' => $request->rtl,
                 'default_status' => $request->default_lang,
-                'flag' => $image['path'] ?? null,
-                'flag_driver' =>$image['driver'] ?? 'local'
+                'flag' => $flagImage ?? null,
+                'flag_driver' => $driver ?? 'local'
             ]);
-            // 'flag' => $flagImage ?? null,
-            // 'flag_driver' => $driver ?? 'local'
+
             if (!$response) {
                 throw new Exception('Something went wrong while storing language. Please try again later.');
             }
@@ -81,7 +80,7 @@ class LanguageController extends Controller
                 throw new Exception('No Language found.');
             });
 
-            $shortNames = array_keys(config('languages.langCode'));
+            $shortNames = config('languages.langCode');
 
             return view('admin.language.edit', compact('language', 'shortNames'));
         } catch (\Exception $exception) {
@@ -91,8 +90,6 @@ class LanguageController extends Controller
 
     public function update(Request $request, $id)
     {
-
-
         $request->validate([
             'name' => 'required|string|max:100|unique:languages,name,' . $id,
             'short_name' => 'required|string|max:3|unique:languages,short_name,' . $id,
@@ -110,18 +107,11 @@ class LanguageController extends Controller
             $oldShortName = $language->short_name;
 
             if ($request->file('flag') && $request->file('flag')->isValid()) {
-                $image = $this->fileUpload($request->flag, config('filelocation.language.path'), null, null,'avif',60,$language->driver, $language->flag);
+                $image = $this->fileUpload($request->flag, config('filelocation.language.path'), null, null, 'avif', 60, $language->flag, $language->flag_driver);
                 if ($image) {
                     $flagImage = $image['path'];
                     $flagDriver = $image['driver'];
                 }
-            }
-
-            if ($request->hasFile('flag')) {
-                $image = $this->fileUpload($request->flag, config('filelocation.language.path'),null, null,'avif',60, $language->flag_driver, $language->flag);
-                throw_if(empty($image['path']), 'Image could not be uploaded.');
-                $flagImage = $image['path'];
-                $flagDriver = $image['driver'] ?? 'local';
             }
 
             $response = $language->update([
@@ -149,7 +139,7 @@ class LanguageController extends Controller
                 });
             }
 
-            return back()->with('success', "`{$language->name}`language has been updated successfully");
+            return back()->with('success', "`{$language->name}` language has been updated successfully");
 
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -163,7 +153,12 @@ class LanguageController extends Controller
                 throw new \Exception('No language found or may be you had selected default language.');
             });
 
-            if ($language->short_name !== 'en') {
+            if (strtolower($language->short_name) != 'en') {
+
+                $language->notificationTemplates()->delete();
+                $language->pageDetails()->delete();
+                $language->contentDetails()->delete();
+
                 $response = $language->delete();
             }
 

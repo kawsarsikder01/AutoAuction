@@ -11,6 +11,7 @@ use App\Models\Language;
 use App\Models\BlogCategory;
 use App\Traits\Upload;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 
@@ -24,12 +25,13 @@ class BlogController extends Controller
     {
         $defaultLanguage = Language::where('default_status', true)->first();
         $data['languages'] = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
-        $blogs = Blog::with('category', 'details')->orderBy('id', 'desc')
-            ->whereHas('details', function ($query) use($defaultLanguage) {
-                $query->where('language_id',  $defaultLanguage->id);
-            })
+
+        $data['blogs'] = Blog::with(['category', 'details' => function ($query) use ($defaultLanguage) {
+            $query->where('language_id', $defaultLanguage->id);
+        }])
+            ->orderBy('id', 'desc')
             ->paginate(basicControl()->paginate);
-        return view('admin.blog_management.blog.index',$data,compact('defaultLanguage','blogs'));
+        return view('admin.blog_management.blog.index',$data,compact('defaultLanguage'));
     }
 
     /**
@@ -55,7 +57,7 @@ class BlogController extends Controller
             'slug' => 'required|string|min:3|max:200|alpha_dash|unique:blog_details,slug',
             'description' => 'required|string|min:3|max:10000',
             'description_image' => 'required|mimes:png,jpg,jpeg|max:5000',
-            'short_description' => 'required | string | max:1000'
+            'short_description' => 'required | string | max:20000'
         ]);
 
         try {
@@ -105,18 +107,17 @@ class BlogController extends Controller
      */
     public function edit( $id , $language = NULL)
     {
-        try {
-            $blog = Blog::with("details")->where('id', $id)->firstOr(function () {
-                throw new \Exception('Blog not found');
-            });
-            $data['pageEditableLanguage'] = Language::where('id', $language)->select('id', 'name', 'short_name')->first();
-            $data['defaultLanguage'] = Language::where('default_status', true)->first();
-            $data['blogCategory'] = BlogCategory::orderBy('id', 'desc')->get();
-            $data['allLanguage'] = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
+        $blog = Blog::with(["details" => function ($query) use ($language) {
+            $query->where('language_id', $language);
+        }])->where('id', $id)->firstOr(function () {
+            throw new \Exception('Blog not found');
+        });
+        $data['pageEditableLanguage'] = Language::where('id', $language)->select('id', 'name', 'short_name')->first();
+        $data['defaultLanguage'] = Language::where('default_status', true)->first();
+        $data['blogCategory'] = BlogCategory::orderBy('id', 'desc')->get();
+        $data['allLanguage'] = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
             return view('admin.blog_management.blog.edit',$data, compact('blog','language'));
-        }catch (\Exception $e){
-            return back()->with('error', $e->getMessage());
-        }
+
     }
 
     /**
@@ -124,63 +125,62 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $blog = Blog::with(['details'=>function ($query)use($request) {
+            $query->where('language_id',$request->language_id);
+        }])->findOrFail($id);
+
+
         $request->validate([
             'category_id' => 'required|numeric|not_in:0|exists:blog_category,id',
             'title' => 'required|string|min:3|max:200',
             'slug' => ['required', 'min:1', 'max:100',
                 new AlphaDashWithoutSlashes(),
-                Rule::unique('blog_details', 'slug')->ignore($id),
+                Rule::unique('blog_details', 'slug')->ignore(optional($blog->details)->id),
                 Rule::notIn(['login', 'register', 'signin', 'signup', 'sign-in', 'sign-up'])
             ],
-            'description' => 'nullable|string|min:3 | max:10000',
-            'description_image' => 'nullable|mimes:png,jpg,jpeg|max:5000',
-            'short_description' => 'required | string | max:1000'
+            'description' => 'nullable|string|min:3',
+            'description_image' => 'nullable|mimes:png,jpg,jpeg|max:50000',
         ]);
 
         try {
-            if ($request->hasFile('description_image')) {
-                $descriptionImage = $this->fileUpload($request->description_image, config('filelocation.blog.path'), null, null, 'avif', 60);
-                throw_if(empty($descriptionImage['path']), 'Description image could not be uploaded.');
-            }
-
-            if ($request->hasFile('breadcrumb_image')){
-                $breadcrumbImage = $this->fileUpload($request->breadcrumb_image, config('filelocation.blog.breadcrumbImage.path'), null, null, 'avif', 60);
-                throw_if(empty($breadcrumbImage['path']), 'Description image could not be uploaded.');
-            }
-
+            DB::beginTransaction();
             $blog = Blog::with("details")->where('id', $id)->firstOr(function () {
                 throw new \Exception('Blog not found');
             });
-
-            $response = $blog->update([
-                'category_id' => $request->category_id,
-                'blog_image' => $descriptionImage['path'] ?? $blog->blog_image,
-                'blog_image_driver' => $descriptionImage['driver'] ?? $blog->blog_image_driver,
-                'breadcrumb_image' => $breadcrumbImage['path'] ?? $blog->breadcrumb_image,
-                'breadcrumb_image_driver' => $breadcrumbImage['driver'] ?? $blog->breadcrumb_image_driver,
-                'breadcrumb_status' => $request->breadcrumb_status,
-                'status' => $request->status?1:0
-            ]);
-
-            throw_if(!$response, 'Something went wrong while storing blog data. Please try again later.');
-
-
+            if ($request->hasFile('description_image')) {
+                $descriptionImage = $this->fileUpload($request->description_image, config('filelocation.blog.path'), null, null, 'avif', 60, $blog->blog_image,$blog->blog_image_driver);
+                throw_if(empty($descriptionImage['path']), 'Description image could not be uploaded.');
+            }
+            if ($request->hasFile('breadcrumb_image')){
+                $breadcrumbImage = $this->fileUpload($request->breadcrumb_image, config('filelocation.blog.path'), null, null, 'avif', 60, $blog->breadcrumb_image??null,$blog->breadcrumb_image_driver??null);
+                throw_if(empty($breadcrumbImage['path']), 'Description image could not be uploaded.');
+            }
+            $blog->created_by = Auth::user()->id;
+            $blog->category_id = $request->category_id;
+            $blog->breadcrumb_status = $request->breadcrumb_status;
+            $blog->blog_image = $descriptionImage['path']??$blog->blog_image;
+            $blog->blog_image_driver = $descriptionImage['driver']??$blog->blog_image_driver;
+            $blog->breadcrumb_image = $breadcrumbImage['path']??$blog->breadcrumb_image;
+            $blog->breadcrumb_image_driver = $breadcrumbImage['driver']??$blog->breadcrumb_image_driver;
+            $blog->save();
             $blog->details()->updateOrCreate([
                 'language_id' => $request->language_id,
             ],
                 [
+                    'slug' => $request->slug,
                     "title" => $request->title,
-                    "slug" => $request->slug,
+                    'short_description' => $request->short_description,
                     'description' => $request->description,
-                    'short_description' => $request->short_description
                 ]
             );
+            DB::commit();
 
-            return back()->with('success', 'Blog Update successfully.');
-
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong while updating blog details.');
         }
+
+        return back()->with('success', 'Blog saved successfully.');
     }
 
     /**
@@ -192,6 +192,7 @@ class BlogController extends Controller
             $blog = Blog::where('id', $id)->firstOr(function () {
                 throw new \Exception('No blog data found.');
             });
+            $this->
             $blog->details()->delete();
             $blog->delete();
             return redirect()->back()->with('success', 'Blog deleted successfully.');
@@ -247,10 +248,9 @@ class BlogController extends Controller
             'meta_description' => $request->meta_description,
             'meta_image' => $pageSEOImage ?? $blog->meta_image,
             'meta_image_driver' => $pageSEODriver ?? $blog->meta_image_driver,
-        ]);
-        $blog->details->update([
             'page_title' => $request->page_title,
         ]);
+
 
 
         return back()->with('success', 'Seo has been updated.');

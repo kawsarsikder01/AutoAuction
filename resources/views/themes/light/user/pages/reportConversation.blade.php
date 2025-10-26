@@ -41,17 +41,18 @@
                                             </div>
                                         @else
                                             @if ($conversation->admin_id && $conversation->sender_id == $conversation->admin_id)
+
                                                 <div class="chat-box opposite-side">
                                                     <div class="img">
                                                         <img class="img-fluid"
-                                                             src="{{getFile($conversation->admin->image_driver,$conversation->admin->image)}}"
+                                                             src="{{getFile(optional($conversation->admin)->image_driver,optional($conversation->admin)->image)}}"
                                                              alt=""/>
                                                     </div>
                                                     <div class="text-wrapper">
                                                         <div class="text">
                                                             <p>{{$conversation->message}}</p>
                                                         </div>
-                                                        <span class="time">Admin</span>
+                                                        <span class="time">@lang(optional($conversation->admin)->name)</span>
                                                     </div>
                                                 </div>
                                             @else
@@ -98,7 +99,7 @@
                                         @csrf
                                         <div class="input-group">
                                             <input type="hidden" name="report_id" value="{{$report->id}}">
-                                            <input type="text" name="message" class="form-control" placeholder="Enter your message"/>
+                                            <input type="text" name="message" class="form-control" placeholder="@lang('Enter your message')"/>
                                             <button type="submit" class="submit-btn">
                                                 <i class="fal fa-paper-plane"></i>
                                             </button>

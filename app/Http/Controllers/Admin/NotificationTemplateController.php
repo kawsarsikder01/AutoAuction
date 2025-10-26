@@ -73,6 +73,7 @@ class NotificationTemplateController extends Controller
         $validator = Validator::make($request->all(), [
             'name.*' => 'required|string|max:255',
             'subject.*' => 'required|string|max:5000',
+            'email_from.*' => 'required|string|max:100',
             'email_template.*' => 'required|string',
             'mail_status' => 'nullable|integer|in:0,1'
         ], [
@@ -80,6 +81,7 @@ class NotificationTemplateController extends Controller
             'name.*.string' => 'The subject must be a string.',
             'name.*.max' => 'The subject may not be greater than 255.',
             'subject.*.required' => 'The subject field is required.',
+            'email_from.*.required' => 'The mail from field is required.',
             'email_template.*.required' => 'The message field is required.',
         ]);
 
@@ -113,6 +115,7 @@ class NotificationTemplateController extends Controller
                 'name' => $request->name[$language_id] ?? null,
                 'template_key' => $template->template_key,
                 'subject' => $request->subject[$language_id] ?? null,
+                'email_from' => $request->email_from[$language_id] ?? null,
                 'short_keys' => $template->short_keys,
                 'email' => $request->email_template[$language_id] ?? null,
                 'status' => $status,

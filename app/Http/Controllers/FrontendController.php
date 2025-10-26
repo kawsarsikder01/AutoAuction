@@ -25,22 +25,36 @@ class FrontendController extends Controller
 
     public function page($slug = '/')
     {
-       try{
+
         $selectedTheme = basicControl()->theme;
-        $pageDetails = PageDetail::with('page')
-            ->whereHas('page', function ($query) use ($slug, $selectedTheme) {
-                $query->where(['slug' => $slug, 'template_name' => $selectedTheme]);
-            })
-            ->firstOrFail();
-        $page = Page::where('slug', $slug)->first();
-        $pageSeo = [
-            'page_title' => optional($pageDetails->page)->page_title
-        ];
-        $sectionsData = $this->getSectionsData($pageDetails->sections, $pageDetails->content, $selectedTheme);
-        return view("themes.{$selectedTheme}.page", compact('sectionsData', 'pageSeo', 'page', 'pageDetails'));
-       }catch(\Exception $exception){
+        $existingSlugs = collect([]);
+        DB::table('pages')->select('slug')->get()->map(function ($item) use ($existingSlugs) {
+            $existingSlugs->push($item->slug);
+        });
+        if (!in_array($slug, $existingSlugs->toArray())) {
             abort(404);
-       }
+        }
+
+//        try {
+            $pageDetails = PageDetail::with('page')
+                ->whereHas('page', function ($query) use ($slug, $selectedTheme) {
+                    $query->where(['slug' => $slug, 'template_name' => $selectedTheme]);
+                })
+                ->firstOrFail();
+            $pageSeo = [
+                'page_title' => optional($pageDetails->page)->page_title,
+                'breadcrumb_image' => optional($pageDetails->page)->breadcrumb_status ? getFile(optional($pageDetails->page)->breadcrumb_image_driver, optional($pageDetails->page)->breadcrumb_image) : null,
+            ];
+            $page = Page::where('slug', $slug)->first();
+
+            $sectionsData = $this->getSectionsData($pageDetails->sections, $pageDetails->content, $selectedTheme);
+
+            return view("themes.{$selectedTheme}.page", compact('sectionsData', 'pageSeo','pageDetails','page'));
+
+//        } catch (\Exception $exception) {
+//            dd($exception->getMessage());
+//            return redirect()->route('instructionPage');
+//        }
     }
 
     public function plan()

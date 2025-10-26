@@ -21,19 +21,19 @@
             <div class="card-header card-header-content-md-between">
                 <div class="mb-2 mb-md-0">
 
-                        <div class="input-group input-group-merge navbar-input-group">
-                            <div class="input-group-prepend input-group-text">
-                                <i class="bi-search"></i>
-                            </div>
-                            <input type="search" id="datatableSearch"
-                                   class="search form-control form-control-sm"
-                                   placeholder="@lang('Search transaction')"
-                                   aria-label="@lang('Search transaction')"
-                                   autocomplete="off">
-                            <a class="input-group-append input-group-text display-none" href="javascript:void(0)">
-                                <i id="clearSearchResultsIcon" class="bi-x"></i>
-                            </a>
+                    <div class="input-group input-group-merge navbar-input-group">
+                        <div class="input-group-prepend input-group-text">
+                            <i class="bi-search"></i>
                         </div>
+                        <input type="search" id="datatableSearch"
+                               class="search form-control form-control-sm"
+                               placeholder="@lang('Search transaction')"
+                               aria-label="@lang('Search transaction')"
+                               autocomplete="off">
+                        <a class="input-group-append input-group-text display-none" href="javascript:void(0)">
+                            <i id="clearSearchResultsIcon" class="bi-x"></i>
+                        </a>
+                    </div>
 
                 </div>
 
@@ -191,7 +191,6 @@
 @endsection
 
 
-
 @push('css-lib')
     <link rel="stylesheet" href="{{ asset('assets/admin/css/tom-select.bootstrap5.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/flatpickr.min.css') }}">
@@ -216,6 +215,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.transaction.search") }}",
                 },

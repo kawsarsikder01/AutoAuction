@@ -33,8 +33,9 @@
                             @else
                                 <h4>@lang("Vehicle Initial Price") {{$itemObject->details['price'] }} {{basicControl()->currency_symbol}}</h4>
                             @endif
-                            <p>Location: {{$itemObject->user['address_one']}}</p>
-                            <a href="{{route('auction.details',[slug($itemObject->details['title'])??'',$item['id']])}}" class="btn-custom arrow"> <span>Place a Bid</span> </a>
+                            
+                            <p>@lang('Location'): {{$itemObject->user['address_one']??''}}</p>
+                            <a href="{{route('auction.details',[slug($itemObject->details['title'])??'',$item['id']])}}" class="btn-custom arrow"> <span>@lang('Place a Bid')</span> </a>
                         </div>
                     </div>
                @endforeach

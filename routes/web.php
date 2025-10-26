@@ -12,7 +12,13 @@ use App\Http\Controllers\User\DepositController;
 use App\Http\Controllers\User\PayoutController;
 use App\Http\Controllers\ManualRecaptchaController;
 use App\Http\Controllers\khaltiPaymentController;
+use App\Http\Controllers\User\TwoFaSecurityController;
+use App\Models\NotificationPermission;
+use App\Models\Report;
+use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InAppNotificationController;
 use App\Http\Controllers\User\SupportTicketController;
@@ -40,9 +46,6 @@ use App\Http\Controllers\User\NotificationPermissionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-
-
 $basicControl = basicControl();
 Route::get('maintenance-mode', function () {
     $data['maintenanceMode'] = \App\Models\MaintenanceMode::first();
@@ -50,10 +53,15 @@ Route::get('maintenance-mode', function () {
 })->name('maintenance');
 
 
+
 Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset')->middleware('guest');
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset.update');
+
+Route::get('instruction/page', function () {
+    return view('instruction-page');
+})->name('instructionPage');
 
 Route::group(['middleware' => ['maintenanceMode']], function () use ($basicControl) {
     Route::group(['middleware' => ['guest']], function () {
@@ -88,53 +96,64 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
             Route::get('transaction-list', [HomeController::class, 'index'])->name('transaction');
             Route::get('transaction-search', [HomeController::class, 'search'])->name('transaction.search');
 
-            Route::get('twostep-security', [HomeController::class, 'twoStepSecurity'])->name('twostep.security');
-            Route::post('twoStep-enable', [HomeController::class, 'twoStepEnable'])->name('twoStepEnable');
-            Route::post('twoStep-disable', [HomeController::class, 'twoStepDisable'])->name('twoStepDisable');
+            /* ===== Manage Two Step ===== */
+            Route::get('two-step-security', [TwoFaSecurityController::class, 'twoStepSecurity'])->name('twostep.security');
+            Route::post('twoStep-enable', [TwoFaSecurityController::class, 'twoStepEnable'])->name('twoStepEnable');
+            Route::post('twoStep-disable', [TwoFaSecurityController::class, 'twoStepDisable'])->name('twoStepDisable');
+            Route::post('twoStep/re-generate', [TwoFaSecurityController::class, 'twoStepRegenerate'])->name('twoStepRegenerate');
             Route::middleware('kycVerification')->group(function () {
 
-                /* Manage Buy and Sell Vehicle and Manage Plan*/
-                Route::get('purchase/history',[PlanPurchaseControlller::class,'purchaseHistory'])->name('purchase.history');
+                /*Vehicle Buy ,Sell and Manage Plan*/
+                Route::get('purchase/history', [PlanPurchaseControlller::class, 'purchaseHistory'])->name('purchase.history');
                 Route::get('purchase/plan/{plan_id}', [PlanPurchaseControlller::class, 'purchasePlan'])->name('purchase.plan');
-                Route::get('upgrade/plan/{id}',[PlanPurchaseControlller::class,'upgradePlan'])->name('upgrade.plan');
-                Route::get('payment-check-amount',[PlanPurchaseControlller::class,'checkAmount'])->name('plan.checkAmount');
-                Route::post('confirm-plan',[PlanPurchaseControlller::class,'confirmPlan'])->name('confirm-plan');
-                Route::post('/bid/{id}',[\App\Http\Controllers\BiddingController::class,'bid'])->name('bid');
+                Route::get('upgrade/plan/{id}', [PlanPurchaseControlller::class, 'upgradePlan'])->name('upgrade.plan');
+                Route::get('payment-check-amount', [PlanPurchaseControlller::class, 'checkAmount'])->name('plan.checkAmount');
+                Route::post('confirm-plan', [PlanPurchaseControlller::class, 'confirmPlan'])->name('confirm-plan');
+                Route::post('/bid/{id}', [\App\Http\Controllers\BiddingController::class, 'bid'])->name('bid');
                 Route::get('sell/your/vehicle', [SellerController::class, 'index'])->name('show.listing.form')->middleware(['CheckSeller']);
                 Route::post('store/vehicle', [SellerController::class, 'store'])->name('listing.vehicle')->middleware(['CheckSeller']);
-                Route::get('listed/vehicle',[SellerController::class,'listedVehicle'])->name('listed.vehicle');
-                Route::get('edit/vehicle/{id}',[SellerController::class,'edit'])->name('edit.vehicle');;
-                Route::post('update/vehicle/{id}',[SellerController::class,'update'])->name('update.vehicle');;
-                Route::get('delete/vehicle/{id}',[SellerController::class,'destroy'])->name('delete.vehicle');
+                Route::get('listed/vehicle', [SellerController::class, 'listedVehicle'])->name('listed.vehicle');
+                Route::get('edit/vehicle/{id}', [SellerController::class, 'edit'])->name('edit.vehicle');;
+                Route::post('update/vehicle/{id}', [SellerController::class, 'update'])->name('update.vehicle');;
+                Route::get('delete/vehicle/{id}', [SellerController::class, 'destroy'])->name('delete.vehicle');
+                Route::get('bidding/history', [BidderController::class, 'userBiddingHistory'])->name('bidding.history');
+                Route::post('release/property', [SellerController::class, 'releaseProperty'])->name('release.property');
 
-                Route::get('bidding/history',[BidderController::class,'userBiddingHistory'])->name('bidding.history');
+                Route::get('top/auction/visitors',[HomeController::class,'topVisitedAuction'])->name('top.auction.visitors');
 
-                Route::post('release/property',[SellerController::class,'releaseProperty'])->name('release.property');
+                Route::post('confirm/payment', [BidderController::class, 'payNow'])->name('confirm.payment');
+                Route::post('store/report/{reporter_id}/{reported_id}/{vehicle_id}', [ReportController::class, 'store'])->name('store.report');
+                Route::get('vehicle/bidding/history/{id}', [SellerController::class, 'vehicleBiddingHistory'])->name('vehicle.bidding.history');
 
+                Route::get('auction/statistic/{auction_id}',[SellerController::class,'auctionStatistic'])->name('auction.statistic');
 
-                Route::post('confirm/payment',[BidderController::class,'payNow'])->name('confirm.payment');
-                Route::post('store/report/{reporter_id}/{reported_id}/{vehicle_id}',[ReportController::class,'store'])->name('store.report');
-
-                Route::get('vehicle/bidding/history/{id}',[SellerController::class,'vehicleBiddingHistory'])->name('vehicle.bidding.history');
-
-                Route::get('vehicle-owner/messages/{id}/{bid_id}',[MessageController::class,'index'])->name('messages');
-                Route::get('bidder/messages/{id}/{bid_id}',[MessageController::class,'showMessagesForBidder'])->name('bidder.message.show');
-                Route::get('get/message/{id}',[MessageController::class,'getMessage'])->name('get.message');
-                Route::post('send/message/',[MessageController::class,'sendMessage'])->name('send.message');
-                Route::get('reports',[ReportController::class,'index'])->name('reports.conversation');
-                Route::get('reports/conversation/{id}',[ReportController::class,'getConversation'])->name('get.conversation');
-                Route::post('send/report/message',[ReportController::class,'sendMessage'])->name('send.report.message');
+                Route::get('vehicle-owner/messages/{id}/{bid_id}', [MessageController::class, 'index'])->name('messages');
+                Route::get('bidder/messages/{id}/{bid_id}', [MessageController::class, 'showMessagesForBidder'])->name('bidder.message.show');
+                Route::get('get/message/{id}', [MessageController::class, 'getMessage'])->name('get.message');
+                Route::post('send/message/', [MessageController::class, 'sendMessage'])->name('send.message');
+                Route::get('reports', [ReportController::class, 'index'])->name('reports.conversation');
+                Route::get('reports/conversation/{id}', [ReportController::class, 'getConversation'])->name('get.conversation');
+                Route::post('send/report/message', [ReportController::class, 'sendMessage'])->name('send.report.message');
             });
 
             /*Get Mor Info */
-           Route::post('get/more/info',[GetInformationController::class,'getInfo'])->name('get.info');
+            Route::post('get/more/info', [GetInformationController::class, 'getInfo'])->name('get.info');
             /*Get Chart Data*/
-                Route::get('get/chart/data',[HomeController::class,'getChartData'])->name('get.chart.data');
+            Route::get('get/chart/data', [HomeController::class, 'getChartData'])->name('get.chart.data');
+            Route::get('get/bidHistory',[HomeController::class,'getBidHistory'])->name('get.bidHistory');
+            Route::get('auction/visitors/history/{auction_id}',[SellerController::class,'getVisitorsHistory'])->name('auction.visitors.history');
+            Route::get('auction/visitors/{auctin_id}',[SellerController::class,'auctionVisitors'])->name('auction.visitors');
+            Route::get('get/userLogin/history',[HomeController::class,'getUserLoginHistory'])->name('get.userLogin.history');
             /*Contact */
-           Route::post('store/contact/information',[ContactController::class,'store'])->name('store.contact.information');
+
+            /*Show Kyc */
+
+            Route::get('verification/center',[HomeController::class,'getUserKyc'])->name('show.user.kyc');
+            Route::post('store/contact/information', [ContactController::class, 'store'])->name('store.contact.information');
+            
             /* user notification permission */
-            Route::get('notification/permission',[NotificationPermissionController::class,'index'])->name('notification.permission');
-            Route::post('notification/permission/update',[NotificationPermissionController::class,'notifyPermissionUpdate'])->name('notification.permission.update');
+            Route::get('notification/permission', [NotificationPermissionController::class, 'index'])->name('notification.permission');
+            Route::post('notification/permission/update', [NotificationPermissionController::class, 'notifyPermissionUpdate'])->name('notification.permission.update');
 
             /* PAYMENT REQUEST BY USER */
             Route::get('payout-list', [PayoutController::class, 'index'])->name('payout.index');
@@ -173,10 +192,10 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
 
     Route::get('/captcha', [ManualRecaptchaController::class, 'reCaptCha'])->name('captcha');
     /* Searching Auction Vehicle */
-    Route::get('filter/vehicle',[SearchingController::class,'filterVehicle'])->name('filter.vehicle');
-    Route::get('filter/bidding-history',[SearchingController::class,'filterBiddingHistory'])->name('filter.bidding-history');
-    Route::get('filter/listed-vehicle',[SearchingController::class,'filterListedVehicle'])->name('filter.listed-vehicle');
-    Route::get('blog/searching',[SearchingController::class,'blogSearching'])->name('blog.search');
+    Route::get('filter/vehicle', [SearchingController::class, 'filterVehicle'])->name('filter.vehicle');
+    Route::get('filter/bidding-history', [SearchingController::class, 'filterBiddingHistory'])->name('filter.bidding-history');
+    Route::get('filter/listed-vehicle', [SearchingController::class, 'filterListedVehicle'])->name('filter.listed-vehicle');
+    Route::get('blog/searching', [SearchingController::class, 'blogSearching'])->name('blog.search');
 
     /* Manage User Deposit */
     Route::get('supported-currency', [DepositController::class, 'supportedCurrency'])->name('supported.currency');
@@ -194,16 +213,17 @@ Route::group(['middleware' => ['maintenanceMode']], function () use ($basicContr
 
     Auth::routes();
 
-    Route::get('submit/react/{id}',[ReactController::class,'submit'])->name('submit.react');
-    Route::get('unsubmit/react/{id}',[ReactController::class,'unsubmit'])->name('unsubmit.react');
-    Route::get('get/react/{id}',[ReactController::class,'getReact'])->name('get.react');
+    Route::get('submit/react/{id}', [ReactController::class, 'submit'])->name('submit.react');
+    Route::get('unsubmit/react/{id}', [ReactController::class, 'unsubmit'])->name('unsubmit.react');
+    Route::get('get/react/{id}', [ReactController::class, 'getReact'])->name('get.react');
     Route::get('/plan', [FrontendController::class, 'plan'])->name('plan');
     Route::get('/auction', [FrontendController::class, 'auction'])->name('auction');
     Route::get('/blogs', [FrontendController::class, 'blogs'])->name('blogs');
     Route::get('blog', [FrontendController::class, 'blogs'])->name('blog');
-    Route::get('blogs/{category}/{id}',[FrontendController::class,'categoryBlogs'])->name('category.blogs');
+    Route::get('blogs/{category}/{id}', [FrontendController::class, 'categoryBlogs'])->name('category.blogs');
     Route::get('blog-details/{slug}', [BlogController::class, 'blogDetails'])->name('blog.details');
-    Route::get('property/details/{slug?}/{id}',[\App\Http\Controllers\BidderController::class,'viewAuctionDetails'])->name('auction.details');
+
+    Route::get('property/details/{slug?}/{id}', [\App\Http\Controllers\BidderController::class, 'viewAuctionDetails'])->name('auction.details')->middleware(['visitor']);
 
     Route::get('language/{locale}', function ($locale) {
         $language = Language::where('short_name', $locale)->first();

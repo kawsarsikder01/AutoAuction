@@ -129,9 +129,8 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>@lang('Message')</label>
-                                                    <textarea
-                                                        class="form-control summernote @error('push_notification_template.'.$value->id) is-invalid @enderror"
-                                                        name="push_notification_template[{{ $value->id }}]">{{ old('push_notification_template.'.$value->id, $template->email ?? '') }}</textarea>
+                                                    <textarea class="form-control summernote @error('push_notification_template.'.$value->id) is-invalid @enderror"
+                                                              name="push_notification_template[{{ $value->id }}]">{{ old('push_notification_template.'.$value->id, $template->email ?? '') }}</textarea>
                                                     @error('push_notification_template.'.$value->id)
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ __($message) }}</strong>

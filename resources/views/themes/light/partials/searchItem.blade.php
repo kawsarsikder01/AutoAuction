@@ -21,7 +21,7 @@
              <form action="{{route('filter.vehicle')}}" method="get">
                 <div class="row g-3 align-items-end">
                    <div class="input-box col-xl-4">
-                      <input type="text" class="form-control" value="{{request()->name}}" name="name" placeholder="Search" />
+                      <input type="text" class="form-control" value="{{request()->name}}" name="name" placeholder="@lang('Search')" />
                    </div>
                    <div class="input-box col-xl-2">
                       <select class="js-example-basic-single form-control" name="category">

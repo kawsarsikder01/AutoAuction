@@ -25,7 +25,7 @@
                                     <li><i class="bi-briefcase dropdown-item-icon"></i> @lang('@' . $user->username)
                                     </li>
                                     @if(isset($user->country))
-                                    <li><i class="bi-geo-alt dropdown-item-icon"></i> @lang($user->country)</li>
+                                        <li><i class="bi-geo-alt dropdown-item-icon"></i> @lang($user->country)</li>
                                     @endif
 
                                     <li><i class="bi bi-wallet dropdown-item-icon"></i> {{ currencyPosition($user->balance) }}

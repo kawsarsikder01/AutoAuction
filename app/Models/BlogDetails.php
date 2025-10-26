@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Translatable;
 
 class BlogDetails extends Model
 {
-    use HasFactory;
-    
+    use HasFactory , Translatable;
+
     protected $guarded = ['id'];
 
     public function blog(){

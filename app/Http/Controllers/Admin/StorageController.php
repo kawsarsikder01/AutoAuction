@@ -48,7 +48,7 @@ class StorageController extends Controller
 
         if ($request->hasFile('logo')) {
             try {
-                $image = $this->fileUpload($request->logo, config('filelocation.driver.path'),null,null, 'avif', 60, $storage->logo,$storage->driver );
+                $image = $this->fileUpload($request->logo, config('filelocation.driver.path'), null, null, 'avif', 60, $storage->logo, $storage->driver);
                 if ($image) {
                     $storageLogo = $image['path'];
                     $storageDriver = $image['driver'];

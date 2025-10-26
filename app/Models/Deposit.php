@@ -15,9 +15,9 @@ class Deposit extends Model
         'fixed_charge', 'payable_amount', 'base_currency_charge', 'payable_amount_in_base_currency', 'btc_amount', 'btc_wallet', 'payment_id', 'information', 'trx_id', 'status', 'note'];
 
 
-     protected $casts = [
-         'information' => 'object'
-     ];
+    protected $casts = [
+        'information' => 'object'
+    ];
 
     public function transactional()
     {
@@ -26,7 +26,7 @@ class Deposit extends Model
 
     public function depositable()
     {
-        return $this->morphOne(Deposit::class, 'depositable');
+        return $this->morphTo();
     }
 
     protected static function boot()

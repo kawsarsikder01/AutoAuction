@@ -24,10 +24,11 @@ class LogoController extends Controller
             'favicon' => 'sometimes|required|mimes:jpg,png,jpeg|max:2048',
             'admin_logo' => 'sometimes|required|mimes:jpg,png,jpeg|max:2048',
         ]);
+
         $basicControl = basicControl();
         if ($request->hasFile('logo')) {
             try {
-                $image = $this->fileUpload($request->logo, config('filelocation.logo.path'),null,null,'avif',60, $basicControl->logo, $basicControl->logo_driver);
+                $image = $this->fileUpload($request->logo, config('filelocation.logo.path'), null, null,'avif', 60, $basicControl->logo, $basicControl->logo_driver);
                 if ($image) {
                     $basicControl->logo = $image['path'];
                     $basicControl->logo_driver = $image['driver'];
@@ -39,7 +40,7 @@ class LogoController extends Controller
 
         if ($request->hasFile('favicon')) {
             try {
-                $image = $this->fileUpload($request->favicon, config('filelocation.logo.path'), null,null, 'avif', 60,$basicControl->favicon, $basicControl->favicon_driver);
+                $image = $this->fileUpload($request->favicon, config('filelocation.logo.path'), null, null, 'avif', 60, $basicControl->favicon,$basicControl->favicon_driver);
                 if ($image) {
                     $basicControl->favicon = $image['path'];
                     $basicControl->favicon_driver = $image['driver'];
@@ -51,7 +52,7 @@ class LogoController extends Controller
 
         if ($request->hasFile('admin_logo')) {
             try {
-                $image = $this->fileUpload($request->admin_logo, config('filelocation.logo.path'),null,null,'avif',60,$basicControl->admin_logo, $basicControl->admin_logo_driver);
+                $image = $this->fileUpload($request->admin_logo, config('filelocation.logo.path'), null, null, 'avif', 60,$basicControl->admin_logo, $basicControl->admin_logo_driver);
                 if ($image) {
                     $basicControl->admin_logo = $image['path'];
                     $basicControl->admin_logo_driver = $image['driver'];
@@ -63,7 +64,7 @@ class LogoController extends Controller
 
         if ($request->hasFile('admin_dark_mode_logo')) {
             try {
-                $image = $this->fileUpload($request->admin_dark_mode_logo, config('filelocation.logo.path'), null, null, 'avif', 70,$basicControl->admin_dark_mode_logo, $basicControl->admin_dark_mode_logo_driver);
+                $image = $this->fileUpload($request->admin_dark_mode_logo, config('filelocation.logo.path'), null, null, 'avif', 60,$basicControl->admin_dark_mode_logo,$basicControl->admin_dark_mode_logo_driver);
                 if ($image) {
                     $basicControl->admin_dark_mode_logo = $image['path'];
                     $basicControl->admin_dark_mode_logo_driver = $image['driver'];

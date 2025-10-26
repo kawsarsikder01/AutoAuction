@@ -107,7 +107,7 @@
                                                                 <div class="form-check form-switch">
                                                                     <input type="hidden" name="admin_login_recaptcha" value="0">
                                                                     <input class="form-check-input" name="admin_login_recaptcha" type="checkbox" id="adminLoginRecaptcha" value="1"
-                                                                        {{ $basicControl->recaptcha_admin_login == 1 ? 'checked' : ''}}>
+                                                                        {{ $basicControl->google_admin_login_recaptcha_status	 == 1 ? 'checked' : ''}}>
                                                                     <label class="form-check-label" for="adminLoginRecaptcha"></label>
                                                                     @error('admin_login_recaptcha')
                                                                     <span class="invalid-feedback">{{ $message }}</span>
@@ -137,7 +137,7 @@
                                                                 <div class="form-check form-switch">
                                                                     <input type="hidden" name="user_login_recaptcha" value="0">
                                                                     <input class="form-check-input" name="user_login_recaptcha" type="checkbox" id="userLoginRecaptcha" value="1"
-                                                                        {{ $basicControl->reCaptcha_status_login == 1 ? 'checked' : ''}}>
+                                                                        {{ $basicControl->google_user_login_recaptcha_status == 1 ? 'checked' : ''}}>
                                                                     <label class="form-check-label" for="userLoginRecaptcha"></label>
                                                                     @error('user_login_recaptcha')
                                                                     <span class="invalid-feedback">{{ $message }}</span>
@@ -165,7 +165,7 @@
                                                                 <div class="form-check form-switch">
                                                                     <input type="hidden" name="user_registration_recaptcha" value="0">
                                                                     <input class="form-check-input" type="checkbox" name="user_registration_recaptcha" id="userRegistrationRecaptcha" value="1"
-                                                                        {{ $basicControl->reCaptcha_status_registration == 1 ? 'checked' : ''}}>
+                                                                        {{ $basicControl->google_user_registration_recaptcha_status == 1 ? 'checked' : ''}}>
                                                                     <label class="form-check-label" for="userRegistrationRecaptcha"></label>
                                                                     @error('user_registration_recaptcha')
                                                                     <span class="invalid-feedback">{{ $message }}</span>

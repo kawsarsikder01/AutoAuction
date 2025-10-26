@@ -6,6 +6,11 @@ return [
             'icon' => 'fa-light fa-image',
             'short_description' => 'Basic such as, site title, timezone, currency, notifications, verifications and so on.',
         ],
+        'GDPR Cookie' => [
+            'route' => 'admin.cookie',
+            'icon' => 'fa-thin fa-cookie',
+            'short_description' => 'Cookie such as, cookie title, cookie image, text, status,cookie button and so on.',
+        ],
         'logo' => [
             'route' => 'admin.logo.settings',
             'icon' => 'fa-light fa-image',

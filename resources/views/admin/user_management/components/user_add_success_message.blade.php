@@ -20,10 +20,10 @@
                                 created.")</p>
                         </div>
                         <div class="d-flex justify-content-center">
-                            <a class="btn btn-white me-3" href="{{ route('admin.users.add') }}">
+                            <a class="btn btn-white me-3" href="{{ route('admin.users') }}">
                                 <i class="bi-chevron-left ms-1"></i> @lang("Back to users")
                             </a>
-                            <a class="btn btn-primary" href="{{ route('admin.users') }}">
+                            <a class="btn btn-primary" href="{{ route('admin.users.add') }}">
                                 <i class="bi-person-plus-fill me-1"></i> @lang("Add new user")
                             </a>
                         </div>

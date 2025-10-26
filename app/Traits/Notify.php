@@ -9,6 +9,7 @@ use App\Models\Admin;
 use App\Models\FireBaseToken;
 use App\Models\InAppNotification;
 use App\Models\ManualSmsConfig;
+use App\Models\NotificationPermission;
 use App\Models\NotificationTemplate;
 use App\Models\SmsControl;
 use Illuminate\Support\Facades\Http;
@@ -26,14 +27,19 @@ trait Notify
 
     public function mail($user, $templateKey = null, $params = [], $subject = null, $requestMessage = null)
     {
+        $notificationPermission = NotificationPermission::where('notifyable_id',$user->id)->first();
 
         try {
 
-            $basic = basicControl();
-
-            if ($basic->email_notification != 1) {
+            if ($notificationPermission->template_email_key){
+                if (!in_array($templateKey, $notificationPermission->template_email_key)) {
+                    return false;
+                }
+            }else{
                 return false;
             }
+
+            $basic = basicControl();
             $email_body = $basic->email_description;
 
             $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('language_id', $user->language_id)->where('notify_for', 0)->first();
@@ -42,7 +48,6 @@ trait Notify
             }
 
             $message = str_replace("[[name]]", $user->username, $email_body);
-
 
             if (!$templateObj && $subject == null) {
                 return false;
@@ -63,6 +68,7 @@ trait Notify
             $subject = ($subject == null) ? $templateObj->subject : $subject;
             $email_from = $basic->sender_email;
 
+
             Mail::to($user)->queue(new SendMail($email_from, $subject, $message));
         } catch (\Exception $exception) {
             return true;
@@ -76,9 +82,14 @@ trait Notify
             return false;
         }
 
-        $smsControl = ManualSmsConfig::firstOrCreate();
-        $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('language_id', $user->language_id)->where('notify_for', 0)->first();
+        $notificationPermission = NotificationPermission::where('notifyable_id',$user->id)->first();
+        if (!in_array($templateKey, $notificationPermission->template_sms_key)) {
+            return false;
+        }
 
+        $smsControl = ManualSmsConfig::firstOrCreate();
+
+        $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('language_id', $user->language_id)->where('notify_for', 0)->first();
         if (!$templateObj) {
             $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('notify_for', 0)->first();
         }
@@ -253,32 +264,29 @@ trait Notify
         }
     }
 
-
     public function userFirebasePushNotification($user, $templateKey, $params = [], $action = null)
     {
+
+
         try {
             $basic = basicControl();
             $notify = config('firebase');
 
-            if (!$basic->push_notification) {
+            $notificationPermission = NotificationPermission::where('notifyable_id',$user->id)->first();
+            if (!in_array($templateKey, $notificationPermission->template_push_key)) {
                 return false;
             }
 
-//            if (empty($user->push_key) || in_array($templateKey, $user->push_key) == false) {
-//                return false;
-//            }
 
-
+            if (!$basic->push_notification) {
+                return false;
+            }
             if ($notify['user_foreground'] == 0 && $notify['user_background'] == 0) {
                 return false;
             }
 
 
             $templateObj = NotificationTemplate::where('template_key', $templateKey)->where('language_id', $user->language_id)->first();
-            if (!$templateObj) {
-                $templateObj = NotificationTemplate::where('template_key', $templateKey)->first();
-            }
-
             if (!$templateObj->status['push']) {
                 return false;
             }
@@ -290,7 +298,6 @@ trait Notify
                 }
             }
 
-
             $template = '';
             if ($templateObj) {
                 $template = $templateObj->push;
@@ -299,10 +306,7 @@ trait Notify
                 }
             }
 
-
             $users = FireBaseToken::where('tokenable_id', $user->id)->get();
-
-//            dd($user->id);
 
             foreach ($users as $user) {
                 $data = [
@@ -339,12 +343,20 @@ trait Notify
 
 
         try {
-
             $basic = basicControl();
 
             if ($basic->in_app_notification != 1) {
                 return false;
             }
+
+
+            $notificationPermission = NotificationPermission::where('notifyable_id',$user->id)->first();
+
+
+            if (!in_array($templateKey, $notificationPermission->template_in_app_key)) {
+               return false;
+            }
+
 
             $templateObj = NotificationTemplate::where('template_key', $templateKey)
                 ->where('language_id', $user->language_id)->where('notify_for', 0)
@@ -417,7 +429,7 @@ trait Notify
                         "data" => [
                             "foreground" => (int)$notify['admin_foreground'],
                             "background" => (int)$notify['admin_background'],
-                            "click_action" => $action,
+                            "click_action" => $action
                         ],
                         "content_available" => true,
                         "mutable_content" => true

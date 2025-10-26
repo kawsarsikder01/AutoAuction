@@ -15,8 +15,8 @@
                              <h4>@lang('Create An Account')</h4>
                           </div>
                           <div class="col-md-6 form-floating">
-                             <input type="text" name="first_name" class="form-control" id="fname" placeholder="First Name" />
-                             <label for="fname">First Name</label>
+                             <input type="text" name="first_name" class="form-control" id="fname" placeholder="@lang('First Name')" />
+                             <label for="fname">@lang('First Name')</label>
                              @error('first_name')
                                 <span class="invalid-feedback d-block" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -24,8 +24,8 @@
                                 @enderror
                           </div>
                           <div class="col-md-6 form-floating">
-                             <input type="text" name="last_name" class="form-control" id="lname" placeholder="name@example.com" />
-                             <label for="lname">Last Name</label>
+                             <input type="text" name="last_name" class="form-control" id="last_name" placeholder="@lang('Last Name')" />
+                             <label for="last_name">@lang('Last Name')</label>
                              @error('last_name')
                              <span class="invalid-feedback d-block" role="alert">
                                      <strong>{{ $message }}</strong>
@@ -33,7 +33,7 @@
                              @enderror
                           </div>
                           <div class="col-md-6 form-floating">
-                             <input type="email" name="email" class="form-control"  id="email" placeholder="name@example.com" />
+                             <input type="email" name="email" class="form-control"  id="email" placeholder="@lang('Enter Your Email Address')" />
                              <label for="email">@lang('Email address')</label>
                              @error('email')
                              <span class="invalid-feedback d-block" role="alert">
@@ -42,7 +42,7 @@
                              @enderror
                           </div>
                           <div class="col-md-6 form-floating">
-                             <input type="text" name="username" class="form-control" id="username" placeholder="name@example.com" />
+                             <input type="text" name="username" class="form-control" id="username" placeholder="@lang('Enter Your Username')" />
                              <label for="username">@lang('Username')</label>
                              @error('username')
                              <span class="invalid-feedback d-block" role="alert">
@@ -51,17 +51,18 @@
                              @enderror
                           </div>
                           <div class="col-md-12 form-floating">
-                             <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" />
+                             <input type="password" name="password" class="form-control" id="id_password" placeholder="@lang('Password')" />
                              <label for="id_password">@lang('Password')</label>
                               <i class="fa-regular fa-eye-slash" id="togglePassword"></i>
-                             @error('password')
-                             <span class="invalid-feedback d-block" role="alert">
+
+                          </div>
+                           @error('password')
+                           <span class="invalid-feedback d-block" role="alert">
                                      <strong>{{ $message }}</strong>
                                  </span>
-                             @enderror
-                          </div>
+                           @enderror
                           <div class="col-md-12 form-floating">
-                           <input type="password" name="password_confirmation" class="form-control" id="confirmPassword" placeholder="Password" />
+                           <input type="password" name="password_confirmation" class="form-control" id="confirmPassword" placeholder="@lang('Confirm Password')" />
                            <label for="confirmPassword">@lang('Confirm Password')</label>
                               <i class="fa-regular fa-eye-slash" id="confirmTogglePassword"></i>
                            @error('password_confirmation')
@@ -70,6 +71,42 @@
                                </span>
                            @enderror
                         </div>
+                           @if($basicControl->manual_recaptcha === 1 && $basicControl->reCaptcha_status_login === 1)
+                               <div class="form-floating">
+
+                                   <input type="text"       tabindex="2"
+                                          class="form-control form-control-lg @error('captcha') is-invalid @enderror"
+                                          name="captcha" id="captcha" autocomplete="off"
+                                          placeholder="Enter Captcha" >
+                                   <label for="floatingInput">@lang('Captcha')</label>
+
+                                   @error('captcha')
+                                   <span class="invalid-feedback">{{ $message }}</span>
+                                   @enderror
+                               </div>
+
+                               <div class="mt-4">
+                                   <div class="input-group captcha-group input-group-merge manualRecaptchaImage" data-hs-validation-validate-class>
+                                       <img src="{{route('captcha').'?rand='. rand()}}" id='captcha_image' >
+                                       <a class="input-group-append input-group-text manualRecaptchaIcon"
+                                          href='javascript: refreshCaptcha();'>
+                                           <i class="fa-solid fa-rotate-right"></i>
+                                       </a>
+                                   </div>
+                               </div>
+                           @endif
+
+                           @if(basicControl()->google_user_login_recaptcha_status && basicControl()->google_recaptcha)
+                               <div class="row mt-4">
+                                   <div class="g-recaptcha @error('g-recaptcha-response') is-invalid @enderror"
+                                        data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
+                                   @error('g-recaptcha-response')
+                                   <span class="invalid-feedback d-block text-danger" role="alert">
+                                                {{ $message }}
+                                            </span>
+                                   @enderror
+                               </div>
+                           @endif
                        </div>
                        <button class="btn-custom w-100 mt-4">@lang('Create Account')</button>
                        <div class="bottom">

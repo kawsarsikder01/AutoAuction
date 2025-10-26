@@ -11,10 +11,10 @@
                         <thead>
                         <tr>
                             <th scope="col">@lang('Method')</th>
-                            <th scope="col">Transaction ID</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Created time</th>
+                            <th scope="col">@lang('Transaction ID')</th>
+                            <th scope="col">@lang('Amount')</th>
+                            <th scope="col">@lang('Status')</th>
+                            <th scope="col">@lang('Created time')</th>
                         </tr>
                         </thead>
                         <tbody>

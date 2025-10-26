@@ -12,8 +12,7 @@
                             <div class="d-flex flex-wrap align-items-center justify-content-center alert-content">
                                 <i class="fa-solid fa-circle-info me-3"></i>
                                 <p class="me-3 mt-3">
-                                    @lang('Do not miss any single important notification! Allow your
-                                                                        browser to get instant push notification')
+                                    @lang('Do not miss any single important notification! Allow your browser to get instant push notification')
                                 </p>
                                 <button class="btn-custom" id="allow-notification">@lang('Allow me')</button>
                             </div>
@@ -25,9 +24,7 @@
                 <div class="card-box" v-if="notificationPermission == 'denied' && !is_notification_skipped" v-cloak>
                     <div class="media align-items-center d-flex justify-content-between alert alert-warn mb-4">
                         <div><i
-                                class="fas fa-exclamation-triangle"></i> @lang('Please allow your browser to get instant push notification.
-                        Allow it from
-                        notification setting.')
+                                class="fas fa-exclamation-triangle"></i> @lang('Please allow your browser to get instant push notification.Allow it from notification setting.')
                         </div>
                         <button class="close-btn pt-1" @click.prevent="skipNotification"><i class="fas fa-times"></i>
                         </button>
@@ -120,19 +117,28 @@
              <!-- card boxes -->
              <div class="col-12 d-none d-lg-block">
                 <div class="row g-4">
-                   <div class="col-xl-3 col-lg-4 col-md-12 ">
-                      <div class="card-box">
-                         <div class="d-flex justify-content-between">
-                            <h4>{{number_format(Auth::user()->balance, 2, '.', ',')??0 }} {{" ".basicControl()->currency_symbol}}</h4>
-                             <i class="fa-solid fa-wallet"></i>
-                         </div>
-                         <p class="mb-0">@lang('Current Balance')</p>
-                      </div>
-                   </div>
+                    <div class="col-xl-3 col-lg-4 col-md-12">
+                        <div class="card-box">
+                            <div class="d-flex justify-content-between">
+                                {!! Auth::user()->plan?'<h4>'.Auth::user()->plan->plan_name.'</h4>':'<p>'.'Explore a Strategic Selling Plan for Your Vehicle – Maximize Your Selling Potential Now!'.'</p>' !!}
+                                <i class="fa-solid fa-cube"></i>
+                            </div>
+                            <p class="mb-0"> {{Auth::user()->plan?trans('Current Plan'):''}}</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-4 col-md-12 ">
+                        <div class="card-box">
+                            <div class="d-flex justify-content-between">
+                                <h4>{{currencyPosition(Auth::user()->balance)}}</h4>
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                            <p class="mb-0">@lang('Current Balance')</p>
+                        </div>
+                    </div>
                    <div class="col-xl-3 col-lg-4 col-md-12">
                       <div class="card-box">
                          <div class="d-flex justify-content-between">
-                            <h4>{{number_format(Auth::user()->hold_balance, 2, '.', ',')?? 0}} {{" ".basicControl()->currency_symbol}}</h4>
+                            <h4>{{currencyPosition(Auth::user()->hold_balance)}}</h4>
                              <i class="fa-light fa-chart-pie-simple"></i>
                          </div>
                          <p class="mb-0">@lang('Hold Balance')</p>
@@ -174,15 +180,7 @@
                          <p class="mb-0">@lang('Total Win Auction')</p>
                       </div>
                    </div>
-                        <div class="col-xl-3 col-lg-4 col-md-12">
-                            <div class="card-box">
-                                <div class="d-flex justify-content-between">
-                                    {!! Auth::user()->plan?'<h4>'.Auth::user()->plan->plan_name.'</h4>':'<p>'.'Explore a Strategic Selling Plan for Your Vehicle – Maximize Your Selling Potential Now!'.'</p>' !!}
-                                    <i class="fa-solid fa-cube"></i>
-                                </div>
-                                <p class="mb-0"> {{Auth::user()->plan?'Current Plan':''}}</p>
-                            </div>
-                        </div>
+
                     <div class="col-xl-3 col-lg-4 col-md-12">
                         <div class="card-box">
                             <div class="d-flex justify-content-between">
@@ -244,77 +242,20 @@
              </div>
               <div class="col-12">
                   <div class="row">
-                      <div class="col-xl-6 col-lg-12">
-                          <div class="card rounded-4">
-                              <h3 class="card-title d-block m-auto pt-3     ">
-                                 @lang('Transaction Summary')
-                              </h3>
-                              <div class="card-box">
-                                  <canvas  id="myChart"></canvas>
-                              </div>
-                          </div>
+                    @include(template().'partials.Dashboard.TransactionSummary')
+                    @include(template().'partials.Dashboard.bidHistory')
+                      <div class="col-xl-6 col-lg-12 mt-xl-0 mt-lg-4 mt-sm-4" id="visitorCard">
+                          @include(template().'partials.Dashboard.TopAuctionVisitors')
                       </div>
+
                       <div class="col-xl-6 col-lg-12 mt-xl-0 mt-lg-4 mt-sm-4">
-                          <div class="card rounded-4">
-                              <h3 class="card-title d-block m-auto pt-3">
-                                 @lang('Bid History')
-                              </h3>
-                              <div class="card-box">
-                                  <canvas  id="BidHistory"></canvas>
-                              </div>
-                          </div>
+                          @include(template().'partials.Dashboard.TopBidHistory')
                       </div>
                   </div>
               </div>
-              <div class="col-12">
-                <div class="row">
-                    <div class="col-xl-4 col-lg-6 mb-3 mb-lg-5">
-                        <div class="card custom-chart">
-                            <div class="card-header bg-white">
-                                <h4 class="card-header-title d-block m-auto p-1">
-                                    @lang('Device History')
-                                </h4>
-                            </div>
-                            <div class="card-body  " >
-                                <canvas id="GetDeviceHistory" ></canvas>
-                            </div>
-                            <div class="card-footer bg-white">
-                                <span class="d-block text-center">@lang("Last 30 Days Device History")</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-6 mb-3 mb-lg-5">
-                        <div class="card custom-chart">
-                            <div class="card-header bg-white ">
-                                <h4 class="card-header-title d-block m-auto p-1">
-                                    @lang('Browser History')
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="GetBrowserHistory" ></canvas>
-                            </div>
-                            <div class="card-footer bg-white">
-                                <span class="d-block text-center">@lang("Last 30 Days Device History")</span>
-                            </div>
 
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-6 mb-3 mb-lg-5">
-                        <div class="card  custom-chart">
-                            <div class="card-header bg-white">
-                                <h4 class="card-header-title d-block m-auto p-1">
-                                    @lang('Operating System History')
-                                </h4>
-                            </div>
-                            <div class="card-body ">
-                                <canvas id="GetOperatingSystemHistory"></canvas>
-                            </div>
-                            <div class="card-footer bg-white">
-                                <span class="d-block text-center">@lang("Last 30 Days Device History")</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <div class="col-12">
+                @include(template().'partials.Dashboard.UserLoginHistory')
               </div>
 
           </div>
@@ -324,7 +265,7 @@
 
 @endsection
 @push('js-lib')
-    <script src="{{ asset('assets/admin/js/Chart.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/chart.min.js') }}"></script>
 @endpush
 
 @if($firebaseNotify)
@@ -417,168 +358,38 @@
                 }
             });
 
-            $(document).ready(function (){
 
-                $.ajax({
-                    url: "{{route('user.get.chart.data')}}",
-                    type: 'GET',
-                    success: function (data) {
-                        updateChart(data);
-                        bidHistory(data);
-                    }
-                });
-                function updateChart(data){
-                    const xValues = data.xValues;
-
-                    new Chart("myChart", {
-                        type: "line",
-                        data: {
-                            labels: xValues,
-                            datasets: [{
-                                data: data.purchasePlan,
-                                label: "Purchase Plan",
-                                borderColor: "#00cec9",
-                                fill: false
-                            },{
-                                data: data.deposit,
-                                label: "Deposit",
-                                borderColor: "#feba27",
-                                fill: false
-                            },{
-                                data: data.payout,
-                                label: "Payout",
-                                borderColor: "#bdc3c7",
-                                fill: false
-                            }]
-                        },
-                        options: {
-                            legend: {display: true}
-                        }
-                    });
-                }
-
-                function bidHistory(data){
-                    const xValues = data.xValues;
-                    const yValues = data.bidHistory;
-                    const barColors = ["#0a3d62","#e67e22","#1abc9c","#079992","#18dcff","#0984e3","#e55039","#079992","#b71540","#f1c40f","#ff3838","#2ecc71","#7F27FF","#2c3e50","#f6e58d"];
-                    new Chart("BidHistory", {
-                        type: "bar",
-                        data: {
-                            labels: xValues,
-                            datasets: [{
-                                label:'Bid History',
-                                backgroundColor: barColors,
-                                data: yValues
-                            }]
-                        },
-                        options: {
-                            legend: {display: true},
-                        }
-                    });
-                }
-
-                new Chart("GetDeviceHistory", {
-                    type: "doughnut",
-                    data: {
-                        labels: @json($userLoginsDeviceData->keys()),
-                        datasets: [{
-                            backgroundColor: [ "#0072C6","#FF9500","#FF5733"],
-                            data: @json($userLoginsDeviceData->values())
-                        }]
-                    },
-                    options: {
-                        cutout: '70%',
-                        title: {
-                            display: true,
-                        },
-                        plugins: {
-                            tooltip: {
-                                hasIndicator: true,
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        }
-                    }
-                });
-                new Chart("GetBrowserHistory", {
-                    type: "doughnut",
-                    data: {
-                        labels: @json($userLoginsBrowserData->keys()),
-                        datasets: [{
-                            backgroundColor: [ "#0072C6","#FF9500","#FF5733","#4285F4", "#0078D4", "#FF1B2D", "#006699", "#002558", "#003399", "#3E74A0", "#5EAA51","#999999"],
-                            data: @json($userLoginsBrowserData->values())
-                        }]
-                    },
-                    options: {
-                        cutout: '70%',
-                        title: {
-                            display: true,
-                        },
-                        plugins: {
-                            tooltip: {
-                                hasIndicator: true,
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        }
-                    }
-                });
-                new Chart("GetOperatingSystemHistory", {
-                    type: "doughnut",
-                    data: {
-                        labels: @json($userLoginsOSData->keys()),
-                        datasets: [{
-                            backgroundColor: [ "#0072C6","#FF9500","#FF5733","#4285F4", "#0078D4", "#FF1B2D", "#006699", "#002558", "#003399", "#3E74A0", "#5EAA51","#999999"],
-                            data: @json($userLoginsOSData->values())
-                        }]
-                    },
-                    options: {
-                        cutout: '70%',
-                        title: {
-                            display: true,
-                        },
-                        plugins: {
-                            tooltip: {
-                                hasIndicator: true,
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        }
-                    }
-                });
-
-                $('#hideKycAlert').on('click',function (){
-                    $('.kycAlert').hide();
-                })
-            })
 
         </script>
     @endpush
 @endif
+@push('script')
+    <script>
+        $(document).ready(function (){
+            $('#hideKycAlert').on('click',function (){
+                $('.kycAlert').hide();
+            })
+        })
+    </script>
+@endpush
 
 @push('style')
    <style>
        #BidHistory{
            width:100%;
-           height: 400px;
-           margin-top: -18px;
+           height: 400px!important;
+           margin-bottom: -18px;
+       }
+       #Visitors{
+           width:100%;
+           height: 400px !important;
+           margin-bottom: -18px;
        }
        #myChart{
            width:100%;
-           height: 400px;
-           margin-top:-18px;
+           height: 400px!important;
+           margin-bottom: -18px;
+
        }
        #GetDeviceHistory{
           width: 60% !important;

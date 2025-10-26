@@ -33,10 +33,9 @@ class BasicService
         $deposit->save();
 
         if ($deposit->user && $deposit->depositable_type == Fund::class) {
-
-                $user = $deposit->user;
-                $user->balance += $deposit->payable_amount_in_base_currency;
-                $user->save();
+            $user = $deposit->user;
+            $user->balance += $deposit->payable_amount_in_base_currency;
+            $user->save();
             $transaction = new Transaction();
             $transaction->user_id = $deposit->user_id;
             $transaction->amount = $deposit->payable_amount_in_base_currency;
@@ -75,15 +74,15 @@ class BasicService
                 "icon" => "fas fa-ticket-alt text-white"
             ];
 
-            $firebaseAction = route('admin.transaction');
-            $this->adminMail('ADD_FUND_USER_ADMIN', $params, $action);
+            $this->adminMail('ADD_FUND_USER_ADMIN', $params);
             $this->adminPushNotification('ADD_FUND_USER_ADMIN', $params, $actionAdmin);
-            $this->adminFirebasePushNotification('ADD_FUND_USER_ADMIN', $params, $firebaseAction);
-        }elseif ($deposit->depositable_type == Plan::class && $deposit->depositable_id){
+            $this->adminFirebasePushNotification('ADD_FUND_USER_ADMIN', $params, route('admin.transaction'));
+
+        } elseif ($deposit->depositable_type == Plan::class && $deposit->depositable_id) {
             $user = $deposit->user;
-            if(!$user->plan){
+            if (!$user->plan) {
                 $plan = Plan::findOrFail($deposit->depositable_id);
-                if ($plan){
+                if ($plan) {
 
 
                     $transaction = new Transaction();
@@ -91,9 +90,9 @@ class BasicService
                     $transaction->amount = $deposit->payable_amount_in_base_currency;
                     $transaction->charge = getAmount($deposit->base_currency_charge);
                     $transaction->balance = getAmount($user->balance);
-                    $transaction->trx_type = '-';
+                    $transaction->trx_type = '+';
                     $transaction->trx_id = $deposit->trx_id;
-                    $transaction->remarks = 'Deposit Via ' . optional($deposit->gateway)->name;
+                    $transaction->remarks = 'Purchase Plan Via ' . optional($deposit->gateway)->name;
                     $transaction->transactional_type = 'App\Models\Plan';
                     $deposit->transactional()->save($transaction);
                     $deposit->save();
@@ -103,17 +102,15 @@ class BasicService
                     $planPurchaseHistory->plan_name = $plan->plan_name;
                     $planPurchaseHistory->plan_id = $plan->id;
                     $planPurchaseHistory->user_id = $user->id;
-                    $planPurchaseHistory->price =  $plan->price;
+                    $planPurchaseHistory->price = $plan->price;
                     $planPurchaseHistory->noOfListing = $plan->number_of_listing;
                     $planPurchaseHistory->noOfMaxImg = $plan->number_of_images;
                     $planPurchaseHistory->access_auction = $plan->access_auction;
-                    $planPurchaseHistory->customer_support = $plan->customer_support;
                     $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
-                    $planPurchaseHistory->top_search_result = $plan->top_search_result;
                     $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
                     $planPurchaseHistory->trx_id = $deposit->trx_id;
                     $planPurchaseHistory->status = 1;
-                    $planPurchaseHistory->payment_method =  optional($deposit->gateway)->name;
+                    $planPurchaseHistory->payment_method = optional($deposit->gateway)->name;
                     $planPurchaseHistory->purchase_date = Carbon::now()->toDateTimeString();
                     if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
                         $planPurchaseHistory->expiry_date = Carbon::now()->addDays($plan->expiry_time);
@@ -144,20 +141,20 @@ class BasicService
 
                 $firebaseAction = route('admin.transaction');
                 $this->adminMail('PLAN_PURCHASE_USER_ADMIN', $params);
-                $this->adminPushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $actionAdmin);
+                $this->adminPushNotification('PLAN_PURCHASE_USER_ADMIN', $params,$actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_PURCHASE_USER_ADMIN', $params, $firebaseAction);
-            }elseif($user->plan){
+            } elseif ($user->plan) {
                 $plan = Plan::findOrFail($deposit->depositable_id);
-                if ($plan){
+                if ($plan) {
 
                     $transaction = new Transaction();
                     $transaction->user_id = $deposit->user_id;
                     $transaction->amount = $deposit->payable_amount_in_base_currency;
                     $transaction->charge = getAmount($deposit->base_currency_charge);
                     $transaction->balance = getAmount($user->balance);
-                    $transaction->trx_type = '-';
+                    $transaction->trx_type = '+';
                     $transaction->trx_id = $deposit->trx_id;
-                    $transaction->remarks = 'Deposit Via ' . optional($deposit->gateway)->name;
+                    $transaction->remarks = 'Upgrade Plan Via ' . optional($deposit->gateway)->name;
                     $transaction->transactional_type = 'App\Models\Plan';
                     $deposit->transactional()->save($transaction);
                     $deposit->save();
@@ -169,17 +166,15 @@ class BasicService
                     $planPurchaseHistory->plan_name = $plan->plan_name;
                     $planPurchaseHistory->plan_id = $plan->id;
                     $planPurchaseHistory->user_id = $user->id;
-                    $planPurchaseHistory->price =  $plan->price;
+                    $planPurchaseHistory->price = $plan->price;
                     $planPurchaseHistory->noOfListing = $plan->number_of_listing;
                     $planPurchaseHistory->noOfMaxImg = $plan->number_of_images;
                     $planPurchaseHistory->access_auction = $plan->access_auction;
-                    $planPurchaseHistory->customer_support = $plan->customer_support;
                     $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
-                    $planPurchaseHistory->top_search_result = $plan->top_search_result;
                     $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
                     $planPurchaseHistory->status = 1;
                     $planPurchaseHistory->trx_id = $deposit->trx_id;
-                    $planPurchaseHistory->payment_method =  optional($deposit->gateway)->name;
+                    $planPurchaseHistory->payment_method = optional($deposit->gateway)->name;
                     $planPurchaseHistory->purchase_date = Carbon::now()->toDateTimeString();
                     if ($plan->expiry_time_type == 'days' || $plan->expiry_time_type == 'day') {
                         $planPurchaseHistory->expiry_date = Carbon::now()->addDays($plan->expiry_time);
@@ -208,7 +203,7 @@ class BasicService
                     "icon" => "fas fa-ticket-alt text-white"
                 ];
 
-                $firebaseAction = route('admin.transaction');
+                $firebaseAction = route('admin.show.plan.purchase.history');
                 $this->adminMail('PLAN_UPGRADE_USER_ADMIN', $params);
                 $this->adminPushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $actionAdmin);
                 $this->adminFirebasePushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $firebaseAction);

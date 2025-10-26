@@ -180,6 +180,10 @@ class User extends Authenticatable
         return $this->belongsTo(PlanPurchaseHistory::class,'purchased_plan_id');
 
     }
+    public function userAllPlans()
+    {
+        return $this->hasMany(PlanPurchaseHistory::class,'user_id');
+    }
     public function vehicle()
     {
         return $this->hasMany(Vehicle::class,'user_id');

@@ -34,9 +34,9 @@ class Payment
                 "SECKEY" => $gateway->parameters->secret_key ?? '',
                 "txref" => $deposit->trx_id
             );
-
             $response = BasicCurl::curlPostRequestWithHeaders($url, $headers, $postParam);
             $response = json_decode($response);
+
             if ($response->data->status == "successful" && $response->data->chargecode == "00" && round($deposit->payable_amount, 2) == $response->data->amount && $deposit->payment_method_currency == $response->data->currency && $deposit->status == 0) {
                 BasicService::preparePaymentUpgradation($deposit);
 

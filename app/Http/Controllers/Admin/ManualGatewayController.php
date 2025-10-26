@@ -82,7 +82,7 @@ class ManualGatewayController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $image = $this->fileUpload($request->image, config('filelocation.gateway.path'), null,null, 'avif', 60);
+                $image = $this->fileUpload($request->image, config('filelocation.gateway.path'), null, null, 'avif', 60);
                 if ($image) {
                     $gatewayImage = $image['path'];
                     $driver = $image['driver'];
@@ -130,7 +130,7 @@ class ManualGatewayController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'name' => "required|min:3|unique:gateways,name,".$id,
+            'name' => "required|min:3|unique:gateways,name," . $id,
             'description' => 'required|string|min:3',
             'note' => 'required|string|min:3',
             'manual_gateway_status' => "nullable|integer|in:0,1",
@@ -193,7 +193,7 @@ class ManualGatewayController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $image = $this->fileUpload($request->image, config('filelocation.gateway.path'), null,null,'avif',60,$gateway->image,$gateway->driver);
+                $image = $this->fileUpload($request->image, config('filelocation.gateway.path'), null, null, 'avif', 60, $gateway->image, $gateway->driver);
                 if ($image) {
                     $gatewayImage = $image['path'];
                     $driver = $image['driver'];

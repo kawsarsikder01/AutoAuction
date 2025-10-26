@@ -39,7 +39,7 @@ class PusherConfigController extends Controller
 
         $basicControl = basicControl();
         $basicControl->update([
-           'in_app_notification' => $request->in_app_notification
+            'in_app_notification' => $request->in_app_notification
         ]);
 
         return back()->with('success', 'Pusher Configuration Successfully');

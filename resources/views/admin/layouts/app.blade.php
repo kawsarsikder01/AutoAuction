@@ -112,19 +112,21 @@
 
 
 <!-- JS Global Compulsory  -->
-<script src="{{ asset('assets/admin/js/jquery.min.js') }}"></script>
+
+<script src="{{ asset('assets/global/js/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/jquery-migrate.min.js') }}"></script>
-<script src="{{ asset('assets/global/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('assets/admin/js/bootstrap.bundle.min.js') }}"></script>
 
 <!-- JS Implementing Plugins -->
 <script src="{{ asset('assets/admin/js/hs-navbar-vertical-aside.min.js') }}"></script>
 
 @stack('js-lib')
 <script src="{{ asset('assets/admin/js/hs-form-search.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/notiflix-aio-2.7.0.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/vue.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/axios.min.js') }}"></script>
-<script src="{{ asset('assets/admin/js/pusher.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/notiflix-aio-3.2.6.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/vue.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/axios.min.js') }}"></script>
+<script src="{{ asset('assets/global/js/pusher.min.js') }}"></script>
+
 
 
 <script src="{{ asset('assets/admin/js/theme.min.js') }}"></script>
@@ -153,7 +155,6 @@
         $variants.forEach(function ($item) {
             $item.addEventListener('click', function () {
                 var $theme = $item.getAttribute('data-value');
-
                 if ($theme == 'auto') {
                     $('aside').removeClass('navbar-bordered bg-white navbar-vertical-aside-initialized')
                     $('aside').addClass('navbar-dark bg-dark navbar-vertical-aside-initialized')
@@ -167,10 +168,10 @@
                     url: "{{route('admin.themeMode')}}/" + $theme,
                     type: 'get',
                     success: function (response) {
-                        if(response != 'dark'){
-                            if(response == 'auto'){
+                        if (response != 'dark') {
+                            if (response == 'auto') {
                                 var $themeImgSource = "{{ getFile($basicControl->admin_dark_mode_logo_driver, $basicControl->admin_dark_mode_logo, true) }}";
-                            }else{
+                            } else {
                                 var $themeImgSource = "{{ getFile($basicControl->admin_logo_driver, $basicControl->admin_logo, true) }}";
                             }
                             var element = document.querySelector('.navbar-brand-logo-auto');
@@ -191,96 +192,29 @@
 
 </script>
 
-@auth
-    <script>
-        'use strict'
-        let pushNotificationArea = new Vue({
-            el: "#pushNotificationArea",
-            data: {
-                items: [],
-            },
-            mounted() {
-                this.getNotifications();
-                this.pushNewItem();
-            },
-            methods: {
-                getNotifications() {
-                    let app = this;
-                    axios.get("{{ route('admin.push.notification.show') }}")
-                        .then(function (res) {
-                            app.items = res.data;
-                        })
-                },
-                readAt(id, link) {
-                    let app = this;
-                    let url = "{{ route('admin.push.notification.readAt', 0) }}";
-                    url = url.replace(/.$/, id);
-                    axios.get(url)
-                        .then(function (res) {
-                            if (res.status) {
-                                app.getNotifications();
-                                if (link !== '#') {
-                                    window.location.href = link
-                                }
-                            }
-                        })
-                },
-                readAll() {
-                    let app = this;
-                    let url = "{{ route('admin.push.notification.readAll') }}";
-                    axios.get(url)
-                        .then(function (res) {
-                            if (res.status) {
-                                app.items = [];
-                            }
-                        })
-                },
-                pushNewItem() {
-                    let app = this;
-                    Pusher.logToConsole = false;
-                    let pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-                        encrypted: true,
-                        cluster: "{{ env('PUSHER_APP_CLUSTER') }}"
-                    });
-                    let channel = pusher.subscribe('admin-notification.' + "{{ Auth::id() }}");
-                    channel.bind('App\\Events\\AdminNotification', function (data) {
-                        app.items.unshift(data.message);
-                    });
-                    channel.bind('App\\Events\\UpdateAdminNotification', function (data) {
-                        app.getNotifications();
-                    });
-                },
-                removeHtmlTags(html) {
-                    const doc = new DOMParser().parseFromString(html, 'text/html');
-                    return doc.body.textContent || "";
-                }
-            }
-        });
-    </script>
-@endauth
 
 @stack('script')
 
-
-</body>
-</html>
-
 @if (session()->has('success'))
     <script>
-        Notiflix.Notify.Success("@lang(session('success'))");
+        Notiflix.Notify.success("@lang(session('success'))");
     </script>
 @endif
 
 @if (session()->has('error'))
     <script>
-        Notiflix.Notify.Failure("@lang(session('error'))");
+        Notiflix.Notify.failure("@lang(session('error'))");
     </script>
 @endif
 
 @if (session()->has('warning'))
     <script>
-        Notiflix.Notify.Warning("@lang(session('warning'))");
+        Notiflix.Notify.warning("@lang(session('warning'))");
     </script>
 @endif
+
+
+</body>
+</html>
 
 

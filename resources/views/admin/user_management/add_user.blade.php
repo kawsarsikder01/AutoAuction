@@ -119,7 +119,7 @@
                                                aria-label="@lang("Email")"
                                                autocomplete="off" value="{{ old("email") }}" required>
                                         @error('email')
-                                        <span class="invalid-feedback">{{ $message }}</span>
+                                        <span class="invalid-feedback d-block">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -144,8 +144,8 @@
                                             <select class="js-select form-select" id="locationLabel" name="country">
                                                 <option value="country">@lang("Select Country")</option>
                                                 @forelse($allCountry as $country)
-                                                    <option value="{{ $country['name'] }}"
-                                                            data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle me-2" src="{{ asset($country['flag']) }}" alt="Flag" /><span class="text-truncate">{{ $country['name'] }}</span></span>'>
+                                                    <option value="{{ $country['name'] }}" {{ old('country') == $country['name'] ? 'selected' : '' }}
+                                                    data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle me-2" src="{{ asset($country['flag']) }}" alt="Flag" /><span class="text-truncate">{{ $country['name'] }}</span></span>'>
                                                         @lang($country['name'])
                                                     </option>
                                                 @empty
@@ -227,7 +227,7 @@
                             </div>
 
                             <div class="card-footer d-flex justify-content-end align-items-center">
-                                <button type="button" class="btn btn-primary" data-hs-step-form-next-options='{
+                                <button type="button" class="btn btn-primary nextButton" data-hs-step-form-next-options='{
                                     "targetSelector": "#addUserStepConfirmation"
                                   }'>
                                     @lang('Next') <i class="bi-chevron-right"></i>
@@ -291,7 +291,7 @@
                                 </button>
                                 <div class="ms-auto">
                                     <button id="addUserFinishBtn" type="submit"
-                                            class="btn btn-primary">@lang('Add user')
+                                            class="btn btn-primary addUserBtn">@lang('Add user')
                                     </button>
                                 </div>
                             </div>
@@ -319,7 +319,7 @@
 
 @push('script')
     <script>
-
+        "use strict";
         $(document).on('change', '#avatarUploader', function () {
             let file = this.files[0];
             if (file) {
@@ -337,6 +337,13 @@
             let lastName = $('#lastNameLabel').val();
             let fullName = firstName + ' ' + lastName;
             $('.full_name').text(fullName);
+
+            let add = $('.addUserBtn');
+            if (firstName.trim() === '' || lastName.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
         }
 
         $(document).on("input", "#firstNameLabel, #lastNameLabel", updateFullName);
@@ -345,6 +352,12 @@
         function updateEmailText() {
             let emailValue = $("#emailLabel").val();
             $('.email').text(emailValue);
+            let add = $('.addUserBtn');
+            if (emailValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
         }
 
         $(document).on("input", "#emailLabel", updateEmailText);
@@ -352,6 +365,12 @@
 
         function updateUsernameText() {
             let userNameValue = $("#userNameLabel").val();
+            let add = $('.addUserBtn');
+            if (userNameValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.username').text(userNameValue);
         }
 
@@ -360,6 +379,12 @@
 
         function updatePhoneText() {
             let phoneValue = $("#phoneLabel").val();
+            let add = $('.addUserBtn');
+            if (phoneValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.phone').text(phoneValue);
         }
 
@@ -368,11 +393,24 @@
 
         $(document).on("change", "#locationLabel", function () {
             let countryValue = $("#locationLabel").val();
+            let add = $('.addUserBtn');
+            if (countryValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.country').text(countryValue);
         });
 
         function updateCityText() {
             let cityValue = $("#cityLabel").val();
+            let countryValue = $("#locationLabel").val();
+            let add = $('.addUserBtn');
+            if (cityValue.trim() === '' && countryValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.city').text(cityValue);
         }
 
@@ -381,6 +419,12 @@
 
         function updateStateText() {
             let stateValue = $("#stateLabel").val();
+            let add = $('.addUserBtn');
+            if (stateValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.state').text(stateValue);
         }
 
@@ -390,6 +434,12 @@
 
         function updateZipCodeText() {
             let zipCodeValue = $("#zipCodeLabel").val();
+            let add = $('.addUserBtn');
+            if (zipCodeValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.zip_code').text(zipCodeValue);
         }
 
@@ -399,6 +449,12 @@
 
         function updateAddressLine1() {
             let addressOneValue = $("#addressLine1Label").val();
+            let add = $('.addUserBtn');
+            if (addressOneValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.address_line1').text(addressOneValue);
         }
 
@@ -407,6 +463,12 @@
 
         function updateAddressLine2() {
             let addressTwoValue = $("#addressLine2Label").val();
+            let add = $('.addUserBtn');
+            if (addressTwoValue.trim() === '') {
+                add.prop('disabled', true);
+            } else {
+                add.prop('disabled', false);
+            }
             $('.address_line2').text(addressTwoValue);
         }
 

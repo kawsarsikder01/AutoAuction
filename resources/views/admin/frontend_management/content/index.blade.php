@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 @section('page_title', __('Manage Content'))
 @section('content')
-{{--@dd($errors->all())--}}
     <div class="content container-fluid">
         <div class="page-header">
             <div class="row align-items-end">
@@ -55,7 +54,6 @@
                                     <div class="card card-lg mb-3 mb-lg-4">
                                         <div class="card-body">
                                             @foreach($singleContent['field_name'] as $name => $type)
-{{--                                                @dd(isset($singleContentData[$language->id]))--}}
                                                 <div class="row justify-content-md-between">
                                                     @if($type == "text")
                                                         <div class="col-md-12 mb-3">
@@ -65,7 +63,7 @@
                                                             <input type="@lang($type)" id="@lang($name)"
                                                                    name="{{ $name }}[{{ $language->id }}]"
                                                                    class="form-control @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? @$singleContentData[$language->id][0]->description->{$name} : '') }}"
+                                                                   value="{{ old(@$name.'.'.$language->id, isset($singleContentData[$language->id]) ? @$singleContentData[$language->id][0]->content->media->{$name}??$singleContentData[$language->id][0]->description->{$name} : '') }}"
                                                                    placeholder="@lang(stringToTitle($name))">
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -80,7 +78,7 @@
                                                             <input type="text"
                                                                    class="js-flatpickr form-control flatpickr-custom @error($name.'.'.$language->id) is-invalid @enderror"
                                                                    name="{{ $name }}[{{ $language->id }}]"
-                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? $singleContentData[$language->id][0]->content->{$name} : '') }}"
+                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? $singleContentData[$language->id][0]->content->media->{$name} : '') }}"
                                                                    placeholder="Select dates"
                                                                    data-hs-flatpickr-options='{
                                                                      "dateFormat": "d/m/Y",
@@ -96,25 +94,21 @@
                                                         <div class="col-md-12 mb-4">
                                                             <label
                                                                 class="form-label">@lang(stringToTitle($name))</label>
-                                                            <textarea
-                                                                class="summernote @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                name="{{ $name }}[{{ $language->id }}]">
-                                                                {{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? $singleContentData[$language->id][0]->description->{$name} : '') }}
-                                                            </textarea>
+                                                            <textarea class="summernote @error($name.'.'.$language->id) is-invalid @enderror" name="{{ $name }}[{{ $language->id }}]">{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ? $singleContentData[$language->id][0]->description->{$name} : '') }}</textarea>
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                                             @enderror
                                                         </div>
                                                     @endif
 
-                                                    @if($type == "number")
+                                                    @if($type == "number" && $language->default_status == 1)
                                                         <div class="col-md-12 mb-3">
                                                             <label class="form-label"
                                                                    for="@lang($name)">@lang(stringToTitle($name))</label>
                                                             <input type="@lang($type)" id="@lang($name)"
                                                                    name="{{ $name }}[{{ $language->id }}]"
                                                                    class="form-control @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                   value="{{ old(@$name.'.'.$language->id, isset($singleContentData[$language->id]) ? @$singleContentData[$language->id][0]->description->{$name} : '') }}"
+                                                                   value="{{ old($name.'.'.$language->id, isset($singleContentData[$language->id]) ?$singleContentData[$language->id][0]->content->media->{$name}??$singleContentData[$language->id][0]->description->{$name} : '') }}"
                                                                    placeholder="@lang(stringToTitle($name))">
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -138,36 +132,75 @@
                                                     @endif
 
                                                     @if($type == "file" && $language->default_status == 1)
-                                                        <div class="col-md-4">
-                                                            <label class="form-label"
-                                                                   for="@lang($name)">@lang(stringToTitle($name))</label>
-                                                            <label class="form-check form-check-dashed"
-                                                                   for="logoUploader" id="content_img">
-                                                                <img id="contentImg"
-                                                                     class="avatar avatar-xl avatar-4x3 avatar-centered h-100 mb-2"
-                                                                     src="{{ getFile((!$singleContentData->isEmpty())?  @$singleContentData[$language->id][0]->content->media->{$name}->driver : '', (!$singleContentData->isEmpty())? @$singleContentData[$language->id][0]->content->media->{$name}->path:'', true) }}"
-                                                                     alt="Image Description"
-                                                                     data-hs-theme-appearance="default">
-                                                                <img id="contentImg"
-                                                                     class="avatar avatar-xl avatar-4x3 avatar-centered h-100 mb-2"
-                                                                     src="{{ getFile(!$singleContentData->isEmpty()  ? @$singleContentData[$language->id][0]->content->media->{$name}->driver: '', (!$singleContentData->isEmpty())? @$singleContentData[$language->id][0]->content->media->{$name}->path:'', true) }}"
-                                                                     alt="Image Description"
-                                                                     data-hs-theme-appearance="dark">
+                                                        @if($name == 'image')
+                                                            <div class="col-md-4">
+                                                                <label class="form-label"
+                                                                       for="@lang($name)">@lang(stringToTitle($name))</label>
+                                                                <label class="form-check form-check-dashed"
+                                                                       for="logoUploader{{$name}}" id="content_img">
+                                                                    <img id="contentImg{{$name}}"
+                                                                         class="avatar avatar-xl avatar-4x3 avatar-centered h-100 mb-2"
+                                                                         src="{{ getFile((!$singleContentData->isEmpty())?  @$singleContentData[$language->id][0]->content->media->{$name}->driver : '', (!$singleContentData->isEmpty())? @$singleContentData[$language->id][0]->content->media->{$name}->path:'', true) }}"
+                                                                         alt="Image Description"
+                                                                         data-hs-theme-appearance="default">
+                                                                    <img id="contentImg{{$name}}"
+                                                                         class="avatar avatar-xl avatar-4x3 avatar-centered h-100 mb-2"
+                                                                         src="{{ getFile(!$singleContentData->isEmpty()  ? @$singleContentData[$language->id][0]->content->media->{$name}->driver: '', (!$singleContentData->isEmpty())? @$singleContentData[$language->id][0]->content->media->{$name}->path:'', true) }}"
+                                                                         alt="Image Description"
+                                                                         data-hs-theme-appearance="dark">
+                                                                    <span
+                                                                        class="d-block">@lang("Browse your file here")</span>
+                                                                    <input type="file" name="{{ $name }}"
+                                                                           class="js-file-attach form-check-input"
+                                                                           id="logoUploader{{$name}}"
+                                                                           data-hs-file-attach-options='{
+                                                                      "textTarget": "#contentImg{{$name}}",
+                                                                      "mode": "image",
+                                                                      "targetAttr": "src",
+                                                                      "allowTypes": [".png", ".jpeg", ".jpg"]
+                                                                   }'>
+                                                                </label>
+                                                                @error($name.'.'.$language->id)
                                                                 <span
-                                                                    class="d-block">@lang("Browse your file here")</span>
-                                                                <input type="file" name="{{ $name }}"
-                                                                       class="js-file-attach form-check-input"
-                                                                       id="logoUploader" data-hs-file-attach-options='{
+                                                                    class="invalid-feedback d-block">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        @endif
+
+                                                        @if($name == 'thumb_image')
+                                                            <div class="col-md-4">
+                                                                <label class="form-label"
+                                                                       for="@lang($name)">@lang(stringToTitle($name))</label>
+                                                                <label class="form-check form-check-dashed"
+                                                                       for="logoUploader" id="content_img">
+                                                                    <img id="contentImg"
+                                                                         class="avatar avatar-xl avatar-4x3 avatar-centered h-100 mb-2"
+                                                                         src="{{ getFile((!$singleContentData->isEmpty())?  @$singleContentData[$language->id][0]->content->media->{$name}->driver : '', (!$singleContentData->isEmpty())? @$singleContentData[$language->id][0]->content->media->{$name}->path:'', true) }}"
+                                                                         alt="Image Description"
+                                                                         data-hs-theme-appearance="default">
+                                                                    <img id="contentImg"
+                                                                         class="avatar avatar-xl avatar-4x3 avatar-centered h-100 mb-2"
+                                                                         src="{{ getFile(!$singleContentData->isEmpty()  ? @$singleContentData[$language->id][0]->content->media->{$name}->driver: '', (!$singleContentData->isEmpty())? @$singleContentData[$language->id][0]->content->media->{$name}->path:'', true) }}"
+                                                                         alt="Image Description"
+                                                                         data-hs-theme-appearance="dark">
+                                                                    <span
+                                                                        class="d-block">@lang("Browse your file here")</span>
+                                                                    <input type="file" name="{{ $name }}"
+                                                                           class="js-file-attach form-check-input"
+                                                                           id="logoUploader"
+                                                                           data-hs-file-attach-options='{
                                                                       "textTarget": "#contentImg",
                                                                       "mode": "image",
                                                                       "targetAttr": "src",
                                                                       "allowTypes": [".png", ".jpeg", ".jpg"]
                                                                    }'>
-                                                            </label>
-                                                            @error($name.'.'.$language->id)
-                                                            <span class="invalid-feedback d-block">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
+                                                                </label>
+                                                                @error($name.'.'.$language->id)
+                                                                <span
+                                                                    class="invalid-feedback d-block">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        @endif
 
                                                     @endif
                                                 </div>
@@ -375,12 +408,5 @@
         });
 
 
-
     </script>
 @endpush
-
-
-
-
-
-

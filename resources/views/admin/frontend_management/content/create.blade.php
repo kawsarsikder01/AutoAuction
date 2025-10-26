@@ -74,7 +74,7 @@
                                                             <label class="form-label"
                                                                    for="@lang($name)">@lang(stringToTitle($name))
                                                             </label>
-                                                            <input type="datetime"
+                                                            <input type="text"
                                                                    class="js-flatpickr form-control flatpickr-custom @error($name.'.'.$language->id) is-invalid @enderror"
                                                                    name="{{ $name }}[{{ $language->id }}]"
                                                                    value="{{ old($name.'.'.$language->id) }}"
@@ -94,10 +94,7 @@
                                                             <label class="form-label">
                                                                 @lang(stringToTitle($name))
                                                             </label>
-                                                            <textarea
-                                                                class="summernote @error($name.'.'.$language->id) is-invalid @enderror"
-                                                                name="{{ $name }}[{{ $language->id }}]">{{ old($name.'.'.$language->id) }}
-                                                            </textarea>
+                                                            <textarea class="summernote @error($name.'.'.$language->id) is-invalid @enderror" name="{{ $name }}[{{ $language->id }}]">{{ old($name.'.'.$language->id) }}</textarea>
                                                             @error($name.'.'.$language->id)
                                                             <span class="invalid-feedback d-block">{{ $message }}</span>
                                                             @enderror
@@ -105,6 +102,7 @@
                                                     @endif
 
                                                     @if($type == "number" && $language->default_status == 1)
+                                                        @dd('hello')
                                                         <div class="col-md-12 mb-3">
                                                             <label class="form-label"
                                                                    for="@lang($name)">@lang(stringToTitle($name))</label>
@@ -213,9 +211,3 @@
         });
     </script>
 @endpush
-
-
-
-
-
-

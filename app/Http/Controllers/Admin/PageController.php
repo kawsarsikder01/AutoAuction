@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Language;
+use App\Models\ManageMenu;
 use App\Models\Page;
 use App\Rules\AlphaDashWithoutSlashes;
 use App\Traits\Upload;
@@ -27,11 +28,11 @@ class PageController extends Controller
         $defaultLanguage = Language::where('default_status', true)->first();
         $data['allPages'] = Page::with(['details' => function ($query) use ($defaultLanguage) {
             $query->where('language_id', $defaultLanguage->id);
-        }])->get();
+        }])->whereNull('custom_link')->get();
         return view("admin.frontend_management.page.index", $data, compact("theme", 'defaultLanguage'));
     }
 
-    public function createPage ($theme)
+    public function create($theme)
     {
         abort_if(!in_array($theme, getThemesNames()), 404);
         $data['url'] = url('/') . "/";
@@ -40,7 +41,7 @@ class PageController extends Controller
         return view("admin.frontend_management.page.create", $data, compact('theme'));
     }
 
-    public function createPageStore(Request $request, $theme)
+    public function store(Request $request, $theme)
     {
         $request->validate([
             'name' => 'required|string|min:3|max:100|unique:page_details,name',
@@ -94,7 +95,7 @@ class PageController extends Controller
 
     }
 
-    public function editPage ($id, $theme, $language = null)
+    public function edit($id, $theme, $language = null)
     {
         abort_if(!in_array($theme, getThemesNames()), 404);
         $page = Page::with(['details' => function ($query) use ($language) {
@@ -107,7 +108,7 @@ class PageController extends Controller
         return view("admin.frontend_management.page.edit", $data, compact('page', 'language', 'theme'));
     }
 
-    public function updatePage (Request $request, $id, $theme)
+    public function update(Request $request, $id, $theme)
     {
         $request->validate([
             'name' => ['required', 'string', 'min:1', 'max:100',
@@ -168,15 +169,26 @@ class PageController extends Controller
 
     }
 
-    public function pageDelete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $page = Page::where('id', $id)->firstOr(function () {
                 throw new \Exception('Something went wrong, Please try again');
             });
+
+
+            $headerMenu = ManageMenu::where('menu_section', 'header')->first();
+            $footerMenu = ManageMenu::where('menu_section', 'footer')->first();
+            $lookingKey = $page->name;
+            $headerMenu->update([
+                'menu_items' => filterCustomLinkRecursive($headerMenu->menu_items, $lookingKey)
+            ]);
+            $footerMenu->update([
+                'menu_items' => filterCustomLinkRecursive($footerMenu->menu_items, $lookingKey)
+            ]);
+            $this->fileDelete($page->meta_image_driver, $page->meta_image);
             $page->delete();
             $page->details()->delete();
-            $this->fileDelete($page->meta_image_driver, $page->meta_image);
 
             return back()->with('success', 'Page deleted successfully');
 
@@ -185,32 +197,63 @@ class PageController extends Controller
         }
     }
 
-    public function editStaticPage($id)
+    public function editStaticPage($id, $theme, $language = null)
     {
-        $data['page'] = Page::where('id', $id)->firstOrFail();
+        $data['allLanguage'] = Language::select('id', 'name', 'short_name', 'flag', 'flag_driver')->where('status', 1)->get();
+        $data['pageEditableLanguage'] = Language::where('id', $language)->select('id', 'name', 'short_name')->first();
+        $data['page'] = Page::with(['details' => function ($query) use ($language) {
+            $query->where('language_id', $language);
+        }])->where('id', $id)->first();
+
         return view("admin.frontend_management.page.edit_static", $data);
     }
 
-    public function updateStaticPage(Request $request, $id)
+    public function updateStaticPage(Request $request, $id, $theme)
     {
+
         $request->validate([
-            'breadcrumb_image' => 'required|mimes:jpg,png,jpeg|max:4096',
+            'name' => ['required', 'string', 'min:1', 'max:100',
+                Rule::unique('page_details', 'page_id')->ignore($id),
+            ],
+            'language_id' => 'required|integer|exists:languages,id',
+            'breadcrumb_status' => 'nullable|integer|in:0,1',
+            'breadcrumb_image' => ($request->input('breadcrumb_status') == 1) ? 'sometimes|required|mimes:jpg,png,jpeg|max:2048' : 'nullable|mimes:jpg,png,jpeg|max:2048',
+            'status' => 'nullable|integer|in:0,1',
         ]);
-        $page = Page::findOrFail($id);
 
-        if ($request->hasFile('breadcrumb_image')) {
-            $image = $this->fileUpload($request->breadcrumb_image, config('filelocation.pageImage.path'), null, null, 'avif', 60);
-            throw_if(empty($image), 'Image could not found');
+        try {
+
+            $page = Page::findOrFail($id);
+
+            if ($request->hasFile('breadcrumb_image')) {
+                $image = $this->fileUpload($request->breadcrumb_image, config('filelocation.pagesImage.path'), null, null, 'avif', 80, $page->breadcrumb_image, $page->breadcrumb_image_driver);
+                throw_if(empty($image['path']), 'Image could not be uploaded.');
+            }
+
+            $response = $page->update([
+                "breadcrumb_image" => $image['path'] ?? $page->breadcrumb_image,
+                "breadcrumb_image_driver" => $image['driver'] ?? $page->breadcrumb_image_driver,
+                "breadcrumb_status" => $request->breadcrumb_status,
+                "status" => $request->status,
+            ]);
+
+            if (!$response) {
+                throw new \Exception("Something went wrong, Please Try again");
+            }
+
+            $page->details()->updateOrCreate([
+                'language_id' => $request->language_id,
+            ],
+                [
+                    "name" => $request->name,
+                ]
+            );
+            return redirect()->route('admin.page.index', $theme)->with('success', 'Static Page Updated Successfully');
+        } catch (Exception $e) {
+            if (isset($image['path'], $image['driver']))
+                $this->fileDelete($image['driver'], $image['path']);
+            return back()->with('error', $e->getMessage());
         }
-
-        $response = $page->update([
-            'breadcrumb_image' => $image['path'],
-            'breadcrumb_image_driver' => $image['driver'],
-        ]);
-
-        throw_if(!$response, 'Something went wrong, Try again');
-
-        return redirect()->route('admin.page.index',basicControl()->theme)->with('success',  'Blog Page Updated Successfully.');
     }
 
     public function updateSlug(Request $request)
@@ -255,40 +298,38 @@ class PageController extends Controller
 
     public function pageSeoUpdate(Request $request, $id)
     {
-
         $request->validate([
             'page_title' => 'required|string|min:3|max:100',
             'meta_title' => 'required|string|min:3|max:100',
             'meta_keywords' => 'required|array',
             'meta_keywords.*' => 'required|string|min:1|max:300',
             'meta_description' => 'required|string|min:1|max:300',
-            'seo_meta_image' => 'sometimes|required|mimes:jpeg,png,jpeg|max:2048'
+            'meta_image' => 'sometimes|required|mimes:jpeg,png,jpeg|max:2048'
         ]);
 
-
+        try {
             $pageSEO = Page::findOrFail($id);
 
-            if ($request->hasFile('seo_meta_image')) {
+            if ($request->hasFile('meta_image')) {
+
                 try {
-                    $image = $this->fileUpload($request->seo_meta_image, config('filelocation.pageSeo.path'), null, null, 'avif', 60, $pageSEO->seo_meta_image, $pageSEO->seo_meta_image_driver);
+                    $image = $this->fileUpload($request->meta_image, config('filelocation.seo.path'), null, null, 'avif', 60, $pageSEO->seo_meta_image, $pageSEO->seo_meta_image_driver);
                     throw_if(empty($image['path']), 'Image path not found');
                 } catch (\Exception $exp) {
-
                     return back()->with('error', 'Meta image could not be uploaded.');
                 }
             }
-        try {
+
             $pageSEO->update([
                 'page_title' => $request->page_title,
                 'meta_title' => $request->meta_title,
                 'meta_keywords' => $request->meta_keywords,
                 'meta_description' => $request->meta_description,
-                'seo_meta_image' => $image['path'] ?? $pageSEO->seo_meta_image,
-                'seo_meta_image_driver' => $image['driver'] ?? $pageSEO->seo_meta_image_driver,
+                'seo_meta_image' => $image['path'] ?? $pageSEO->meta_image,
+                'seo_meta_image_driver' => $image['driver'] ?? $pageSEO->meta_image_driver,
             ]);
-
         } catch (\Exception $e) {
-                dd($e);
+            dd($e->getMessage());
             return back()->with('error', $e->getMessage());
         }
 

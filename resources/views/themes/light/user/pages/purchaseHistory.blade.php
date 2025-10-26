@@ -15,7 +15,7 @@
                    <tr>
                       <th scope="col">@lang('Plan Name')</th>
                       <th scope="col">@lang('Price')</th>
-                       <th scope="col">@lang('Transaction Id')</th>
+                       <th scope="col">@lang('Transaction ID')</th>
                        <th scope="col">@lang('Payment Method')</th>
                        <th scope="col">@lang('Listing Limit')</th>
                       <th scope="col">@lang('Purchase Date')</th>

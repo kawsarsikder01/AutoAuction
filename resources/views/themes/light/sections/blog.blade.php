@@ -32,7 +32,7 @@
                            <a href="{{route('blog.details',$item['details']['slug'])}}" class="title">{{$item['details']['title']}}</a>
                         </h4>
                          <p>{{$item['details']['short_description']}}</p>
-                        <a href="{{route('blog.details',$item['details']['slug'])}}" class="btn-custom arrow"><span>View details</span></a>
+                        <a href="{{route('blog.details',$item['details']['slug'])}}" class="btn-custom arrow"><span>@lang('View details')</span></a>
                      </div>
                   </div>
                </div>

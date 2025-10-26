@@ -88,7 +88,7 @@ class AuctionController extends Controller
     {
         $defaultLanguage = Language::where('default_status', true)->first();
         $languages = Language::get();
-        $brand = CarBrand::where('language_id',  $defaultLanguage->id)->get();
+        $brand = CarBrand::where('language_id',  $defaultLanguage->id)->paginate(basicControl()->paginate);
         return view('admin.auctionManagement.brand.index',compact('brand','defaultLanguage','languages'));
     }
 

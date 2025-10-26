@@ -197,5 +197,15 @@
     "Total Support Ticket":"Total Support Ticket",
     "Transaction Summary":"Transaction Summary",
     "Device History":"Device History",
-    "Browser History":"Browser History"
+    "Browser History":"Browser History",
+    "Edit Profile": "Edit Profile",
+    "First name": "First name",
+    "Last name": "Last name",
+    "username": "username",
+    "email address": "email address",
+    "phone number": "phone number",
+    "preferred language": "preferred language",
+    "address": "address",
+    "Current Password": "Current Password",
+    "New Password":"New Password"
 }

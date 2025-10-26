@@ -26,15 +26,15 @@
                 <div class="d-grid gap-3 gap-lg-5">
                     <div class="card pb-3">
                         <div class="card-header d-flex justify-content-between">
-                            <h4 class="card-title m-0">@lang('Add User Form')</h4>
+                            <h4 class="card-title m-0">@lang('Add KYC From')</h4>
                         </div>
                         <div class="card-body mt-2">
                             <form action="{{ route('admin.kyc.store') }}" method="post"
                                   enctype="multipart/form-data">
                                 @csrf
 
-                                <div class="row mb-5 d-flex align-items-center">
-                                    <div class="col-md-6 mb-2">
+                                <div class="row mb-4 d-flex align-items-center">
+                                    <div class="col-md-6">
                                         <label for="nameLabel" class="form-label">@lang('Name')</label>
                                         <input type="text" class="form-control  @error('name') is-invalid @enderror"
                                                name="name" id="nameLabel" placeholder="Name" aria-label="Name"
@@ -47,9 +47,9 @@
                                     <div class="col-md-6">
                                         <label class="row form-check form-switch mt-3" for="kyc_status">
                                         <span class="col-4 col-sm-9 ms-0 ">
-                                          <span class="d-block text-dark">@lang("Form Status")</span>
+                                          <span class="d-block text-dark">@lang("KYC Status")</span>
                                           <span
-                                              class="d-block fs-5">@lang("Enable form status for your user to obtain their information.")</span>
+                                              class="d-block fs-5">@lang("Enable KYC status for your user to obtain their information.")</span>
                                         </span>
                                             <span class="col-2 col-sm-3 text-end">
                                          <input type='hidden' value='0' name='status'>
@@ -64,6 +64,7 @@
                                         </label>
                                     </div>
                                 </div>
+
                                 <div class="js-add-field card mb-3 mb-lg-5">
                                     <div class="card-header card-header-content-sm-between">
                                         <h4 class="card-header-title mb-2 mb-sm-0">@lang("Add Field")</h4>

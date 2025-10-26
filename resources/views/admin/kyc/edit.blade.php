@@ -30,7 +30,7 @@
                             <form action="{{ route('admin.kyc.update', $kyc->id) }}" method="post"
                                   enctype="multipart/form-data">
                                 @csrf
-                                <div class="row mb-5 d-flex align-items-center">
+                                <div class="row mb-4 d-flex align-items-center">
                                     <div class="col-md-6">
                                         <label for="nameLabel" class="form-label">@lang('Name')</label>
                                         <input type="text" class="form-control  @error('name') is-invalid @enderror"
@@ -61,38 +61,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="row  mb-5">
-                                    <div class="col-md-6">
-                                        <label for="validationTypeLabel" class="form-label mb-2">@lang('Validation Type')</label>
-                                        <div class="input-group input-group-sm-vertical">
-                                            <!-- Radio Check -->
-                                            <label class="form-control" for="editUserModalAccountTypeModalRadioEg1_1">
-                                          <span class="form-check">
-                                            <input type="radio" class="form-check-input" value="0" name="type" id="editUserModalAccountTypeModalRadioEg1_1" @checked($kyc->type == 0 ?true:false)>
-                                            <span class="form-check-label">Verification</span>
-                                          </span>
-                                            </label>
-                                            <!-- End Radio Check -->
-
-                                            <!-- Radio Check -->
-                                            <label class="form-control" for="editUserModalAccountTypeModalRadioEg1_2">
-                                          <span class="form-check">
-                                            <input type="radio" class="form-check-input" value="1" name="type" id="editUserModalAccountTypeModalRadioEg1_2" @checked($kyc->type == 1 ?true:false)>
-                                            <span class="form-check-label">Seller</span>
-                                          </span>
-                                            </label>
-                                            <!-- End Radio Check -->
-                                            <!-- Radio Check -->
-                                            <label class="form-control" for="editUserModalAccountTypeModalRadioEg1_3">
-                                          <span class="form-check">
-                                            <input type="radio" class="form-check-input" value="2" name="type" id="editUserModalAccountTypeModalRadioEg1_3" @checked($kyc->type == 2 ?true:false)>
-                                            <span class="form-check-label">Bidder</span>
-                                          </span>
-                                            </label>
-                                            <!-- End Radio Check -->
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="js-add-field card mb-3 mb-lg-5">
                                     <div class="card-header card-header-content-sm-between">
@@ -115,7 +83,6 @@
                                                 <th></th>
                                             </tr>
                                             </thead>
-
 
                                             @php
                                                 $oldKycInputFormCount = old('field_name', $kyc->input_form) ? count( old('field_name', (array) $kyc->input_form)) : 0;

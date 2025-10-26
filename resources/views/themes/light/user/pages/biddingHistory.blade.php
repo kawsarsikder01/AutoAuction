@@ -15,7 +15,7 @@
                    <form action="{{route('filter.bidding-history')}}" method="get">
                       <div class="row g-3 align-items-end">
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
-                            <input type="text" class="form-control" value="{{request()->title}}" name="title" placeholder="Search" />
+                            <input type="text" class="form-control" value="{{request()->title}}" name="title" placeholder="@lang('Search')" />
                          </div>
                          <div class="input-box col-lg-3 col-md-6 col-xl-2">
                             <select class="js-example-basic-single form-control" name="sold_status">

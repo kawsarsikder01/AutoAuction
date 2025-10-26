@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\BiddingHistory;
 use App\Models\Deposit;
 use App\Models\Fund;
 use App\Models\Gateway;
@@ -150,6 +151,26 @@ class PlanPurchaseControlller extends Controller
         return $data;
     }
 
+    public function userBalance($price)
+    {
+        $user = Auth::user();
+        $biddingHistorys =BiddingHistory::whereIn('bid_amount', function ($query) {
+            $query->selectRaw('MAX(bid_amount)')
+                ->from('bidding_history')
+                ->groupBy('vehicle_id');
+        })->with('vehicle')->where('user_id',$user->id)->where('wining_status',0)->get();
+        $totalBidAmount = 0;
+        foreach($biddingHistorys as $biddingHistory){
+            if ($biddingHistory->vehicle->biddingHistory->max('bid_amount') != $biddingHistory->bid_amount){
+                continue;
+            }
+            $totalBidAmount = $totalBidAmount + $biddingHistory->bid_amount;
+        }
+        if ($totalBidAmount + $price <= $user->balance){
+            return true;
+        }
+        return false;
+    }
 public function confirmPlan(Request $request)
 {
     $plan_id = session('plan_id');
@@ -162,8 +183,7 @@ public function confirmPlan(Request $request)
     ]);
     try {
         $plan = Plan::findOrFail($request->plan_id);
-
-        if ($request->gateway_id == 'website_wallet' && $plan->price > Auth::user()->balance){
+        if ($request->gateway_id == 'website_wallet' && $this->userBalance($plan->price) !=  true){
             return back()->with('error','Your balance is low please deposit now');
         }
         if ($request->gateway_id != 'website_wallet'){
@@ -201,7 +221,7 @@ public function confirmPlan(Request $request)
 
            if ($walletPayment == true){
                return  view('success');
-           }else{
+           }elseif($walletPayment ==  false){
                return back()->with('error',$walletPayment);
            }
         }
@@ -227,9 +247,7 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
                 $planPurchaseHistory->noOfListing = $plan->number_of_listing;
                 $planPurchaseHistory->noOfMaxImg = $plan->number_of_images;
                 $planPurchaseHistory->access_auction = $plan->access_auction;
-                $planPurchaseHistory->customer_support = $plan->customer_support;
                 $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
-                $planPurchaseHistory->top_search_result = $plan->top_search_result;
                 $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
                 $planPurchaseHistory->trx_id = $trx_id;
                 $planPurchaseHistory->status = 1;
@@ -250,13 +268,12 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
             $user->balance = $user->balance - $plan->price;
             $user->total_listed_car = 0;
             $user->update();
-
             $transaction = new Transaction();
             $transaction->user_id = $user->id;
             $transaction->amount = $plan->price;
             $transaction->charge = 0;
             $transaction->balance = getAmount($user->balance);
-            $transaction->trx_type = '-';
+            $transaction->trx_type = '+';
             $transaction->trx_id = $trx_id;
             $transaction->remarks = 'Purchase Plan Via ' . 'Wallet';
             $transaction->transactional_id = $deposit_id;
@@ -293,9 +310,7 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
                 $planPurchaseHistory->noOfListing = $plan->number_of_listing;
                 $planPurchaseHistory->noOfMaxImg = $plan->number_of_images;
                 $planPurchaseHistory->access_auction = $plan->access_auction;
-                $planPurchaseHistory->customer_support = $plan->customer_support;
                 $planPurchaseHistory->promoted_listing = $plan->promoted_listing;
-                $planPurchaseHistory->top_search_result = $plan->top_search_result;
                 $planPurchaseHistory->share_other_platform = $plan->share_other_platform;
                 $planPurchaseHistory->status = 1;
                 $planPurchaseHistory->trx_id = $trx_id;
@@ -322,9 +337,9 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
             $transaction->amount = $plan->price;
             $transaction->charge = 0;
             $transaction->balance = getAmount($user->balance);
-            $transaction->trx_type = '-';
+            $transaction->trx_type = '+';
             $transaction->trx_id = $trx_id;
-            $transaction->remarks = 'Purchase Plan Via ' . 'Wallet';
+            $transaction->remarks = 'Upgrade Plan Via ' . 'Wallet';
             $transaction->transactional_id = $deposit_id;
             $transaction->transactional_type = 'App\Models\Plan';
             $transaction->save();
@@ -337,11 +352,11 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
             $actionAdmin = [
                 "name" => $user->firstname . ' ' . $user->lastname,
                 "image" => getFile($user->image_driver, $user->image),
-                "link" => "#",
+                "link" => route('admin.show.plan.purchase.history'),
                 "icon" => "fas fa-ticket-alt text-white"
             ];
 
-            $firebaseAction = "#";
+            $firebaseAction = route('admin.show.plan.purchase.history');
             $this->adminMail('PLAN_UPGRADE_USER_ADMIN', $params);
             $this->adminPushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $actionAdmin);
             $this->adminFirebasePushNotification('PLAN_UPGRADE_USER_ADMIN', $params, $firebaseAction);
@@ -349,7 +364,7 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
 
         return true;
     }catch (\Exception $exception){
-        return $exception->getMessage();
+        return false;
     }
 }
 
@@ -386,7 +401,8 @@ public function walletPayment($plan_id,$trx_id,$deposit_id)
         if(!$user->plan){
             abort(403);
         }
-        $purchaseHistorys = PlanPurchaseHistory::where('user_id',Auth::user()->id)->paginate(basicControl()->paginate);
+        $purchaseHistorys = PlanPurchaseHistory::select('id', 'plan_name', 'price','trx_id','payment_method','noOfListing','purchase_date','expiry_date','status')
+        ->where('user_id',Auth::user()->id)->paginate(basicControl()->paginate);
         return view(template().'user.pages.purchaseHistory',compact('purchaseHistorys'));
     }
 }

@@ -63,8 +63,7 @@
                         @lang("Forgot Password?")</a>
                     </span>
                 </div>
-
-                @if($basicControl->google_recaptcha == 1 && $basicControl->recaptcha_admin_login == 1)
+                @if($basicControl->google_recaptcha == 1 && $basicControl->google_admin_login_recaptcha_status == 1)
                     <div class="row mt-4 mb-4">
                         <div class="g-recaptcha @error('g-recaptcha-response') is-invalid @enderror" data-sitekey="{{ env('GOOGLE_RECAPTCHA_SITE_KEY') }}"></div>
                         @error('g-recaptcha-response')
@@ -74,26 +73,26 @@
                 @endif
 
                 @if($basicControl->manual_recaptcha === 1 && $basicControl->recaptcha_admin_login === 1)
-                <div class="mb-4">
-                    <label class="form-label" for="captcha">@lang('Captcha Code')</label>
-                    <input type="text"       tabindex="2"
-                           class="form-control form-control-lg @error('captcha') is-invalid @enderror"
-                           name="captcha" id="captcha" autocomplete="off"
-                        placeholder="Enter Captcha" required>
-                    @error('captcha')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="mb-4">
-                    <div class="input-group input-group-merge" data-hs-validation-validate-class>
-                        <img src="{{route('captcha').'?rand='. rand()}}" id='captcha_image' >
-                        <a class="input-group-append input-group-text"
-                           href='javascript: refreshCaptcha();'>
-                            <i class="bi-arrow-repeat fs-1 text-primary"></i>
-                        </a>
+                    <div class="mb-4">
+                        <label class="form-label" for="captcha">@lang('Captcha Code')</label>
+                        <input type="text"       tabindex="2"
+                               class="form-control form-control-lg @error('captcha') is-invalid @enderror"
+                               name="captcha" id="captcha" autocomplete="off"
+                               placeholder="Enter Captcha" required>
+                        @error('captcha')
+                        <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
                     </div>
-                </div>
+
+                    <div class="mb-4">
+                        <div class="input-group input-group-merge" data-hs-validation-validate-class>
+                            <img src="{{route('captcha').'?rand='. rand()}}" id='captcha_image' >
+                            <a class="input-group-append input-group-text"
+                               href='javascript: refreshCaptcha();'>
+                                <i class="bi-arrow-repeat fs-1 text-primary"></i>
+                            </a>
+                        </div>
+                    </div>
                 @endif
 
                 <div class="form-check mb-4">

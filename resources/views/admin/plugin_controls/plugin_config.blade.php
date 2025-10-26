@@ -31,162 +31,162 @@
                         </div>
                         <div class="card-body">
                             <div class="list-group list-group-lg list-group-flush list-group-no-gutters">
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img class="avatar avatar-xs avatar-4x3 list-group-icon"
-                                                     src="{{ asset('assets/admin/plugin/tawk.png') }}"
-                                                     alt="Plugin Image">
-                                            </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img class="avatar avatar-xs avatar-4x3 list-group-icon"
+                                                 src="{{ asset('assets/admin/plugin/tawk.png') }}"
+                                                 alt="Plugin Image">
+                                        </div>
 
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h4 class="mb-0">@lang('Tawk')</h4>
-                                                        <p class="fs-5 text-body mb-0">@lang("Message your customers,they'll love you for it")</p>
-                                                    </div>
-                                                    <div class="col-sm-auto">
-                                                        <a class="btn btn-white btn-sm"
-                                                           href="{{ route('admin.tawk.configuration') }}">
-                                                            <i class="bi-pencil-fill me-1"></i> @lang("Edit")
-                                                        </a>
-                                                    </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="row align-items-center">
+                                                <div class="col-sm mb-2 mb-sm-0">
+                                                    <h4 class="mb-0">@lang('Tawk')</h4>
+                                                    <p class="fs-5 text-body mb-0">@lang("Message your customers,they'll love you for it")</p>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <a class="btn btn-white btn-sm"
+                                                       href="{{ route('admin.tawk.configuration') }}">
+                                                        <i class="bi-pencil-fill me-1"></i> @lang("Edit")
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- End Item -->
-
-                                    <!-- Item -->
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img class="avatar avatar-xs avatar-4x3 list-group-icon"
-                                                     src="{{ asset('assets/admin/plugin/messenger.png') }}"
-                                                     alt="FB Image">
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h4 class="mb-0">@lang("FB Messenger")</h4>
-                                                        <p class="fs-5 text-body mb-0">@lang("Message your customers,they'll love you for it")</p>
-                                                    </div>
-                                                    <div class="col-sm-auto">
-                                                        <a class="btn btn-white btn-sm"
-                                                           href="{{ route('admin.fb.messenger.configuration') }}">
-                                                            <i class="bi-pencil-fill me-1"></i> @lang("Edit")
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Item -->
-
-                                    <!-- Item -->
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img class="avatar avatar-xs avatar-4x3 list-group-icon"
-                                                     src="{{ asset('assets/admin/plugin/reCaptcha.png') }}"
-                                                     alt="Plugin Image">
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h4 class="mb-0">@lang("Google Recaptcha")</h4>
-                                                        <p class="fs-5 text-body mb-0">@lang("reCAPTCHA protects your website from fraud and abuse.")</p>
-                                                    </div>
-                                                    <div class="col-sm-auto d-flex align-items-center">
-                                                            <div class="form-check form-switch form-switch-google">
-                                                                <input type="hidden" name="google_recaptcha" value="0">
-                                                                <input class="form-check-input" name="google_recaptcha"
-                                                                       type="checkbox" id="activeRecaptchaGoogle"
-                                                                       value="1" {{ $basicControl->google_recaptcha == 1 ? 'checked' : '' }}>
-                                                                <label class="form-check-label"
-                                                                       for="activeRecaptchaGoogle"></label>
-                                                                @error('active_recaptcha')
-                                                                <span class="invalid-feedback">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-
-                                                            <a class="btn btn-white btn-sm"
-                                                               href="{{ route('admin.google.recaptcha.configuration') }}">
-                                                                <i class="bi-pencil-fill me-1"></i> @lang("Edit")
-                                                            </a>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Item -->
-
-                                    <!-- Item -->
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img class="avatar avatar-xs avatar-4x3 list-group-icon"
-                                                     src="{{ asset('assets/admin/plugin/manual_recaptcha.svg') }}"
-                                                     alt="Google Analytics Image">
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h4 class="mb-0">@lang('Manual Recaptcha')</h4>
-                                                        <p class="fs-5 text-body mb-0">@lang("reCAPTCHA protects your website from fraud and abuse.")</p>
-                                                    </div>
-                                                    <div class="col-sm-auto d-flex align-items-center">
-
-                                                            <div class="form-check form-switch form-switch-manual">
-                                                                <input type="hidden" name="manual_recaptcha" value="0">
-                                                                <input class="form-check-input" name="manual_recaptcha"
-                                                                       type="checkbox" id="activeRecaptchaManual"
-                                                                       value="1" {{ $basicControl->manual_recaptcha == 1 ? 'checked' : '' }}>
-                                                                <label class="form-check-label"
-                                                                       for="activeRecaptchaManual"></label>
-                                                                @error('active_recaptcha')
-                                                                <span class="invalid-feedback">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-
-                                                            <a class="btn btn-white btn-sm"
-                                                               href="{{ route('admin.manual.recaptcha') }}">
-                                                                <i class="bi-pencil-fill me-1"></i> @lang("Edit")
-                                                            </a>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Item -->
-                                    <!-- Item -->
-                                    <div class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img class="avatar avatar-xs avatar-4x3 list-group-icon"
-                                                     src="{{ asset('assets/admin/plugin/analytics.png') }}"
-                                                     alt="Google Analytics Image">
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm mb-2 mb-sm-0">
-                                                        <h4 class="mb-0">@lang('Google Analytics')</h4>
-                                                        <p class="fs-5 text-body mb-0">@lang("Google Analytics is a web analytics service offered by Google")</p>
-                                                    </div>
-                                                    <div class="col-sm-auto">
-                                                        <a class="btn btn-white btn-sm"
-                                                           href="{{ route('admin.google.analytics.configuration') }}">
-                                                            <i class="bi-pencil-fill me-1"></i> @lang("Edit")
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Item -->
                                 </div>
+                                <!-- End Item -->
+
+                                <!-- Item -->
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img class="avatar avatar-xs avatar-4x3 list-group-icon"
+                                                 src="{{ asset('assets/admin/plugin/messenger.png') }}"
+                                                 alt="FB Image">
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="row align-items-center">
+                                                <div class="col-sm mb-2 mb-sm-0">
+                                                    <h4 class="mb-0">@lang("FB Messenger")</h4>
+                                                    <p class="fs-5 text-body mb-0">@lang("Message your customers,they'll love you for it")</p>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <a class="btn btn-white btn-sm"
+                                                       href="{{ route('admin.fb.messenger.configuration') }}">
+                                                        <i class="bi-pencil-fill me-1"></i> @lang("Edit")
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Item -->
+
+                                <!-- Item -->
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img class="avatar avatar-xs avatar-4x3 list-group-icon"
+                                                 src="{{ asset('assets/admin/plugin/reCaptcha.png') }}"
+                                                 alt="Plugin Image">
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="row align-items-center">
+                                                <div class="col-sm mb-2 mb-sm-0">
+                                                    <h4 class="mb-0">@lang("Google Recaptcha")</h4>
+                                                    <p class="fs-5 text-body mb-0">@lang("reCAPTCHA protects your website from fraud and abuse.")</p>
+                                                </div>
+                                                <div class="col-sm-auto d-flex align-items-center">
+                                                    <div class="form-check form-switch form-switch-google">
+                                                        <input type="hidden" name="google_recaptcha" value="0">
+                                                        <input class="form-check-input" name="google_recaptcha"
+                                                               type="checkbox" id="activeRecaptchaGoogle"
+                                                               value="1" {{ $basicControl->google_recaptcha == 1 ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                               for="activeRecaptchaGoogle"></label>
+                                                        @error('active_recaptcha')
+                                                        <span class="invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+
+                                                    <a class="btn btn-white btn-sm"
+                                                       href="{{ route('admin.google.recaptcha.configuration') }}">
+                                                        <i class="bi-pencil-fill me-1"></i> @lang("Edit")
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Item -->
+
+                                <!-- Item -->
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img class="avatar avatar-xs avatar-4x3 list-group-icon"
+                                                 src="{{ asset('assets/admin/plugin/manual_recaptcha.svg') }}"
+                                                 alt="Google Analytics Image">
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="row align-items-center">
+                                                <div class="col-sm mb-2 mb-sm-0">
+                                                    <h4 class="mb-0">@lang('Manual Recaptcha')</h4>
+                                                    <p class="fs-5 text-body mb-0">@lang("reCAPTCHA protects your website from fraud and abuse.")</p>
+                                                </div>
+                                                <div class="col-sm-auto d-flex align-items-center">
+
+                                                    <div class="form-check form-switch form-switch-manual">
+                                                        <input type="hidden" name="manual_recaptcha" value="0">
+                                                        <input class="form-check-input" name="manual_recaptcha"
+                                                               type="checkbox" id="activeRecaptchaManual"
+                                                               value="1" {{ $basicControl->manual_recaptcha == 1 ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                               for="activeRecaptchaManual"></label>
+                                                        @error('active_recaptcha')
+                                                        <span class="invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+
+                                                    <a class="btn btn-white btn-sm"
+                                                       href="{{ route('admin.manual.recaptcha') }}">
+                                                        <i class="bi-pencil-fill me-1"></i> @lang("Edit")
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Item -->
+                                <!-- Item -->
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img class="avatar avatar-xs avatar-4x3 list-group-icon"
+                                                 src="{{ asset('assets/admin/plugin/analytics.png') }}"
+                                                 alt="Google Analytics Image">
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="row align-items-center">
+                                                <div class="col-sm mb-2 mb-sm-0">
+                                                    <h4 class="mb-0">@lang('Google Analytics')</h4>
+                                                    <p class="fs-5 text-body mb-0">@lang("Google Analytics is a web analytics service offered by Google")</p>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <a class="btn btn-white btn-sm"
+                                                       href="{{ route('admin.google.analytics.configuration') }}">
+                                                        <i class="bi-pencil-fill me-1"></i> @lang("Edit")
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Item -->
+                            </div>
                         </div>
                     </div>
                 </div>

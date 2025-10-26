@@ -106,6 +106,9 @@ return [
     ],
     'carImage' => [
         'path' => 'carImage'
+	]
+	,'cookie' => [
+        'path' => 'cookie'
     ]
 
 

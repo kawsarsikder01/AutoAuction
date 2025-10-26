@@ -43,7 +43,7 @@
                  <div class="col-lg-6">
                     <div class="auction-content-area">
                        <div class="btn-group socialShareing" id="React">
-                             <button class="react" id="heartReact" data-ip = {{request()->ip()}}> <i class='fa-regular fa-heart'></i><span>${length}</span></button>
+                             <button class="react" id="heartReact" data-ip = {{request()->ip()}}> <i class='fa-regular fa-heart'></i><span>{{count($react)}}</span></button>
                           <div class="">
                                @if(Auth::guard('admin')->user())
                                      <button type="submit" class="react" data-bs-toggle="modal" data-bs-target="#RemoveVehicleModal"><i class="fa-regular fa-trash-can"></i>@lang('Delete')</button>
@@ -378,7 +378,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Model</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">@lang('Model')</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="" id="FormRoute" method="POST">
@@ -537,19 +537,20 @@
                     success: function(data) {
                         let length = data.length;
                         let icon = 0;
+                        let react = $('#heartReact');
                         for(i = 0; i < length ; ++i){
                             if(data[i].ip_address === ip){
-                                $('#heartReact').children('i').removeClass('submit fa-regular fa-heart');
-                                $('#heartReact').children('i').addClass('unsubmit fa-solid fa-heart');
-                                $('#heartReact').children('span').text(length);
+                                react.children('i').removeClass('submit fa-regular fa-heart');
+                                react.children('i').addClass('unsubmit fa-solid fa-heart');
+                                react.children('span').text(length);
                                 icon = 1;
                                 break;
                             }
                         }
                         if(icon == 0){
-                            $('#heartReact').children('i').removeClass('unsubmit fa-solid fa-heart');
-                            $('#heartReact').children('i').addClass('submit fa-regular fa-heart');
-                            $('#heartReact').children('span').text(length);
+                            react.children('i').removeClass('unsubmit fa-solid fa-heart');
+                            react.children('i').addClass('submit fa-regular fa-heart');
+                            react.children('span').text(length);
 
                         }
                         $('#countReact').text(length);
@@ -607,10 +608,9 @@
 
         .unsubmit{
             transition: .1s;
-            /*animation: unsubmit ease-in-out;*/
-            animation: unsubmit 1s ease;
+            animation: react 1s ease;
         }
-        @keyframes unsubmit {
+        @keyframes react {
             0% {
                 transform: scale(1);
             }

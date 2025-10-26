@@ -81,9 +81,6 @@
                                                     <input type="text" class="form-control"
                                                     id="transaction_id_filter_input"
                                                     autocomplete="off">
-                                                    {{-- <span class="input-group-text" id="flatpickr_filter_date_range">
-                                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                                    </span> --}}
                                                 </div>
 
                                             </div>
@@ -205,6 +202,7 @@
             HSCore.components.HSDatatables.init($('#datatable'), {
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route("admin.get.vehicle.biddingHistory",$id) }}",
                 },
@@ -228,9 +226,6 @@
             });
 
             $.fn.dataTable.ext.errMode = 'throw';
-            var dataRoute = $('#vehicleStatusUpdate').data('route');
-            console.log(dataRoute)
-
         });
 
     </script>

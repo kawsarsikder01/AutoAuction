@@ -37,11 +37,11 @@ class AdminProfileSettingController extends Controller
             $admin = Auth::guard('admin')->user();
 
             if ($request->file('image')) {
-                $image = $this->fileUpload($request->image, config('filelocation.adminProfileImage.path'), null,null, 'avif',60, $admin->image, $admin->image_driver);
-                if(!$image){
-                    throw new Exception( 'Image could not be uploaded.',empty($image['path']));
+                $image = $this->fileUpload($request->image, config('filelocation.adminProfileImage.path'), null,null, 'avif', 60, $admin->image, $admin->image_driver);
+                if ($image) {
+                    $adminImage = $image['path'];
+                    $adminImageDriver = $image['driver'] ?? 'local';
                 }
-
             }
 
             $response = $admin->update([
@@ -50,12 +50,10 @@ class AdminProfileSettingController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->addressLine,
-                'image' => $image['path'] ?? null,
-                'image_driver' => $image['driver'] ?? 'local',
+                'image' => $adminImage ?? $admin->image,
+                'image_driver' => $adminImageDriver ?? $admin->image_driver,
             ]);
 
-            // 'image' => $image['path'] ?? $admin->image,
-            // 'image_driver' => $adminImageDriver ?? $admin->image_driver,
             if (!$response) {
                 throw new Exception("Something went wrong");
             }

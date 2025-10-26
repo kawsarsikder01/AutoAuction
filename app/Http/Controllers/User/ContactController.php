@@ -31,7 +31,7 @@ class ContactController extends Controller
             "image" => getFile(Auth::user()->image_driver, Auth::user()->image)
         ];
         $this->adminPushNotification( 'USER_CONTACT_INFORMATION', $msg, $action);
-        $this->adminFirebasePushNotification('USER_CONTACT_INFORMATION', $msg);
+        $this->adminFirebasePushNotification('USER_CONTACT_INFORMATION','#');
         $this->adminMail( 'USER_CONTACT_INFORMATION', $msg);
         return back()->with('success',"Your Request Send Successfully");
     }

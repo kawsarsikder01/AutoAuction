@@ -26,7 +26,7 @@ class Vehicle extends Model
     }
     public  function  biddingHistory()
     {
-        return $this->hasMany(BiddingHistory::class,'vehicle_id')->orderByDesc('id');
+        return $this->hasMany(BiddingHistory::class,'vehicle_id')->orderByDesc('created_at');
     }
     public function reacts()
     {
@@ -47,5 +47,10 @@ class Vehicle extends Model
     public function plan()
     {
         return $this->belongsTo(PlanPurchaseHistory::class,'user_current_plan_id');
+    }
+
+    public function visitors()
+    {
+        return $this->hasMany(Visitor::class,'auction_id');
     }
 }

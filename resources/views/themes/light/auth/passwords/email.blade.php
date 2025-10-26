@@ -1,7 +1,6 @@
 @extends($theme.'layouts.app')
 @section('content')
 <x-banner-component :pagetitle="$pageSeo->page_title" :path="$pageSeo->breadcrumb_image" :driver="$pageSeo->breadcrumb_image_driver"/>
-{{-- @dd($pageSeo) --}}
 <section class="login-section">
     <div class="container">
        <div class="login-wrapper">
@@ -45,5 +44,3 @@
  </section>
  @include($theme . 'sections.footer')
 @endsection
-{{-- @error('email') is-invalid @enderror --}}
-{{-- value="{{ old('email') }}" --}}

@@ -5,7 +5,7 @@
    <div class="main row">
       <div class="col-12">
          <div class="dashboard-heading">
-            <h4 class="mb-0">Edit Profile</h4>
+            <h4 class="mb-0">@lang('Edit Profile')</h4>
          </div>
          <section class="profile-setting">
             <div class="row g-4 g-lg-5">
@@ -93,34 +93,34 @@
                         @csrf
                            <div class="row g-4">
                               <div class="input-box col-md-6">
-                                 <label>First name</label>
-                                 <input type="text" class="form-control" value="{{ old('first_name', $user->firstname) }}" name="first_name" placeholder="Mr. John" autocomplete="off"/>
+                                 <label>@lang('First name')</label>
+                                 <input type="text" class="form-control" value="{{ old('first_name', $user->firstname) }}" name="first_name" placeholder="@lang('First Name')" autocomplete="off"/>
                                  @if($errors->has('first_name'))
                                     <div class="error text-danger">@lang($errors->first('first_name')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>last name</label>
-                                 <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->lastname) }}" placeholder="Doe" autocomplete="off" />
+                                 <label>@lang('Last name')</label>
+                                 <input type="text" name="last_name" class="form-control" value="{{ old('last_name', $user->lastname) }}" placeholder="@lang('Last Name')" autocomplete="off" />
                                  @if($errors->has('last_name'))
                                     <div class="error text-danger">@lang($errors->first('last_name')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>username</label>
-                                 <input type="text" name="username" class="form-control" value=" {{ old('username', $user->username) }}" placeholder="johndoe"  autocomplete="off"/>
+                                 <label>@lang('username')</label>
+                                 <input type="text" name="username" class="form-control" value=" {{ old('username', $user->username) }}" placeholder="@lang('Enter Your Username')"  autocomplete="off"/>
                                  @if($errors->has('username'))
                                     <div class="error text-danger">@lang($errors->first('username')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>email address</label>
+                                 <label>@lang('email address')</label>
                                  <input
                                     type="email"
                                     name="email"
                                     value="{{ old('email', $user->email) }}"
                                     class="form-control"
-                                    placeholder="example@gmail.com"
+                                    placeholder="@lang('Enter Your Email')"
                                     autocomplete="off"
                                  />
                                  @if($errors->has('email'))
@@ -128,14 +128,14 @@
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>phone number</label>
-                                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control" placeholder="01234567891" autocomplete="off" />
+                                 <label>@lang('phone number')</label>
+                                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control" placeholder="@lang('Enter Your Phone Number')" autocomplete="off" />
                                  @if($errors->has('phone'))
                                     <div class="error text-danger">@lang($errors->first('phone')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>preferred language</label>
+                                 <label>@lang('preferred language')</label>
                                  <select
                                     class="js-example-basic-single form-control"
                                     name="language_id"
@@ -148,13 +148,13 @@
                                  </select>
                               </div>
                               <div class="input-box col-12">
-                                 <label>address</label>
+                                 <label>@lang('address')</label>
                                  <textarea
                                     class="form-control"
                                     cols="30"
                                     rows="3"
                                     name="address"
-                                    placeholder="457 Morningview, New York USA"
+                                    placeholder="@lang('Enter Your Address')"
                                  >{{ old('address', $user->address_one) }}</textarea>
                                  @if($errors->has('address'))
                                  <div class="error text-danger">@lang($errors->first('address')) </div>
@@ -176,21 +176,21 @@
                            @csrf
                            <div class="row g-4">
                               <div class="input-box col-md-6">
-                                 <label>Current Password</label>
+                                 <label>@lang('Current Password')</label>
                                  <input type="password" name="current_password" class="form-control"  autocomplete="off" />
                                  @if($errors->has('current_password'))
                                     <div class="error text-danger">@lang($errors->first('current_password')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>New Password</label>
+                                 <label>@lang('New Password')</label>
                                  <input type="password" name="password" class="form-control" placeholder="" autocomplete="off"/>
                                  @if($errors->has('password'))
                                     <div class="error text-danger">@lang($errors->first('password')) </div>
                                  @endif
                               </div>
                               <div class="input-box col-md-6">
-                                 <label>Confirm Password</label>
+                                 <label>@lang('Confirm Password')</label>
                                  <input type="password" name="password_confirmation" class="form-control" placeholder="" autocomplete="off"/>
                                  @if($errors->has('password_confirmation'))
                                     <div class="error text-danger">@lang($errors->first('password_confirmation')) </div>
@@ -203,94 +203,130 @@
                         </form>
                      </div>
                      @forelse($kyc as $kyc_key => $item)
-
+                         @php($check = checkUserKyc($item->id))
                               <div class="tab-pane fade {{$errors->has($item->name) || session('kycForm') ==$item->name ?'show active':''}} "
                                    id="tab-{{$kyc_key}}"
                                    role="tabpanel"
                                    aria-labelledby="tab-{{$kyc_key}}-tab" >
                                   <div class="alert mb-0">
+                                        @if($check == 'pending')
+                                           <div class="card">
+                                               <div class="card-header bg-white">
+                                                   <h4 class="card-header-title">@lang('KYC Information')</h4>
+                                               </div>
+                                               <div class="card-body">
+                                                   <div class="">
+                                                       <div class="img">
+                                                           <img src="{{asset($themeTrue.'img/img/pending.jpg')}}" id="verifiedImg" alt="" srcset="">
+                                                       </div>
+                                                       <div class="text">
+                                                           <span class="KycverifiedMessage text-center text-primary">@lang('Your KYC is Pending')</span>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                        @elseif($check == true)
+                                          <div class="card">
+                                              <div class="card-header bg-white">
+                                                  <h4 class="card-header-title">@lang('KYC Information')</h4>
+                                              </div>
+                                              <div class="card-body">
+                                                    <div class="">
+                                                        <div class="img">
+                                                            <img src="{{asset($themeTrue.'img/img/verified.jpg')}}" id="verifiedImg" alt="" srcset="">
+                                                        </div>
+                                                        <div class="text">
+                                                            <span class="KycverifiedMessage text-center text-success">@lang('Your KYC is Verified')</span>
+                                                        </div>
+                                                    </div>
+                                              </div>
+                                          </div>
+                                      @else
+                                          <form action="{{ route('user.kyc.verification.submit') }}" method="post"
+                                                enctype="multipart/form-data">
+                                              @csrf
+                                              <div class="row g-4">
+                                                  <input type="hidden" name="type" value="{{ $item->id }}">
+                                                  @foreach($item->input_form as $k => $value)
 
-                                      <form action="{{ route('user.kyc.verification.submit') }}" method="post"
-                                            enctype="multipart/form-data">
-                                          @csrf
-                                          <div class="row g-4">
-                                              <input type="hidden" name="type" value="{{ $item->id }}">
-                                              @foreach($item->input_form as $k => $value)
-
-                                                  @if($value->type == "text")
-                                                      <div class="input-box col-md-12">
-                                                          <label for="">{{ $value->field_label }}</label>
-                                                          <input type="text" class="form-control"
-                                                                 name="{{ $value->field_name }}"
-                                                                 placeholder="{{ $value->field_label }}" autocomplete="off"/>
-                                                          @if($errors->has($value->field_name))
-                                                              <div
-                                                                  class="error text-danger">@lang($errors->first($value->field_name)) </div>
-                                                          @endif
-                                                      </div>
-                                                  @endif
-                                                  @if($value->type == "number")
-                                                      <div class="input-box col-md-12">
-                                                          <label for="">{{ $value->field_label }}</label>
-                                                          <input type="text" class="form-control"
-                                                                 name="{{ $value->field_name }}"
-                                                                 placeholder="{{ $value->field_label }}" autocomplete="off"/>
-                                                          @if($errors->has($value->field_name))
-                                                              <div
-                                                                  class="error text-danger">@lang($errors->first($value->field_name)) </div>
-                                                          @endif
-                                                      </div>
-                                                  @endif
-                                                  @if($value->type == "date")
-                                                      <div class="input-box col-md-12">
-                                                          <label for="">{{ $value->field_label }}</label>
-                                                          <input type="date" class="form-control"
-                                                                 name="{{ $value->field_name }}"
-                                                                 placeholder="{{ $value->field_label }}" autocomplete="off"/>
-                                                          @if($errors->has($value->field_name))
-                                                              <div
-                                                                  class="error text-danger">@lang($errors->first($value->field_name)) </div>
-                                                          @endif
-                                                      </div>
-                                                  @endif
-
-                                                  @if($value->type == "textarea")
-                                                      <div class="input-box col-md-12">
-                                                          <label for="">{{ $value->field_label }}</label>
-                                                          <textarea class="form-control" id="" cols="30" rows="10"
-                                                                    name="{{ $value->field_name }}"></textarea>
-                                                          @if($errors->has($value->field_name))
-                                                              <div
-                                                                  class="error text-danger">@lang($errors->first($value->field_name)) </div>
-                                                          @endif
-                                                      </div>
-                                                  @endif
-
-                                                  @if($value->type == "file")
-                                                      <div class="input-box col-12">
-                                                          <label for="">{{ $value->field_label }}</label>
-                                                          <div class="attach-file">
-                                             <span class="prev"> <i
-                                                     class="fa-duotone fa-link"></i> </span>
-                                                              <input class="form-control" accept="image/*"
-                                                                     name="{{ $value->field_name }}" type="file"/>
+                                                      @if($value->type == "text")
+                                                          <div class="input-box col-md-12">
+                                                              <label for="">{{ $value->field_label }}</label>
+                                                              <input type="text" class="form-control"
+                                                                     name="{{ $value->field_name }}"
+                                                                     value="{{ old($value->field_name) }}"
+                                                                     placeholder="{{ $value->field_label }}" autocomplete="off"/>
                                                               @if($errors->has($value->field_name))
                                                                   <div
                                                                       class="error text-danger">@lang($errors->first($value->field_name)) </div>
                                                               @endif
                                                           </div>
-                                                      </div>
+                                                      @endif
+                                                      @if($value->type == "number")
+                                                          <div class="input-box col-md-12">
+                                                              <label for="">{{ $value->field_label }}</label>
+                                                              <input type="text" class="form-control"
+                                                                     name="{{ $value->field_name }}"
+                                                                     value="{{ old($value->field_name) }}"
+                                                                     placeholder="{{ $value->field_label }}" autocomplete="off"/>
+                                                              @if($errors->has($value->field_name))
+                                                                  <div
+                                                                      class="error text-danger">@lang($errors->first($value->field_name)) </div>
+                                                              @endif
+                                                          </div>
+                                                      @endif
+                                                      @if($value->type == "date")
+                                                          <div class="input-box col-md-12">
+                                                              <label for="">{{ $value->field_label }}</label>
+                                                              <input type="date" class="form-control"
+                                                                     name="{{ $value->field_name }}"
+                                                                     value="{{old($value->field_name)}}"
+                                                                     placeholder="{{ $value->field_label }}" autocomplete="off"/>
+                                                              @if($errors->has($value->field_name))
+                                                                  <div
+                                                                      class="error text-danger">@lang($errors->first($value->field_name)) </div>
+                                                              @endif
+                                                          </div>
+                                                      @endif
 
-                                                  @endif
+                                                      @if($value->type == "textarea")
+                                                          <div class="input-box col-md-12">
+                                                              <label for="">{{ $value->field_label }}</label>
+                                                              <textarea class="form-control" id="" cols="30" rows="10"
+                                                                        name="{{ $value->field_name }}"> {{old( $value->field_name)}} </textarea>
+                                                              @if($errors->has($value->field_name))
+                                                                  <div
+                                                                      class="error text-danger">@lang($errors->first($value->field_name)) </div>
+                                                              @endif
+                                                          </div>
+                                                      @endif
 
-                                              @endforeach
+                                                      @if($value->type == "file")
+                                                          <div class="input-box col-12">
+                                                              <label for="">{{ $value->field_label }}</label>
+                                                              <div class="attach-file">
+                                             <span class="prev"> <i
+                                                     class="fa-duotone fa-link"></i> </span>
+                                                                  <input class="form-control" accept="image/*"
+                                                                         name="{{ $value->field_name }}" type="file"/>
+                                                                  @if($errors->has($value->field_name))
+                                                                      <div
+                                                                          class="error text-danger">@lang($errors->first($value->field_name)) </div>
+                                                                  @endif
+                                                              </div>
+                                                          </div>
+
+                                                      @endif
+
+                                                  @endforeach
 
 
-                                              <div class="input-box col-12">
-                                                  <button type="submit" class="btn-custom">@lang('Submit')</button>
+                                                  <div class="input-box col-12">
+                                                      <button type="submit" class="btn-custom">@lang('Submit')</button>
+                                                  </div>
                                               </div>
-                                          </div>
-                                      </form>
+                                          </form>
+                                        @endif
                                   </div>
                               </div>
                         @empty
@@ -303,5 +339,21 @@
    </div>
 </div>
 @endsection
+
+@push('style')
+    <style>
+        #verifiedImg{
+            height: 200px;
+            width: 200px;
+            display: block;
+            margin: auto;
+        }
+        .KycverifiedMessage{
+            font-size: 20px;
+            display: block;
+            margin: auto;
+        }
+    </style>
+@endpush
 
 

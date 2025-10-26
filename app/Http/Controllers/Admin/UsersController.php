@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\UserAllRecordDeleteJob;
+use App\Jobs\UserAllRecordJob;
 use App\Models\Deposit;
 use App\Models\Fund;
 use App\Models\Gateway;
@@ -16,12 +18,12 @@ use App\Models\UserLogin;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Validation\Rule;
 use App\Traits\Upload;
 use App\Traits\Notify;
 use Exception;
-use Validator;
 
 class UsersController extends Controller
 {
@@ -53,6 +55,7 @@ class UsersController extends Controller
 
     public function search(Request $request)
     {
+
         $search = $request->search['value'];
         $filterStatus = $request->filterStatus;
         $filterName = $request->filterName;
@@ -60,7 +63,7 @@ class UsersController extends Controller
         $filterSMSVerification = $request->filterSMSVerification;
         $filterTwoFaSecurity = $request->filterTwoFaVerification;
 
-        $users = User::orderBy('id', 'DESC')
+        $users = User::query()->orderBy('id', 'DESC')
             ->when(!empty($search), function ($query) use ($search) {
                 return $query->where('email', 'LIKE', "%{$search}%")
                     ->orWhere('username', 'LIKE', "%{$search}%")
@@ -175,7 +178,10 @@ class UsersController extends Controller
             session()->flash('error', 'You do not select User.');
             return response()->json(['error' => 1]);
         } else {
-            User::whereIn('id', $request->strIds)->delete();
+            User::whereIn('id', $request->strIds)->get()->map(function ($user) {
+                UserAllRecordJob::dispatch($user);
+                $user->forceDelete();
+            });
             session()->flash('success', 'User has been deleted successfully');
             return response()->json(['success' => 1]);
         }
@@ -198,6 +204,7 @@ class UsersController extends Controller
         $languages = Language::all()->map(function ($item) {
             return $item->id;
         });
+
         $request->validate([
             'firstName' => 'required|string|min:2|max:100',
             'lastName' => 'required|string|min:2|max:100',
@@ -209,7 +216,7 @@ class UsersController extends Controller
             'addressTwo' => 'required|string|min:2',
             'zipCode' => 'required|string|min:2|max:100',
             'status' => 'nullable|integer|in:0,1',
-            'image' => 'nullable|mimes:jpeg,png,jpg,gif|max:4096',
+            'image' => 'nullable|mimes:jpeg,png,jpg,gif|sizes:2048',
             'language_id' => Rule::in($languages),
         ]);
 
@@ -219,7 +226,7 @@ class UsersController extends Controller
         });
         if ($request->hasFile('image')) {
             try {
-                $image = $this->fileUpload($request->image, config('filelocation.profileImage.path'),null,null, 'avif', 60,$user->image,  $user->image_driver);
+                $image = $this->fileUpload($request->image, config('filelocation.profileImage.path'), null, null, 'avif', 60, $user->image, $user->image_driver);
                 if ($image) {
                     $profileImage = $image['path'];
                     $driver = $image['driver'];
@@ -479,7 +486,9 @@ class UsersController extends Controller
             $user = User::where('id', $id)->firstOr(function () {
                 throw new \Exception('User not found!');
             });
-            $user->delete();
+
+            UserAllRecordJob::dispatch($user);
+            $user->forceDelete();
             return redirect()->route('admin.users')->with('success', 'User Account Deleted Successfully.');
 
         } catch (\Exception $exp) {
@@ -517,7 +526,7 @@ class UsersController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $image = $this->fileUpload($request->image, config('filelocation.profileImage.path'),  null, null, 'avif', 60);
+                $image = $this->fileUpload($request->image, config('filelocation.profileImage.path'), null, null, 'avif', 60);
                 if ($image) {
                     $profileImage = $image['path'];
                     $driver = $image['driver'];
@@ -592,6 +601,8 @@ class UsersController extends Controller
 
     public function userTransactionSearch(Request $request, $id)
     {
+
+        $basicControl = basicControl();
         $search = $request->search['value'];
 
         $filterTransactionId = $request->filterTransactionID;
@@ -619,7 +630,8 @@ class UsersController extends Controller
             ->when(!empty($filterTransactionId), function ($query) use ($filterTransactionId) {
                 return $query->where('trx_id', $filterTransactionId);
             })
-            ->orderBy('id', 'DESC');
+            ->orderBy('id', 'DESC')
+            ->get();
 
 
         return DataTables::of($transaction)
@@ -663,6 +675,7 @@ class UsersController extends Controller
         $filterTransactionId = $request->filterTransactionID;
         $filterStatus = $request->filterStatus;
         $filterMethod = $request->filterMethod;
+        $basicControl = basicControl();
         $search = $request->search['value'];
 
         $filterDate = explode('-', $request->filterDate);
@@ -706,7 +719,8 @@ class UsersController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            });
+            })
+            ->get();
 
 
         return DataTables::of($funds)
@@ -807,6 +821,7 @@ class UsersController extends Controller
         $filterTransactionId = $request->filterTransactionID;
         $filterStatus = $request->filterStatus;
         $filterMethod = $request->filterMethod;
+        $basicControl = basicControl();
         $search = $request->search['value'];
 
         $filterDate = explode('-', $request->filterDate);
@@ -849,7 +864,8 @@ class UsersController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            });
+            })
+            ->get();
 
 
         return DataTables::of($payout)
@@ -998,7 +1014,8 @@ class UsersController extends Controller
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($startDate));
                 $endDate = Carbon::createFromFormat('d/m/Y', trim($endDate));
                 $query->whereBetween('created_at', [$startDate, $endDate]);
-            });
+            })
+            ->get();
 
         return DataTables::of($transaction)
             ->addColumn('no', function () {

@@ -76,7 +76,7 @@
              <!-- pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end mt-4">
-                    {{-- {{ $tickets->appends($_GET)->links($theme.'partials.pagination') }} --}}
+                    {{ $historys->appends($_GET)->links($theme.'partials.pagination') }}
                 </ul>
              </nav>
           </div>

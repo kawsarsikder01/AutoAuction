@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\BiddingHistory;
 use App\Models\Report;
+use App\Models\Visitor;
 use App\Traits\Notify;
 use Carbon\Carbon;
 use Exception;
@@ -15,6 +16,8 @@ use App\Traits\Upload;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\noOfMaxImg;
+use Illuminate\Support\Facades\DB;
+use function Laravel\Prompts\select;
 
 class SellerController extends Controller
 {
@@ -90,7 +93,7 @@ class SellerController extends Controller
             $vehicle->user_id = $user->id;
             $vehicle->category_id = $request->category_id;
             $vehicle->brand_id = $request->brand_id;
-            $vehicle->plan_id = $user->plan->id;
+            $vehicle->user_current_plan_id = $user->plan->id;
             $vehicle->save();
             $vehicle->details()->create([
                 'title' => $request->title,
@@ -123,7 +126,13 @@ class SellerController extends Controller
         if (!$user->plan) {
             abort(403);
         }
-        $vehicles = Vehicle::with('details')->where('user_id', $user->id)->paginate(basicControl()->paginate);
+        $vehicles = Vehicle::with('details')
+                    ->whereHas('details',function($query){
+                        $query->select('id', 'title', 'price', 'sold_price', 'sold_status');
+                    })
+                    ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->paginate(basicControl()->paginate);
         $data['categories'] = CarCategory::get();
         $data['brands'] = CarBrand::get();
         return view(template() . 'user.pages.listedVehicle', compact('vehicles'), $data);
@@ -226,7 +235,7 @@ class SellerController extends Controller
             $vehicle->user_id = $user->id;
             $vehicle->category_id = $request->category_id;
             $vehicle->brand_id = $request->brand_id;
-            $vehicle->plan_id = $vehicle->plan_id;
+            $vehicle->user_current_plan_id = $vehicle->user_current_plan_id;
             $vehicle->save();
             $vehicle->details()->update([
                 'title' => $request->title,
@@ -268,7 +277,7 @@ class SellerController extends Controller
             $vehicle->user->update();
         }
         $vehicle->biddingHistory()->delete();
-
+        $vehicle->reacts()->delete();
         $vehicle->details->delete();
         foreach ($vehicle->path_name as $path) {
             $this->fileDelete($vehicle->driver, $path);
@@ -277,7 +286,7 @@ class SellerController extends Controller
         $vehicle->delete();
         return redirect()->route('auction')->with('success', 'Vehicle Delete Successfully');
         } catch (Exception $error) {
-            abort(403);;
+            return back()->with('error',$error->getMessage());
         }
     }
 
@@ -310,8 +319,8 @@ class SellerController extends Controller
                 "icon" => "fas fa-money-bill-alt text-white"
             ];
             $this->userPushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg, $action);
-            $this->userFirebasePushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg, $action);
-            $this->sendMailSms($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg, $msg);
+            $this->userFirebasePushNotification($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg,  route('user.listed.vehicle'));
+            $this->sendMailSms($soldVehicle->bidder, 'RELEASED_VEHICLE',$msg);
             return back()->with('success', "Successfully Released Your Property");
         }catch (Exception $exception){
             return back()->with('error', $exception->getMessage());
@@ -325,7 +334,7 @@ class SellerController extends Controller
             if ($vehicle->user_id != Auth::user()->id){
                 throw new Exception('Vehicle Not Found');
             }
-            $historys = $vehicle->biddingHistory;
+            $historys = BiddingHistory::where('vehicle_id', $vehicle->id)->orderByDesc('created_at')->paginate(basicControl()->paginate);
             $max_bid = BiddingHistory::where('vehicle_id', $vehicle->id)->where('bid_amount', $historys->max('bid_amount'))->first();
 
             $vehicleTitle = $vehicle->details->title;
@@ -346,10 +355,91 @@ class SellerController extends Controller
             }
             return view(template() . 'user.pages.vehicleBiddingHistory', compact('historys', 'vehicleTitle', 'report'));
         }catch (\Exception $exception){
+            dd($exception->getMessage());
             abort(404);
         }
     }
+    public function monthList()
+    {
+        $currentYear = Carbon::now()->year;
+        $monthsByYear = [];
 
+        for ($month = 1; $month <= 12; $month++) {
+            $monthsByYear[Carbon::create($currentYear, $month)->format('F')] = '00';
+        }
 
+        return $monthsByYear;
+    }
+
+    public function dayList()
+    {
+        $totalDays = Carbon::now()->endOfMonth()->format('d');
+        $daysByMonth = [];
+        for ($i = 1; $i <= $totalDays; $i++) {
+            array_push($daysByMonth, ['Day ' . sprintf("%02d", $i) => 0]);
+        }
+
+        return collect($daysByMonth)->collapse();
+    }
+
+    public function auctionStatistic($auction_id)
+    {
+        $topbidders =  BiddingHistory::where('vehicle_id',$auction_id)->orderByDesc('bid_amount')->take(4)->get();
+        return view(template().'user.pages.statistic',compact('auction_id','topbidders'));
+    }
+
+    public function auctionVisitors($auction_id)
+    {
+        $currentMonthVisitors = $this->dayList();
+        $labels = $this->dayList();
+        $monthlyVisitor = Visitor::whereMonth('created_at', Carbon::now()->month)
+            ->where('auction_id', $auction_id)
+            ->select(
+                DB::raw('COUNT(id) as perDayVisitor'),
+                DB::raw('DATE_FORMAT(created_at,"Day %d") as date')
+            )
+            ->groupBy(DB::raw("DATE(created_at)"))
+            ->get();
+        foreach ($monthlyVisitor as $item){
+            $currentMonthVisitors[$item['date']] =  $item['perDayVisitor'];
+        }
+        $lastMonthVisitors = $this->dayList();
+        $lastMonth = Visitor::whereMonth('created_at',Carbon::now()->subMonth())
+            ->where('auction_id', $auction_id)
+            ->select(
+                DB::raw('COUNT(id) as perDayVisitor'),
+                DB::raw('DATE_FORMAT(created_at,"Day %d") as date')
+            )
+            ->groupBy(DB::raw("DATE(created_at)"))
+            ->get();
+        foreach ($lastMonth as $item){
+            $lastMonthVisitors[$item['date']] =  $item['perDayVisitor'];
+        }
+
+        return response()->json([
+            'currentMonthVisitors' => $currentMonthVisitors->values(),
+            'lastMonthVisitors' => $lastMonthVisitors->values(),
+            'labels' => $labels->keys()
+        ]);
+    }
+
+    public function getVisitorsHistory($auction_id)
+    {
+        $userLoginsData = DB::table('visitors')
+            ->whereDate('created_at', '>=', now()->subDays(30))
+            ->select('browser_info', 'os', 'device')
+            ->where('auction_id', $auction_id)
+            ->get();
+
+        $data['visitorsBrowserData'] = $userLoginsData->groupBy('browser_info')->map->count();
+        $data['visitorsOSData'] = $userLoginsData->groupBy('os')->map->count();
+        $data['visitorsDeviceData'] = $userLoginsData->groupBy('device')->map->count();
+        return response()->json([
+            'visitorsBrowserData'  => $data['visitorsBrowserData'],
+            'visitorsOSData' => $data['visitorsOSData'],
+            'visitorsDeviceData' =>  $data['visitorsDeviceData']
+        ]);
+    }
 
 }
+

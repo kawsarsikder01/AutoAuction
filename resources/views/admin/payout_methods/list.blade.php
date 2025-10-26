@@ -125,13 +125,13 @@
                                         </td>
                                     </tr>
                                 @empty
-                                <tr>
-                                    <div class="text-center p-4">
-                                        <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error.svg') }}" alt="Image Description" data-hs-theme-appearance="default">
-                                        <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error-light.svg') }}" alt="Image Description" data-hs-theme-appearance="dark">
-                                        <p class="mb-0">@lang("No data to show")</p>
-                                    </div>
-                                </tr>
+                                    <tr>
+                                        <div class="text-center p-4">
+                                            <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error.svg') }}" alt="Image Description" data-hs-theme-appearance="default">
+                                            <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error-light.svg') }}" alt="Image Description" data-hs-theme-appearance="dark">
+                                            <p class="mb-0">@lang("No data to show")</p>
+                                        </div>
+                                    </tr>
                                 @endforelse
                                 </tbody>
                             </table>
@@ -225,48 +225,43 @@
 @push('script')
     <script>
         'use strict';
-        $('.js-sortable').on('change', function () {
-            var methods = [];
-            $('.js-sortable tr').each(function (key, val) {
-                let methodCode = $(val).data('code');
-                methods.push(methodCode);
-            });
-            $.ajax({
-                'url': "{{ route('admin.sort.payment.methods') }}",
-                'method': "POST",
-                'data': {sort: methods}
-            })
-        })
-
-        $('.disableBtn').on('click', function () {
-            let status = $(this).data('status');
-            $('.messageShow').text($(this).data('message'));
-            let modal = $('#activeDeactivateModal');
-            modal.find('input[name=code]').val($(this).data('code'));
-        });
-
-        (function () {
-            window.onload = function () {
-
-                HSCore.components.HSDatatables.init($('#datatable'), {
-                    language: {
-                        zeroRecords: `<div class="text-center p-4">
+           $(document).ready(function (){
+            HSCore.components.HSSortable.init('.js-sortable')
+            HSCore.components.HSDatatables.init($('.js-datatable'), {
+                language: {
+                    zeroRecords: `<div class="text-center p-4">
                     <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error.svg') }}" alt="Image Description" data-hs-theme-appearance="default">
                     <img class="dataTables-image mb-3" src="{{ asset('assets/admin/img/oc-error-light.svg') }}" alt="Image Description" data-hs-theme-appearance="dark">
                     <p class="mb-0">No data to show</p>
                     </div>`,
-                        processing: `<div><div></div><div></div><div></div><div></div></div>`
-                    },
+                    processing: `<div><div></div><div></div><div></div><div></div></div>`
+                },
 
+            })
+            HSCore.components.HSTomSelect.init('.js-select', {
+                maxOptions: 250,
+            })
+
+            $('.js-sortable').on('change', function () {
+                var methods = [];
+                $('.js-sortable tr').each(function (key, val) {
+                    let methodCode = $(val).data('code');
+                    methods.push(methodCode);
+                });
+                $.ajax({
+                    'url': "{{ route('admin.sort.payment.methods') }}",
+                    'method': "POST",
+                    'data': {sort: methods}
                 })
-                HSCore.components.HSSortable.init('.js-sortable')
-                HSBsDropdown.init()
-                HSCore.components.HSFlatpickr.init('.js-flatpickr')
-                HSCore.components.HSTomSelect.init('.js-select', {
-                    maxOptions: 250,
-                })
-            }
-        })();
+            })
+
+            $('.disableBtn').on('click', function () {
+                let status = $(this).data('status');
+                $('.messageShow').text($(this).data('message'));
+                let modal = $('#activeDeactivateModal');
+                modal.find('input[name=code]').val($(this).data('code'));
+            });
+        })
     </script>
 @endpush
 

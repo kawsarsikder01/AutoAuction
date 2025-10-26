@@ -13,8 +13,8 @@ class SmsConfigController extends Controller
 {
     public function index()
     {
-        $data['smsControlMethod'] = Config('SMSConfig.SMS');
-        $data['smsMethodDefault'] = Config('SMSConfig.default');
+        $data['smsControlMethod'] = config('SMSConfig.SMS');
+        $data['smsMethodDefault'] = config('SMSConfig.default');
         return view('admin.sms_controls.index', $data);
     }
 
