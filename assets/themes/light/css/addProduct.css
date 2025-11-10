@@ -1,0 +1,58 @@
+
+    .ql-toolbar.ql-snow {
+       border: 1px solid var(--borderColor) !important;
+       border-top-right-radius: 5px;
+       border-top-left-radius: 5px;
+    }
+
+    .ql-container.ql-snow {
+       border: 1px solid var(--borderColor) !important;
+       border-top: none !important;
+       border-bottom-right-radius: 5px;
+       border-bottom-left-radius: 5px;
+    }
+
+    .ql-editor {
+       font-size: 15px;
+       min-height: 150px;
+    }
+
+    .profile-setting form .input-group .select2 {
+       width: 100px !important;
+       border-left: 1px solid var(--borderColor);
+    }
+
+    #content .card-box .btn-action-icon i {
+       color: var(--white);
+       font-size: 14px;
+    }
+
+    #basicExampleDropzone .browse-file {
+       width: 100px;
+    }
+
+    #optionsContainer .btn-action-icon {
+       height: 43px;
+       width: 40px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       margin: 0;
+    }
+
+    select {
+       /* background-image: url(../img/icon/downward-arrow.png); */
+       background-size: 16px;
+       background-repeat: no-repeat;
+       background-position: center right;
+       background-position-x: calc(100% - 10px);
+    }
+
+    .note-btn i{
+      font-size: 13px !important;
+      color: black!important;
+    }
+    .note-btn span{
+      color: black!important;
+    }
+ 
